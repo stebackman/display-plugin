@@ -244,14 +244,8 @@ $style = "
 </p>
                 <p><strong>Company:</strong> <input type="text" name="company" value="<?php echo esc_attr($company); ?>" class="regular-text"></p>
                 <p><strong>Motorcycle:</strong> <input type="text" name="motorcycle" value="<?php echo esc_attr($motorcycle); ?>" class="regular-text"></p>
-                <p><strong>First Aid Course:</strong>
-                    <input type="checkbox" name="first_aid" value="yes" <?php checked($first_aid, 'yes'); ?> 
-                    <?php if (!current_user_can('manage_options')) echo 'disabled'; ?>> Yes, I have completed a first aid course
-                </p>
-                <p><strong>Tilanne Koulutus:</strong>
-                    <input type="checkbox" name="tilanne_koulutus" value="yes" <?php checked($tilanne_koulutus, 'yes'); ?> 
-                    <?php if (!current_user_can('manage_options')) echo 'disabled'; ?>> Yes, I have completed a tilanne koulutus
-                </p>
+                <p><strong>First Aid Course:</strong> <input type="checkbox" name="first_aid" value="yes" <?php checked($first_aid, 'yes'); ?>> Yes, I have completed a first aid course</p>
+                <p><strong>Tilanne Koulutus:</strong> <input type="checkbox" name="tilanne_koulutus" value="yes" <?php checked($tilanne_koulutus, 'yes'); ?>> Yes, I have completed a tilannekoulutuskurssi</p>
                 <div class="biography">
                         <label for="biographical_info">Biographical Info:</label>
                         <textarea id="biographical_info" name="biographical_info" ><?php echo esc_textarea($biographical_info); ?></textarea>   
