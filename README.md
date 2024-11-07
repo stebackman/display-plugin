@@ -1,1 +1,1 @@
-# display-plugin
+# executor-profile
