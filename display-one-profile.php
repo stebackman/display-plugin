@@ -30,6 +30,12 @@ function display_selected_user_profile_shortcode() {
     $profile_picture = get_user_meta($user->ID, 'profile_picture', true) ?: get_avatar_url($user->ID, ['size' => 100]);
     $department = get_user_meta($user->ID, 'department', true);
     $biographical_info = get_user_meta($user->ID, 'description', true);
+    $company = get_user_meta($user->ID,'company',true);
+    $motorcycle = get_user_meta($user->ID,'motorcycle',true);
+
+    //Get first aid and tilannekoulutus:
+    $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
+    $tilanne_koulutus_completed= get_user_meta($user->ID,'tilanne_koulutus',true)==='yes';
 
     // Get visibility settings
     $show_email = get_user_meta($user->ID, 'show_email', true) === 'yes';
@@ -51,13 +57,22 @@ function display_selected_user_profile_shortcode() {
                 <p><strong>Phone Number:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
             <?php endif; ?>
             <p><strong>Department:</strong> <?php echo esc_html($department); ?></p>
+            <p><strong>Company:</strong><?php echo esc_html($company);?></p>
+            <p><strong>Motorcycle:</strong><?php echo esc_html($motorcycle);?></p>
             <div class="biography">
                 <label for="biographical_info">Biographical Info:</label>
                 <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
             </div>
+            <?php if ($first_aid_completed) : ?>
+                <p><strong>First aid completed: 2024. HARDCODED!!</strong> 
+            <?php endif; ?>
+            <?php if ($tilanne_koulutus_completed) : ?>
+                <p><strong>Tilanneturvallisuuskurssi completed: 2024 HARDCODED!!</strong> 
+            <?php endif; ?>
             <?php if (get_current_user_id() === $user->ID) : ?>
                 <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>
             <?php endif; ?>
+
         </div>
     </div>
     <?php

@@ -83,13 +83,13 @@ function display_all_user_profiles_shortcode($atts) {
 
     ob_start();
 
-    // Display search form and department filter
+    // Display search form, department filter, and view toggle button
     ?>
     <form action="" method="get">
-        <input type="hidden" name="page_id" value="<?php echo get_the_ID(); ?>" />
-        <input type="text" name="search_user" placeholder="Search profiles..." value="<?php echo esc_attr($search_query); ?>" />
-        <button type="submit">Search</button>
-    </form>
+    <input type="hidden" name="page_id" value="<?php echo get_the_ID(); ?>" />
+    <input type="text" name="search_user" id="search-user-input" placeholder="Search profiles..." value="<?php echo esc_attr($search_query); ?>" />
+    <button type="submit">Search</button>
+</form>
 
     <label for="department">Select Department:</label>
     <select id="department-filter">
@@ -97,10 +97,12 @@ function display_all_user_profiles_shortcode($atts) {
         <option value="MC Executors - Uusimaa">MC Executors - Uusimaa</option>
         <option value="MC Executors - Pohjanmaa">MC Executors - Pohjanmaa</option>
     </select>
-    <?php
 
+    <button id="toggle-view" data-view="grid">Switch to Table View</button>
+
+    <?php
     if ($users) {
-        echo '<div class="user-profiles">';
+        echo '<div class="user-profiles grid-view">';
 
         // Separate the current user for priority display
         $current_user_profile = '';
@@ -138,7 +140,7 @@ function display_all_user_profiles_shortcode($atts) {
                         <label for="biographical_info">Biographical Info:</label>
                         <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
                     </div>
-                    <p><a href="<?php echo esc_url('/wordpress/?page_id=109&user_id=' . $user->ID); ?>" class="view-profile-button">View Profile</a></p>
+                    <p><a href="<?php echo esc_url('/wordpress/?page_id=122&user_id=' . $user->ID); ?>" class="view-profile-button">View Profile</a></p>
                     <?php if ($current_user_id === (int) $user->ID) : ?>
                         <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>
                     <?php endif; ?>
@@ -158,27 +160,88 @@ function display_all_user_profiles_shortcode($atts) {
         echo $other_users_profiles;
 
         echo '</div>';
+
+        // Table structure for list view
+        echo '<table class="user-profiles-table" style="display:none;">';
+        echo '<thead><tr><th>First Name</th><th>Last Name</th><th>Email</th><th>Phone Number</th><th>Department</th><th>Motorcycle</th><th>Company</th><th>Biographical Info</th></tr></thead>';
+        echo '<tbody>';
+        foreach ($users as $user) {
+            $show_email = get_user_meta($user->ID, 'show_email', true) === 'yes';
+            $show_phone_number = get_user_meta($user->ID, 'show_phone_number', true) === 'yes';
+            $biographical_info = get_user_meta($user->ID, 'description', true);
+            ?>
+            <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
+                <td><?php echo esc_html($user->first_name); ?></td>
+                <td><?php echo esc_html($user->last_name); ?></td>
+                <td><?php echo $show_email ? esc_html($user->user_email) : 'Private'; ?></td>
+                <td><?php echo $show_phone_number ? esc_html(get_user_meta($user->ID, 'phone_number', true)) : 'Private'; ?></td>
+                <td><?php echo esc_html(get_user_meta($user->ID, 'department', true)); ?></td>
+                <td><?php echo esc_html($user->motorcycle); ?></td>
+                <td><?php echo esc_html($user->company); ?></td>
+                <td><?php echo esc_html($biographical_info); ?></td>
+            </tr>
+            <?php
+        }
+        echo '</tbody></table>';
     } else {
         echo '<p>No user profiles found.</p>';
     }
-    
-    // JavaScript for department filtering
-    ?>
-    <script>
-        document.getElementById('department-filter').addEventListener('change', function () {
-            var selectedDepartment = this.value;
-            var profiles = document.querySelectorAll('.user-profile');
 
-            profiles.forEach(function(profile) {
-                var department = profile.getAttribute('data-department');
-                if (selectedDepartment === 'all' || department === selectedDepartment) {
-                    profile.style.display = 'block';
-                } else {
-                    profile.style.display = 'none';
-                }
-            });
+    // JavaScript for view toggle and department filtering
+    ?>
+   <!-- JavaScript for view toggle, department filtering, and live search functionality -->
+<script>
+    document.getElementById('toggle-view').addEventListener('click', function () {
+        var userProfileContainer = document.querySelector('.user-profiles');
+        var userTableContainer = document.querySelector('.user-profiles-table');
+        var currentView = this.getAttribute('data-view');
+
+        if (currentView === 'grid') {
+            userProfileContainer.style.display = 'none';
+            userTableContainer.style.display = 'table';
+            this.setAttribute('data-view', 'table');
+            this.textContent = 'Switch to Grid View';
+        } else {
+            userProfileContainer.style.display = 'flex';
+            userTableContainer.style.display = 'none';
+            this.setAttribute('data-view', 'grid');
+            this.textContent = 'Switch to Table View';
+        }
+    });
+
+    document.getElementById('department-filter').addEventListener('change', function () {
+        var selectedDepartment = this.value;
+        var profiles = document.querySelectorAll('.user-profile');
+        var rows = document.querySelectorAll('.user-profiles-table tbody tr');
+
+        profiles.forEach(function(profile) {
+            var department = profile.getAttribute('data-department');
+            profile.style.display = (selectedDepartment === 'all' || department === selectedDepartment) ? 'block' : 'none';
         });
-    </script>
+
+        rows.forEach(function(row) {
+            var department = row.getAttribute('data-department');
+            row.style.display = (selectedDepartment === 'all' || department === selectedDepartment) ? '' : 'none';
+        });
+    });
+
+    // Live search functionality
+    document.getElementById('search-user-input').addEventListener('input', function () {
+        var searchTerm = this.value.toLowerCase();
+        var profiles = document.querySelectorAll('.user-profile');
+        var rows = document.querySelectorAll('.user-profiles-table tbody tr');
+
+        profiles.forEach(function(profile) {
+            var name = profile.querySelector('h2').textContent.toLowerCase();
+            profile.style.display = name.includes(searchTerm) ? 'block' : 'none';
+        });
+
+        rows.forEach(function(row) {
+            var name = row.querySelector('td:nth-child(1)').textContent.toLowerCase() + ' ' + row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            row.style.display = name.includes(searchTerm) ? '' : 'none';
+        });
+    });
+</script>
     <?php
 
     return ob_get_clean();
@@ -229,6 +292,17 @@ function display_user_profiles_styles() {
         }
         .view-profile-button:hover {
             background-color: #005177;
+        }
+
+        /* Styles for table view */
+        .user-profiles-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .user-profiles-table th, .user-profiles-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
         }
     </style>
     ";

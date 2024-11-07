@@ -52,7 +52,7 @@ function custom_user_profile_fields($user) {
         <tr>
             <th><label for="tilanne_koulutus">Tilannekoulutus Course Completed</label></th>
             <td>
-                <input type="checkbox" name="tilanne_koulutus" id="tilanne_koulutus" value="yes" <?php checked(get_user_meta($user->ID, 'tilanne_koulutus', true), 'yes'); ?>>
+                <input type="checkbox" name="tilanne_koulutus" id="tilanne_koulutus" value="yes" d <?php checked(get_user_meta($user->ID, 'tilanne_koulutus', true), 'yes'); ?>>
                 <label for="tilanne_koulutus">Yes, I have completed a tilannekoulutus</label>
             </td>
         </tr>
@@ -244,8 +244,14 @@ $style = "
 </p>
                 <p><strong>Company:</strong> <input type="text" name="company" value="<?php echo esc_attr($company); ?>" class="regular-text"></p>
                 <p><strong>Motorcycle:</strong> <input type="text" name="motorcycle" value="<?php echo esc_attr($motorcycle); ?>" class="regular-text"></p>
-                <p><strong>First Aid Course:</strong> <input type="checkbox" name="first_aid" value="yes" <?php checked($first_aid, 'yes'); ?>> Yes, I have completed a first aid course</p>
-                <p><strong>Tilanne Koulutus:</strong> <input type="checkbox" name="tilanne_koulutus" value="yes" <?php checked($tilanne_koulutus, 'yes'); ?>> Yes, I have completed a tilannekoulutuskurssi</p>
+                <p><strong>First Aid Course:</strong>
+                    <input type="checkbox" name="first_aid" value="yes" <?php checked($first_aid, 'yes'); ?> 
+                    <?php if (!current_user_can('manage_options')) echo 'disabled'; ?>> Yes, I have completed a first aid course
+                </p>
+                <p><strong>Tilanne Koulutus:</strong>
+                    <input type="checkbox" name="tilanne_koulutus" value="yes" <?php checked($tilanne_koulutus, 'yes'); ?> 
+                    <?php if (!current_user_can('manage_options')) echo 'disabled'; ?>> Yes, I have completed a tilanne koulutus
+                </p>
                 <div class="biography">
                         <label for="biographical_info">Biographical Info:</label>
                         <textarea id="biographical_info" name="biographical_info" ><?php echo esc_textarea($biographical_info); ?></textarea>   
@@ -268,13 +274,14 @@ $style = "
 
 <!-- Handle Password Reset Shortcode Output -->
  <!-- Handle Password Reset Shortcode Output -->
- <?php echo do_shortcode('[handle_password_reset]'); ?>
+
+
+<?php echo do_shortcode('[handle_password_reset]'); ?>
     <?php
     return ob_get_clean();
     
 }
 add_shortcode('display_user_info', 'display_user_info_shortcode');
-
 // Hide unnecessary fields on the admin profile page
 function hide_unnecessary_profile_fields() {
     echo '
@@ -297,7 +304,7 @@ function hide_unnecessary_profile_fields() {
 add_action('admin_head', 'hide_unnecessary_profile_fields');
 
 // Step 4: Handle Password Reset Requests
-/*
+
 function handle_password_reset_request() {
     if (isset($_POST['reset_password'])) {
         $current_user = wp_get_current_user();
@@ -330,4 +337,4 @@ function handle_password_reset_request() {
         return '<p>A password reset link has been sent to your email address.</p>';
     }
 }
-add_shortcode('handle_password_reset', 'handle_password_reset_request');*/
+add_shortcode('handle_password_reset', 'handle_password_reset_request');
