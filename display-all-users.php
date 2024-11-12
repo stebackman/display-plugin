@@ -111,7 +111,14 @@ function display_all_user_profiles_shortcode($atts) {
         foreach ($users as $user) {
             $profile_picture = get_user_meta($user->ID, 'profile_picture', true) ?: get_avatar_url($user->ID, ['size' => 100]);
             $department = get_user_meta($user->ID, 'department', true);
-            $biographical_info = get_user_meta($user->ID, 'description', true);
+            $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
+            $member_id= get_user_meta($user->ID,'member_id',true);
+
+            //Get first aid and tilannekoulutus:
+            $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
+            $tilanne_koulutus_completed= get_user_meta($user->ID,'tilanne_koulutus',true)==='yes';
+
+            $vip_member =get_user_meta($user->ID,'vip_member',true)==='yes';
 
             // Get visibility settings
             $show_email = get_user_meta($user->ID, 'show_email', true) === 'yes';
@@ -122,10 +129,14 @@ function display_all_user_profiles_shortcode($atts) {
             <div class="user-profile" data-department="<?php echo esc_attr($department); ?>">
                 <div class="user-avatar">
                     <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
+                    <?php if ($vip_member): ?>
+                        <span class="vip-crown">&#x1F451;</span>
+                        <?php endif; ?>
                 </div>
                 <div class="user-details">
                     <h2><?php echo esc_html($user->display_name); ?></h2>
                     <p><strong>Name:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
+                    <p><strong>Jäsennumero:</strong> <?php echo esc_html($member_id); ?></p>
                     <?php if ($show_email) : ?>
                         <p><strong>Email:</strong> <?php echo esc_html($user->user_email); ?></p>
                     <?php endif; ?>
@@ -135,12 +146,19 @@ function display_all_user_profiles_shortcode($atts) {
                     <p><strong>Department:</strong> <?php echo esc_html($department); ?></p>
                     <p><strong>Motorcycle:</strong> <?php echo esc_html($user->motorcycle); ?></p>
                     <p><strong>Company:</strong> <?php echo esc_html($user->company); ?></p>
-        
+                    <?php if ($first_aid_completed) : ?>
+                <p><strong>First aid completed: 2024</strong> 
+            <?php endif; ?>
+            <?php if ($tilanne_koulutus_completed) : ?>
+                <p><strong>Tilanneturvallisuuskurssi completed: 2024 </strong> 
+            <?php endif; ?>
                     <div class="biography">
                         <label for="biographical_info">Biographical Info:</label>
                         <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
                     </div>
-                    <p><a href="<?php echo esc_url('/wordpress/?page_id=122&user_id=' . $user->ID); ?>" class="view-profile-button">View Profile</a></p>
+                    <p>
+    <a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">View Profile</a>
+</p>
                     <?php if ($current_user_id === (int) $user->ID) : ?>
                         <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>
                     <?php endif; ?>
@@ -168,7 +186,7 @@ function display_all_user_profiles_shortcode($atts) {
         foreach ($users as $user) {
             $show_email = get_user_meta($user->ID, 'show_email', true) === 'yes';
             $show_phone_number = get_user_meta($user->ID, 'show_phone_number', true) === 'yes';
-            $biographical_info = get_user_meta($user->ID, 'description', true);
+            $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
             ?>
             <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
                 <td><?php echo esc_html($user->first_name); ?></td>
@@ -268,6 +286,8 @@ function display_user_profiles_styles() {
         .user-avatar {
             margin-bottom: 15px;
             text-align: center;
+            position: relative;
+            display: inline-block;
         }
         .user-avatar img {
             border-radius: 50%;
@@ -304,6 +324,13 @@ function display_user_profiles_styles() {
             border: 1px solid #ddd;
             text-align: left;
         }
+            .vip-crown {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 24px;
+            color: gold;
+}
     </style>
     ";
 }

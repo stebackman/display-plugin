@@ -32,6 +32,8 @@ function display_selected_user_profile_shortcode() {
     $biographical_info = get_user_meta($user->ID, 'description', true);
     $company = get_user_meta($user->ID,'company',true);
     $motorcycle = get_user_meta($user->ID,'motorcycle',true);
+    $member_id= get_user_meta($user->ID,'member_id',true);
+    $vip_member= get_user_meta($user->ID,'vip_member',true);
 
     //Get first aid and tilannekoulutus:
     $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
@@ -46,10 +48,14 @@ function display_selected_user_profile_shortcode() {
     <div class="user-profile">
         <div class="user-avatar">
             <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
-        </div>
+            <?php if ($vip_member): ?>
+                <span class="vip-crown">&#x1F451;</span>
+                <?php endif; ?>
+            </div>
         <div class="user-details">
             <h2><?php echo esc_html($user->display_name); ?></h2>
             <p><strong>Name:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
+            <p><strong>Jäsennumero:</strong> <?php echo esc_html($member_id); ?></p>
             <?php if ($show_email) : ?>
                 <p><strong>Email:</strong> <?php echo esc_html($user->user_email); ?></p>
             <?php endif; ?>
@@ -64,10 +70,10 @@ function display_selected_user_profile_shortcode() {
                 <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
             </div>
             <?php if ($first_aid_completed) : ?>
-                <p><strong>First aid completed: 2024. HARDCODED!!</strong> 
+                <p><strong>First aid completed: 2024</strong> 
             <?php endif; ?>
             <?php if ($tilanne_koulutus_completed) : ?>
-                <p><strong>Tilanneturvallisuuskurssi completed: 2024 HARDCODED!!</strong> 
+                <p><strong>Tilanneturvallisuuskurssi completed: 2024 </strong> 
             <?php endif; ?>
             <?php if (get_current_user_id() === $user->ID) : ?>
                 <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>
@@ -96,6 +102,9 @@ function display_user_profile_styles() {
         }
         .user-avatar {
             margin-bottom: 15px;
+            text-align:center;
+            position: relative;
+            display: inline-block;
         }
         .user-avatar img {
             border-radius: 50%;
@@ -118,6 +127,13 @@ function display_user_profile_styles() {
             height: 80px;
             resize: none;
         }
+            .vip-crown {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 24px;
+            color: gold;
+}
     </style>
     ";
 }

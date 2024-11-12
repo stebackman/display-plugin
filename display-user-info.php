@@ -15,6 +15,12 @@ function custom_user_profile_fields($user) {
     ?>
     <h3>Profile Information</h3>
     <table class="form-table">
+    <tr>
+            <th><label for="member_id">Jäsennumero</label></th>
+            <td>
+                <input type="text" name="member_id" id="member_id" value="<?php echo esc_attr(get_user_meta($user->ID, 'member_id', true)); ?>" class="regular-text">
+            </td>
+        </tr>
         <tr>
             <th><label for="phone_number">Phone Number</label></th>
             <td>
@@ -56,6 +62,16 @@ function custom_user_profile_fields($user) {
                 <label for="tilanne_koulutus">Yes, I have completed a tilannekoulutus</label>
             </td>
         </tr>
+        <?php if (current_user_can('administrator')) : ?>
+        <tr>
+            
+            <th><label for="vip_member">Vuoden kunniajäsen</label></th>
+            <td>
+                <input type="checkbox" name="vip_member" id="vip_member" value="yes" d <?php checked(get_user_meta($user->ID, 'vip_member', true), 'yes'); ?>>
+                <label for="vip_member">Tämä jäsen on viime vuoden kunniajäsen</label>
+            </td>
+        </tr>
+        <?php endif; ?>
         <tr>
             <th><label for="biographical_info">Biographical Info</label></th>
             <td>
@@ -71,6 +87,18 @@ add_action('edit_user_profile', 'custom_user_profile_fields');
 // Step 2: Save custom profile fields
 
 function save_custom_user_profile_fields($user_id) {
+     // Check if current user is admin
+     if (!current_user_can('administrator')) {
+        return;
+    }
+
+    // Update 'vip_member' meta based on checkbox
+    if (isset($_POST['vip_member'])) {
+        update_user_meta($user_id, 'vip_member', 'yes');
+    } else {
+        update_user_meta($user_id, 'vip_member', 'no');
+    }
+
     if (current_user_can('edit_user', $user_id)) {
         if (!empty($_FILES['profile_picture']['name'])) {
             $file = $_FILES['profile_picture'];
@@ -86,7 +114,7 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['phone_number', 'department', 'company', 'motorcycle', 'biographical_info'];
+        $fields = ['phone_number', 'department', 'company', 'motorcycle', 'vip_member','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
@@ -212,7 +240,9 @@ $style = "
     $motorcycle = get_user_meta($current_user->ID, 'motorcycle', true);
     $first_aid = get_user_meta($current_user->ID, 'first_aid', true);
     $tilanne_koulutus = get_user_meta($current_user->ID, 'tilanne_koulutus', true);
-    $biographical_info=get_user_meta($current_user->ID,'description',true);
+    $biographical_info=get_user_meta($current_user->ID,'biographical_info',true);
+    $member_id= get_user_meta($current_user->ID,'member_id',true);
+    $vip_member= get_user_meta($current_user->ID,'vip_member',true);
 
 
     // Retrieve visibility options
@@ -233,6 +263,7 @@ $style = "
                 <p><strong>Username:</strong> <?php echo esc_html($current_user->user_login); ?></p>
                 <p><strong>First Name:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
                 <p><strong>Last Name:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
+                <p><strong>Jäsennumero:</strong> <?php echo esc_attr($member_id); ?></p>
                 <p><strong>Email:</strong> <?php echo esc_html($current_user->user_email); ?></p>
                 <p><strong>Phone Number:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
                 <p>
