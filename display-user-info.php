@@ -14,12 +14,6 @@ function custom_user_profile_fields($user) {
     ?>
     <h3>Profile Information</h3>
     <table class="form-table">
-    <tr>
-            <th><label for="member_id">Jäsennumero</label></th>
-            <td>
-                <input type="text" name="member_id" id="member_id" value="<?php echo esc_attr(get_user_meta($user->ID, 'member_id', true)); ?>" class="regular-text">
-            </td>
-        </tr>
         <tr>
             <th><label for="phone_number">Phone Number</label></th>
             <td>
@@ -142,100 +136,145 @@ function display_user_info_shortcode() {
 
 $style = "
 <style>
+   /* Container for user info and profile details */
     .user-info {
         display: flex;
-        align-items: flex-start;
-        border: 1px solid #ddd;
+        flex-direction: column;
+        gap: 15px;
         padding: 20px;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        max-width: 500px;
+        max-width: 600px;
         margin: 20px auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f3f3f3;
         font-family: Arial, sans-serif;
-        position: relative;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     }
+
+    /* Avatar section */
     .user-avatar {
-        margin-right: 20px;
-        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
     }
     .user-avatar img {
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
-        width: 100px;
-        height: 100px;
         object-fit: cover;
+        margin-bottom: 10px;
     }
-    .user-details h2 {
-        font-size: 1.5em;
-        margin-bottom: 20px;
-        color: #333;
+    .vip-crown {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        font-size: 24px;
+        color: gold;
     }
+
+    /* User details and input fields */
     .user-details p {
-        margin: 8px 0;
-        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #333;
+        font-size: 0.95em;
+        margin-bottom: 8px;
     }
     .user-details p strong {
-        color: #333;
-    }
-    .edit-profile-link {
-        position: relative;
-        right: 15px;
-        left: 10px;
-        background-color: #0073aa;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        text-decoration: none;
-        margin-top: 10px;
-    }
-    .edit-profile-link:hover {
-        background-color: #005177;
-    }
-    .biography {
-        margin-top: 20px;
-        border-top: 1px solid #ddd;
-        padding-top: 10px;
-    }
-    .biography textarea {
-        width: 100%;
-        height: 100px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 14px;
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
+        font-weight: bold;
         color: #555;
     }
-    .biography label {
-        font-weight: bold;
+    .user-details input[type='text'],
+    .user-details select,
+    .user-details textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 0.95em;
+        background-color: #fafafa;
+        color: #333;
+        box-sizing: border-box;
     }
-    .visibility-options {
-        margin-top: 20px;
+    .user-details input:focus,
+    .user-details select:focus,
+    .user-details textarea:focus {
+        outline: none;
+        border-color: #0073aa;
+        box-shadow: 0 0 5px rgba(0, 115, 170, 0.3);
+    }
+
+    /* Biography section */
+    .biography {
         border-top: 1px solid #ddd;
         padding-top: 10px;
+        margin-top: 15px;
+    }
+    .biography label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .biography textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* Visibility options */
+    .visibility-options {
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+        margin-top: 15px;
     }
     .visibility-options label {
         display: block;
-        margin-bottom: 5px;
+        margin: 5px 0;
+        color: #444;
     }
-    .update-button {
+
+    /* Action buttons */
+    .update-button,
+    .reset-password-button {
+        display: inline-block;
+        padding: 10px 20px;
+        color: #fff;
         background-color: #0073aa;
-        color: white;
-        padding: 10px 15px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        margin-top: 10px;
+        transition: background-color 0.3s ease;
+        font-size: 1em;
+        margin-top: 15px;
+        width: calc(50% - 10px);
+        box-sizing: border-box;
     }
-    .update-button:hover {
+    .reset-password-button {
+        background-color: #d9534f;
+    }
+    .update-button:hover,
+    .reset-password-button:hover {
         background-color: #005177;
-        }
-        .vip-crown {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 24px;
-            color: gold;}
+    }
+    .reset-password-button:hover {
+        background-color: #b52b2b;
+    }
+
+    /* Link button */
+    .view-profile-button a {
+        display: inline-block;
+        text-decoration: none;
+        padding: 10px 15px;
+        background-color: #6c757d;
+        color: #fff;
+        border-radius: 5px;
+        margin-top: 10px;
+        transition: background-color 0.3s ease;
+    }
+    .view-profile-button a:hover {
+        background-color: #495057;
+    }
 </style>
 ";
   // Retrieve the profile picture, phone number, department, and biographical info
@@ -247,9 +286,8 @@ $style = "
     $first_aid = get_user_meta($current_user->ID, 'first_aid', true);
     $tilanne_koulutus = get_user_meta($current_user->ID, 'tilanne_koulutus', true);
     $biographical_info=get_user_meta($current_user->ID,'biographical_info',true);
-    $member_id= get_user_meta($current_user->ID,'member_id',true);
     $custom_user_id = get_user_meta($current_user->ID, 'custom_user_id', true);
-    $vip_member= get_user_meta($current_user->ID,'vip_member',true);
+    $vip_member= get_user_meta($current_user->ID,'vip_member',true)==='yes';
 
 
     // Retrieve visibility options
@@ -261,6 +299,7 @@ $style = "
     ?>
     <form method="POST" enctype="multipart/form-data">
         <div class="user-info">
+        <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Show all profiles</a></p>
             <div class="user-avatar">
                 <img src="<?php echo esc_url($profile_picture); ?>" alt="Profile Picture">
                 <p><label for="profile_picture">Change Profile Picture:</label></p>
@@ -274,7 +313,6 @@ $style = "
                 <p><strong>First Name:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
                 <p><strong>Last Name:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
-                <p><strong>Jäsennumero:</strong> <?php echo esc_attr($member_id); ?></p>
                 <p><strong>Email:</strong> <?php echo esc_html($current_user->user_email); ?></p>
                 <p><strong>Phone Number:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
                 <p>

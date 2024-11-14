@@ -31,7 +31,7 @@ function display_selected_user_profile_shortcode() {
     $company = get_user_meta($user->ID,'company',true);
     $motorcycle = get_user_meta($user->ID,'motorcycle',true);
     $custom_user_id= get_user_meta($user->ID,'custom_user_id',true);
-    $vip_member= get_user_meta($user->ID,'vip_member',true);
+    $vip_member= get_user_meta($user->ID,'vip_member',true)==='yes';
 
     //Get first aid and tilannekoulutus:
     $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
@@ -43,7 +43,8 @@ function display_selected_user_profile_shortcode() {
 
     ob_start();
     ?>
-    <div class="user-profile">
+    <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Show all profiles</a></p>
+    <div class="user-profile"> 
         <div class="user-avatar">
             <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
             <?php if ($vip_member): ?>
@@ -124,6 +125,17 @@ function display_user_profile_styles() {
             width: 100%;
             height: 80px;
             resize: none;
+        }
+            .view-profile-button {
+            display: inline-block;
+            padding: 8px 12px;
+            color: #1F2518;
+            background-color: #E2C274;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+            .view-profile-button:hover {
+            background-color: #1F2518;
         }
             .vip-crown {
             position: absolute;
