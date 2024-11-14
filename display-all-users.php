@@ -121,6 +121,7 @@ function display_all_user_profiles_shortcode($atts) {
             // Get visibility settings
             $show_email = get_user_meta($user->ID, 'show_email', true) === 'yes';
             $show_phone_number = get_user_meta($user->ID, 'show_phone_number', true) === 'yes';
+            $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
 
             ob_start();
             ?>
@@ -134,7 +135,7 @@ function display_all_user_profiles_shortcode($atts) {
                 <div class="user-details">
                     <h2><?php echo esc_html($user->display_name); ?></h2>
                     <p><strong>Name:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
-                    <p><strong>Jäsennumero:</strong> <?php echo esc_html($member_id); ?></p>
+                    <p><strong>Jäsennumero: </strong> <?php echo esc_html(($custom_user_id)); ?></p>
                     <?php if ($show_email) : ?>
                         <p><strong>Email:</strong> <?php echo esc_html($user->user_email); ?></p>
                     <?php endif; ?>
@@ -154,9 +155,11 @@ function display_all_user_profiles_shortcode($atts) {
                         <label for="biographical_info">Biographical Info:</label>
                         <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
                     </div>
-                    <p><a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">View Profile</a></p>
+                   
                     <?php if ($current_user_id === (int) $user->ID) : ?>
-                        <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>
+                        <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Edit Profile</a></p>
+                    <?php else: ?>
+                        <p><a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">View Profile</a></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -301,13 +304,24 @@ function display_user_profiles_styles() {
         .view-profile-button {
             display: inline-block;
             padding: 8px 12px;
-            color: #fff;
-            background-color: #0073aa;
+            color: #1F2518;
+            background-color: #E2C274;
             border-radius: 5px;
             text-decoration: none;
         }
         .view-profile-button:hover {
-            background-color: #005177;
+            background-color: #1F2518;
+        }
+            .edit-profile-button {
+            display: inline-block;
+            padding: 8px 12px;
+            color: #1F2518;
+            background-color: #e2c274;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .edit-profile-button:hover {
+            background-color: #1F2518;
         }
 
         /* Styles for table view */

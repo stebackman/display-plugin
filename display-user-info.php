@@ -84,11 +84,6 @@ function custom_user_profile_fields($user) {
 add_action('show_user_profile', 'custom_user_profile_fields');
 add_action('edit_user_profile', 'custom_user_profile_fields');
 
-function hide_bio_field_in_admin() {
-    echo "<style>
-        #description { display: none; }
-    </style>";
-}add_action('admin_head', 'hide_bio_field_in_admin');
 // Step 2: Save custom profile fields
 
 function save_custom_user_profile_fields($user_id) {
@@ -124,13 +119,6 @@ function save_custom_user_profile_fields($user_id) {
             if (isset($_POST[$field])) {
                 update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
             }
-        }
-
-        if (isset($_POST['first_name'])) {
-            update_user_meta($user_id, 'first_name', sanitize_text_field($_POST['first_name']));
-        }
-        if (isset($_POST['last_name'])) {
-            update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
         }
         update_user_meta($user_id, 'tilanne_koulutus', isset($_POST['tilanne_koulutus']) ? 'yes' : 'no');
         update_user_meta($user_id, 'first_aid', isset($_POST['first_aid']) ? 'yes' : 'no');
@@ -241,7 +229,13 @@ $style = "
     }
     .update-button:hover {
         background-color: #005177;
-    }
+        }
+        .vip-crown {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 24px;
+            color: gold;}
 </style>
 ";
   // Retrieve the profile picture, phone number, department, and biographical info
@@ -254,6 +248,7 @@ $style = "
     $tilanne_koulutus = get_user_meta($current_user->ID, 'tilanne_koulutus', true);
     $biographical_info=get_user_meta($current_user->ID,'biographical_info',true);
     $member_id= get_user_meta($current_user->ID,'member_id',true);
+    $custom_user_id = get_user_meta($current_user->ID, 'custom_user_id', true);
     $vip_member= get_user_meta($current_user->ID,'vip_member',true);
 
 
@@ -270,11 +265,15 @@ $style = "
                 <img src="<?php echo esc_url($profile_picture); ?>" alt="Profile Picture">
                 <p><label for="profile_picture">Change Profile Picture:</label></p>
                 <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+                <?php if ($vip_member): ?>
+                        <span class="vip-crown">&#x1F451;</span>
+                        <?php endif; ?>
             </div>
             <div class="user-details">
                 <p><strong>Username:</strong> <?php echo esc_html($current_user->user_login); ?></p>
                 <p><strong>First Name:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
                 <p><strong>Last Name:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
+                <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
                 <p><strong>Jäsennumero:</strong> <?php echo esc_attr($member_id); ?></p>
                 <p><strong>Email:</strong> <?php echo esc_html($current_user->user_email); ?></p>
                 <p><strong>Phone Number:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
@@ -334,8 +333,9 @@ function hide_unnecessary_profile_fields() {
         .user-nickname-wrap,
         .user-display-name-wrap,
         .user-profile-picture {
-            display: none !important;
+        display: none !important;
         }
+        #description { display: none; }
     </style>';
 }
 add_action('admin_head', 'hide_unnecessary_profile_fields');

@@ -30,7 +30,7 @@ function display_selected_user_profile_shortcode() {
     $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
     $company = get_user_meta($user->ID,'company',true);
     $motorcycle = get_user_meta($user->ID,'motorcycle',true);
-    $member_id= get_user_meta($user->ID,'member_id',true);
+    $custom_user_id= get_user_meta($user->ID,'custom_user_id',true);
     $vip_member= get_user_meta($user->ID,'vip_member',true);
 
     //Get first aid and tilannekoulutus:
@@ -53,7 +53,7 @@ function display_selected_user_profile_shortcode() {
         <div class="user-details">
             <h2><?php echo esc_html($user->display_name); ?></h2>
             <p><strong>Name:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
-            <p><strong>Jäsennumero:</strong> <?php echo esc_html($member_id); ?></p>
+            <p><strong>Jäsennumero:</strong> <?php echo esc_html($custom_user_id); ?></p>
             <?php if ($show_email) : ?>
                 <p><strong>Email:</strong> <?php echo esc_html($user->user_email); ?></p>
             <?php endif; ?>
