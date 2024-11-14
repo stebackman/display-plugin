@@ -1,11 +1,9 @@
 <?php
 /*
 Plugin Name: Display Selected User Profile
-Plugin URI: https://yourwebsite.com/
 Description: A plugin that displays a specific user's profile on the frontend based on a user selection from the list page.
 Version: 1.1
-Author: Your Name
-Author URI: https://yourwebsite.com/
+Author: Group Molto Bene
 License: GPL2
 */
 
@@ -29,7 +27,7 @@ function display_selected_user_profile_shortcode() {
     // Get user meta information
     $profile_picture = get_user_meta($user->ID, 'profile_picture', true) ?: get_avatar_url($user->ID, ['size' => 100]);
     $department = get_user_meta($user->ID, 'department', true);
-    $biographical_info = get_user_meta($user->ID, 'description', true);
+    $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
     $company = get_user_meta($user->ID,'company',true);
     $motorcycle = get_user_meta($user->ID,'motorcycle',true);
     $member_id= get_user_meta($user->ID,'member_id',true);

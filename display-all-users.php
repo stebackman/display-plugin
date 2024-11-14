@@ -1,11 +1,9 @@
 <?php
 /*
 Plugin Name: Display All User Profiles
-Plugin URI: https://yourwebsite.com/
 Description: A plugin that displays all user profiles on the frontend, including profile pictures and biographical info. Users can control visibility of their phone number and email.
 Version: 1.3
-Author: Your Name
-Author URI: https://yourwebsite.com/
+Author: Group Molto Bene
 License: GPL2
 */
 
@@ -156,9 +154,7 @@ function display_all_user_profiles_shortcode($atts) {
                         <label for="biographical_info">Biographical Info:</label>
                         <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
                     </div>
-                    <p>
-    <a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">View Profile</a>
-</p>
+                    <p><a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">View Profile</a></p>
                     <?php if ($current_user_id === (int) $user->ID) : ?>
                         <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>
                     <?php endif; ?>
@@ -250,7 +246,7 @@ function display_all_user_profiles_shortcode($atts) {
         var rows = document.querySelectorAll('.user-profiles-table tbody tr');
 
         profiles.forEach(function(profile) {
-            var name = profile.querySelector('h2').textContent.toLowerCase();
+            var name = profile.querySelector('p').textContent.toLowerCase();
             profile.style.display = name.includes(searchTerm) ? 'block' : 'none';
         });
 

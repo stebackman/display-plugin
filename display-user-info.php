@@ -4,8 +4,7 @@ Plugin Name: Display User Info
 Plugin URI: https://yourwebsite.com/
 Description: A plugin that displays and allows editing of user information on the frontend, including a profile picture, first-aid course checkbox, company, and motorcycle fields.
 Version: 1.4
-Author: Your Name
-Author URI: https://yourwebsite.com/
+Author: Group Molto Bene
 License: GPL2
 */
 
@@ -48,6 +47,7 @@ function custom_user_profile_fields($user) {
                 <input type="text" name="motorcycle" id="motorcycle" value="<?php echo esc_attr(get_user_meta($user->ID, 'motorcycle', true)); ?>" class="regular-text">
             </td>
         </tr>
+        <?php if (current_user_can('administrator')) : ?>
         <tr>
             <th><label for="first_aid">First Aid Course Completed</label></th>
             <td>
@@ -62,7 +62,7 @@ function custom_user_profile_fields($user) {
                 <label for="tilanne_koulutus">Yes, I have completed a tilannekoulutus</label>
             </td>
         </tr>
-        <?php if (current_user_can('administrator')) : ?>
+        
         <tr>
             
             <th><label for="vip_member">Vuoden kunniajäsen</label></th>
@@ -84,6 +84,11 @@ function custom_user_profile_fields($user) {
 add_action('show_user_profile', 'custom_user_profile_fields');
 add_action('edit_user_profile', 'custom_user_profile_fields');
 
+function hide_bio_field_in_admin() {
+    echo "<style>
+        #description { display: none; }
+    </style>";
+}add_action('admin_head', 'hide_bio_field_in_admin');
 // Step 2: Save custom profile fields
 
 function save_custom_user_profile_fields($user_id) {
@@ -114,11 +119,18 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['phone_number', 'department', 'company', 'motorcycle', 'vip_member','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','phone_number', 'department', 'company', 'motorcycle', 'vip_member','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
             }
+        }
+
+        if (isset($_POST['first_name'])) {
+            update_user_meta($user_id, 'first_name', sanitize_text_field($_POST['first_name']));
+        }
+        if (isset($_POST['last_name'])) {
+            update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
         }
         update_user_meta($user_id, 'tilanne_koulutus', isset($_POST['tilanne_koulutus']) ? 'yes' : 'no');
         update_user_meta($user_id, 'first_aid', isset($_POST['first_aid']) ? 'yes' : 'no');
