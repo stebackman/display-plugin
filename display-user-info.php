@@ -81,11 +81,6 @@ add_action('edit_user_profile', 'custom_user_profile_fields');
 // Step 2: Save custom profile fields
 
 function save_custom_user_profile_fields($user_id) {
-     // Check if current user is admin
-     if (!current_user_can('administrator')) {
-        return;
-    }
-
     // Update 'vip_member' meta based on checkbox
     if (isset($_POST['vip_member'])) {
         update_user_meta($user_id, 'vip_member', 'yes');
