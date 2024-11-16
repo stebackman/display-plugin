@@ -31,18 +31,22 @@ function display_selected_user_profile_shortcode() {
     $company = get_user_meta($user->ID,'company',true);
     $motorcycle = get_user_meta($user->ID,'motorcycle',true);
     $custom_user_id= get_user_meta($user->ID,'custom_user_id',true);
-    $vip_member= get_user_meta($user->ID,'vip_member',true)==='yes';
+    $vip_member= get_user_meta($user->ID,'vip_member',true)==="yes";
 
     //Get first aid and tilannekoulutus:
     $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
     $tilanne_koulutus_completed= get_user_meta($user->ID,'tilanne_koulutus',true)==='yes';
+// Get the last login timestamp
+    $last_login = get_user_meta($user->ID, 'last_login', true);
 
     // Get visibility settings
-    $show_email = get_user_meta($user->ID, 'show_email', true) === 'yes';
-    $show_phone_number = get_user_meta($user->ID, 'show_phone_number', true) === 'yes';
+    $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
+    $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
 
     ob_start();
     ?>
+    
+    <div class="user-profile">
     <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Show all profiles</a></p>
     <div class="user-profile"> 
         <div class="user-avatar">
@@ -50,15 +54,20 @@ function display_selected_user_profile_shortcode() {
             <?php if ($vip_member): ?>
                 <span class="vip-crown">&#x1F451;</span>
                 <?php endif; ?>
+                <?php if ($last_login) : ?>
+    <span class="last-login">Last Logged In: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
+<?php else : ?>
+    <span class="last-login">No login record found.</span>
+<?php endif; ?>
             </div>
         <div class="user-details">
             <h2><?php echo esc_html($user->display_name); ?></h2>
             <p><strong>Name:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
             <p><strong>Jäsennumero:</strong> <?php echo esc_html($custom_user_id); ?></p>
-            <?php if ($show_email) : ?>
+            <?php if (!$hide_email) : ?>
                 <p><strong>Email:</strong> <?php echo esc_html($user->user_email); ?></p>
             <?php endif; ?>
-            <?php if ($show_phone_number) : ?>
+            <?php if (!$hide_phone_number) : ?>
                 <p><strong>Phone Number:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
             <?php endif; ?>
             <p><strong>Department:</strong> <?php echo esc_html($department); ?></p>
@@ -143,6 +152,13 @@ function display_user_profile_styles() {
             right: -10px;
             font-size: 24px;
             color: gold;
+}
+              .last-login {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+    font-style: italic;
 }
     </style>
     ";

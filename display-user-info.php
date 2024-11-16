@@ -12,16 +12,16 @@ License: GPL2
 
 function custom_user_profile_fields($user) {
     ?>
-    <h3>Profile Information</h3>
+    <h3>Profiili</h3>
     <table class="form-table">
         <tr>
-            <th><label for="phone_number">Phone Number</label></th>
+            <th><label for="phone_number">Puhelinnumero</label></th>
             <td>
                 <input type="text" name="phone_number" id="phone_number" value="<?php echo esc_attr(get_user_meta($user->ID, 'phone_number', true)); ?>" class="regular-text">
             </td>
         </tr>
         <tr>
-            <th><label for="department">Department</label></th>
+            <th><label for="department">Osasto</label></th>
             <td>
                   <select id="department-filter">
         <option value="MC Executors - Uusimaa">MC Executors - Uusimaa</option>
@@ -30,23 +30,23 @@ function custom_user_profile_fields($user) {
             </td>
         </tr>
         <tr>
-            <th><label for="company">Company</label></th>
+            <th><label for="company">Yritys</label></th>
             <td>
                 <input type="text" name="company" id="company" value="<?php echo esc_attr(get_user_meta($user->ID, 'company', true)); ?>" class="regular-text">
             </td>
         </tr>
         <tr>
-            <th><label for="motorcycle">Motorcycle</label></th>
+            <th><label for="motorcycle">Moottoripyörä</label></th>
             <td>
                 <input type="text" name="motorcycle" id="motorcycle" value="<?php echo esc_attr(get_user_meta($user->ID, 'motorcycle', true)); ?>" class="regular-text">
             </td>
         </tr>
         <?php if (current_user_can('administrator')) : ?>
         <tr>
-            <th><label for="first_aid">First Aid Course Completed</label></th>
+            <th><label for="first_aid">Ensiapukoulutus suoritettu</label></th>
             <td>
                 <input type="checkbox" name="first_aid" id="first_aid" value="yes" <?php checked(get_user_meta($user->ID, 'first_aid', true), 'yes'); ?>>
-                <label for="first_aid">Yes, I have completed a first aid course</label>
+                <label for="first_aid">Kyllä,olen suorittanut ensiapukoulutuksen</label>
             </td>
         </tr>
         <tr>
@@ -81,6 +81,8 @@ add_action('edit_user_profile', 'custom_user_profile_fields');
 // Step 2: Save custom profile fields
 
 function save_custom_user_profile_fields($user_id) {
+    
+
     // Update 'vip_member' meta based on checkbox
     if (isset($_POST['vip_member'])) {
         update_user_meta($user_id, 'vip_member', 'yes');
@@ -111,8 +113,8 @@ function save_custom_user_profile_fields($user_id) {
         }
         update_user_meta($user_id, 'tilanne_koulutus', isset($_POST['tilanne_koulutus']) ? 'yes' : 'no');
         update_user_meta($user_id, 'first_aid', isset($_POST['first_aid']) ? 'yes' : 'no');
-        update_user_meta($user_id, 'show_email', isset($_POST['show_email']) ? 'yes' : 'no');
-        update_user_meta($user_id, 'show_phone_number', isset($_POST['show_phone_number']) ? 'yes' : 'no');
+        update_user_meta($user_id, 'hide_email', isset($_POST['hide_email']) ? 'yes' : 'no');
+        update_user_meta($user_id, 'hide_phone_number', isset($_POST['hide_phone_number']) ? 'yes' : 'no');
     }
 }
 add_action('personal_options_update', 'save_custom_user_profile_fields');
@@ -286,8 +288,8 @@ $style = "
 
 
     // Retrieve visibility options
-    $show_email = get_user_meta($current_user->ID, 'show_email', true);
-    $show_phone_number = get_user_meta($current_user->ID, 'show_phone_number', true);
+    $hide_email = get_user_meta($current_user->ID, 'hide_email', true);
+    $hide_phone_number = get_user_meta($current_user->ID, 'hide_phone_number', true);
 
     ob_start();
     echo $style;
@@ -329,8 +331,8 @@ $style = "
 
                 <div class="visibility-options">
                     <h4>Profile Visibility Options</h4>
-                    <label><input type="checkbox" name="show_email" value="yes" <?php checked($show_email, 'yes'); ?>> Allow others to see my email</label>
-                    <label><input type="checkbox" name="show_phone_number" value="yes" <?php checked($show_phone_number, 'yes'); ?>> Allow others to see my phone number</label>
+                    <label><input type="checkbox" name="hide_email" value="yes" <?php checked($hide_email, 'yes'); ?>> Piilota sähköpostini muilta käyttäjiltä</label>
+                    <label><input type="checkbox" name="hide_phone_number" value="yes" <?php checked($hide_phone_number, 'yes'); ?>> Piilota puhelinnumeroni muilta käyttäjiltä</label>
                 </div>
  <!-- Reset Password Button -->
  <button type="submit" name="reset_password" class="reset-password-button">Reset Password</button>
@@ -372,6 +374,11 @@ function hide_unnecessary_profile_fields() {
     </style>';
 }
 add_action('admin_head', 'hide_unnecessary_profile_fields');
+
+function update_last_login($user_login, $user) {
+    update_user_meta($user->ID, 'last_login', current_time('mysql'));
+}
+add_action('wp_login', 'update_last_login', 10, 2);
 
 // Step 4: Handle Password Reset Requests
 

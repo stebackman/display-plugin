@@ -7,44 +7,6 @@ Author: Group Molto Bene
 License: GPL2
 */
 
-// Step 1: Add visibility fields to user profile
-/*function add_visibility_options_to_user_profile($user) {
-    ?>
-    <h3>Profile Visibility Options</h3>
-    <table class="form-table">
-        <tr>
-            <th><label for="show_email">Show Email to Others</label></th>
-            <td>
-                <input type="checkbox" name="show_email" id="show_email" value="yes" <?php checked(get_user_meta($user->ID, 'show_email', true), 'yes'); ?>>
-                <label for="show_email">Allow others to see my email</label>
-            </td>
-        </tr>
-        <tr>
-            <th><label for="show_phone_number">Show Phone Number to Others</label></th>
-            <td>
-                <input type="checkbox" name="show_phone_number" id="show_phone_number" value="yes" <?php checked(get_user_meta($user->ID, 'show_phone_number', true), 'yes'); ?>>
-                <label for="show_phone_number">Allow others to see my phone number</label>
-            </td>
-        </tr>
-    </table>
-    <?php
-}
-add_action('show_user_profile', 'add_visibility_options_to_user_profile');
-add_action('edit_user_profile', 'add_visibility_options_to_user_profile');
-
-// Step 2: Save the visibility options
-function save_visibility_options($user_id) {
-    if (current_user_can('edit_user', $user_id)) {
-        update_user_meta($user_id, 'show_email', isset($_POST['show_email']) ? 'yes' : 'no');
-        update_user_meta($user_id, 'show_phone_number', isset($_POST['show_phone_number']) ? 'yes' : 'no');
-    }
-}
-add_action('personal_options_update', 'save_visibility_options');
-add_action('edit_user_profile_update', 'save_visibility_options');
-*/
-
-// Step 3: Shortcode to Display All User Profiles
-// Step 3: Shortcode to Display Filtered User Profiles by Department
 // Shortcode to Display Filtered User Profiles by Department
 function display_all_user_profiles_shortcode($atts) {
     $search_query = isset($_GET['search_user']) ? sanitize_text_field($_GET['search_user']) : '';
@@ -110,8 +72,9 @@ function display_all_user_profiles_shortcode($atts) {
             $profile_picture = get_user_meta($user->ID, 'profile_picture', true) ?: get_avatar_url($user->ID, ['size' => 100]);
             $department = get_user_meta($user->ID, 'department', true);
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
-            $member_id= get_user_meta($user->ID,'member_id',true);
 
+            // Get the last login timestamp
+            $last_login = get_user_meta($user->ID, 'last_login', true);
             //Get first aid and tilannekoulutus:
             $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
             $tilanne_koulutus_completed= get_user_meta($user->ID,'tilanne_koulutus',true)==='yes';
@@ -119,8 +82,8 @@ function display_all_user_profiles_shortcode($atts) {
             $vip_member =get_user_meta($user->ID,'vip_member',true)==='yes';
 
             // Get visibility settings
-            $show_email = get_user_meta($user->ID, 'show_email', true) === 'yes';
-            $show_phone_number = get_user_meta($user->ID, 'show_phone_number', true) === 'yes';
+            $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
+            $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
             $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
 
             ob_start();
@@ -131,31 +94,43 @@ function display_all_user_profiles_shortcode($atts) {
                     <?php if ($vip_member): ?>
                         <span class="vip-crown">&#x1F451;</span>
                         <?php endif; ?>
+                        <?php if ($last_login) : ?>
+    <span class="last-login">Last Logged In: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
+<?php else : ?>
+    <span class="last-login">No login record found.</span>
+<?php endif; ?>
                 </div>
                 <div class="user-details">
                     <h2><?php echo esc_html($user->display_name); ?></h2>
                     <p><strong>Name:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
                     <p><strong>Jäsennumero: </strong> <?php echo esc_html(($custom_user_id)); ?></p>
-                    <?php if ($show_email) : ?>
+                    <?php if (!$hide_email &&(!empty($user->user_email))) : ?>
                         <p><strong>Email:</strong> <?php echo esc_html($user->user_email); ?></p>
                     <?php endif; ?>
-                    <?php if ($show_phone_number) : ?>
+                    <?php if (!$hide_phone_number &&(!empty($user->phone_number))) : ?>
                         <p><strong>Phone Number:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
                     <?php endif; ?>
+                    <?php if(!empty($user->department)): ?>
                     <p><strong>Department:</strong> <?php echo esc_html($department); ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($user->motorcycle)) :?>
                     <p><strong>Motorcycle:</strong> <?php echo esc_html($user->motorcycle); ?></p>
+                    <?php endif; ?>
+                    <?php if(!empty($user->company)): ?>
                     <p><strong>Company:</strong> <?php echo esc_html($user->company); ?></p>
+                    <?php endif ;?>
                     <?php if ($first_aid_completed) : ?>
-                <p><strong>First aid completed: 2024</strong> 
-            <?php endif; ?>
-            <?php if ($tilanne_koulutus_completed) : ?>
-                <p><strong>Tilanneturvallisuuskurssi completed: 2024 </strong> 
-            <?php endif; ?>
-                    <div class="biography">
+                        <p><strong>First aid completed: 2024</strong> 
+                        <?php endif; ?>
+                        <?php if ($tilanne_koulutus_completed) : ?>
+                            <p><strong>Tilanneturvallisuuskurssi completed: 2024 </strong> 
+                            <?php endif; ?>
+                            <?php if (!empty($biographical_info)): ?>
+                                <div class="biography">
                         <label for="biographical_info">Biographical Info:</label>
                         <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
                     </div>
-                   
+            <?php endif; ?>
                     <?php if ($current_user_id === (int) $user->ID) : ?>
                         <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Edit Profile</a></p>
                     <?php else: ?>
@@ -183,15 +158,15 @@ function display_all_user_profiles_shortcode($atts) {
         echo '<thead><tr><th>First Name</th><th>Last Name</th><th>Email</th><th>Phone Number</th><th>Department</th><th>Motorcycle</th><th>Company</th><th>Biographical Info</th></tr></thead>';
         echo '<tbody>';
         foreach ($users as $user) {
-            $show_email = get_user_meta($user->ID, 'show_email', true) === 'yes';
-            $show_phone_number = get_user_meta($user->ID, 'show_phone_number', true) === 'yes';
+            $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
+            $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
             ?>
             <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
                 <td><?php echo esc_html($user->first_name); ?></td>
                 <td><?php echo esc_html($user->last_name); ?></td>
-                <td><?php echo $show_email ? esc_html($user->user_email) : 'Private'; ?></td>
-                <td><?php echo $show_phone_number ? esc_html(get_user_meta($user->ID, 'phone_number', true)) : 'Private'; ?></td>
+                <td><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></td>
+                <td><?php echo (!$hide_phone_number) ? esc_html(get_user_meta($user->ID, 'phone_number', true)) : 'Private'; ?></td>
                 <td><?php echo esc_html(get_user_meta($user->ID, 'department', true)); ?></td>
                 <td><?php echo esc_html($user->motorcycle); ?></td>
                 <td><?php echo esc_html($user->company); ?></td>
@@ -340,6 +315,13 @@ function display_user_profiles_styles() {
             right: -10px;
             font-size: 24px;
             color: gold;
+}
+            .last-login {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+    font-style: italic;
 }
     </style>
     ";
