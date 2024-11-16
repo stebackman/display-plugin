@@ -47,18 +47,18 @@ function display_all_user_profiles_shortcode($atts) {
     ?>
     <form action="" method="get">
     <input type="hidden" name="page_id" value="<?php echo get_the_ID(); ?>" />
-    <input type="text" name="search_user" id="search-user-input" placeholder="Search profiles..." value="<?php echo esc_attr($search_query); ?>" />
-    <button type="submit">Search</button>
+    <input type="text" name="search_user" id="search-user-input" placeholder="Hae profiili..." value="<?php echo esc_attr($search_query); ?>" />
+    <button type="submit">Hae</button>
 </form>
 
-    <label for="department">Select Department:</label>
+    <label for="department">Valitse osasto:</label>
     <select id="department-filter">
-        <option value="all">All Departments</option>
+        <option value="all">Kaikki osastot</option>
         <option value="MC Executors - Uusimaa">MC Executors - Uusimaa</option>
         <option value="MC Executors - Pohjanmaa">MC Executors - Pohjanmaa</option>
     </select>
 
-    <button id="toggle-view" data-view="grid">Switch to Table View</button>
+    <button id="toggle-view" data-view="grid">Vaihda taulukkonäkymäksi</button>
 
     <?php
     if ($users) {
@@ -95,46 +95,45 @@ function display_all_user_profiles_shortcode($atts) {
                         <span class="vip-crown">&#x1F451;</span>
                         <?php endif; ?>
                         <?php if ($last_login) : ?>
-    <span class="last-login">Last Logged In: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
+    <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
 <?php else : ?>
-    <span class="last-login">No login record found.</span>
+    <span class="last-login">Ei sisäänkirjautumistietoja</span>
 <?php endif; ?>
                 </div>
                 <div class="user-details">
                     <h2><?php echo esc_html($user->display_name); ?></h2>
-                    <p><strong>Name:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
+                    <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
                     <p><strong>Jäsennumero: </strong> <?php echo esc_html(($custom_user_id)); ?></p>
                     <?php if (!$hide_email &&(!empty($user->user_email))) : ?>
-                        <p><strong>Email:</strong> <?php echo esc_html($user->user_email); ?></p>
+                        <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
                     <?php endif; ?>
                     <?php if (!$hide_phone_number &&(!empty($user->phone_number))) : ?>
-                        <p><strong>Phone Number:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
+                        <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
                     <?php endif; ?>
                     <?php if(!empty($user->department)): ?>
-                    <p><strong>Department:</strong> <?php echo esc_html($department); ?></p>
+                    <p><strong>Osasto:</strong> <?php echo esc_html($department); ?></p>
                     <?php endif; ?>
                     <?php if (!empty($user->motorcycle)) :?>
-                    <p><strong>Motorcycle:</strong> <?php echo esc_html($user->motorcycle); ?></p>
+                    <p><strong>Moottoripyörä:</strong> <?php echo esc_html($user->motorcycle); ?></p>
                     <?php endif; ?>
                     <?php if(!empty($user->company)): ?>
-                    <p><strong>Company:</strong> <?php echo esc_html($user->company); ?></p>
+                    <p><strong>Yritys:</strong> <?php echo esc_html($user->company); ?></p>
                     <?php endif ;?>
                     <?php if ($first_aid_completed) : ?>
-                        <p><strong>First aid completed: 2024</strong> 
+                        <p><strong>Ensiapukoulutus suoritettu: 2024</strong> 
                         <?php endif; ?>
                         <?php if ($tilanne_koulutus_completed) : ?>
-                            <p><strong>Tilanneturvallisuuskurssi completed: 2024 </strong> 
+                            <p><strong>Tilanneturvallisuuskurssi suoritettu: 2024 </strong> 
                             <?php endif; ?>
                             <?php if (!empty($biographical_info)): ?>
                                 <div class="biography">
-                        <label for="biographical_info">Biographical Info:</label>
                         <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
                     </div>
             <?php endif; ?>
                     <?php if ($current_user_id === (int) $user->ID) : ?>
-                        <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Edit Profile</a></p>
+                        <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Muokkaa profiilia</a></p>
                     <?php else: ?>
-                        <p><a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">View Profile</a></p>
+                        <p><a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -155,12 +154,14 @@ function display_all_user_profiles_shortcode($atts) {
 
         // Table structure for list view
         echo '<table class="user-profiles-table" style="display:none;">';
-        echo '<thead><tr><th>First Name</th><th>Last Name</th><th>Email</th><th>Phone Number</th><th>Department</th><th>Motorcycle</th><th>Company</th><th>Biographical Info</th></tr></thead>';
+        echo '<thead><tr><th>Etunimi</th><th>Sukunim</th><th>Sähköposti</th><th>Puhelinnumero</th><th>Osasto</th><th>Moottoripyörä</th><th>Yritys</th><th>Ensiapu</th><th>Tilanneturvallisuus</th><th>Kuvailu</th></tr></thead>';
         echo '<tbody>';
         foreach ($users as $user) {
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
+            $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
+            $tilanne_koulutus_completed= get_user_meta($user->ID,'tilanne_koulutus',true)==='yes';
             ?>
             <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
                 <td><?php echo esc_html($user->first_name); ?></td>
@@ -170,7 +171,10 @@ function display_all_user_profiles_shortcode($atts) {
                 <td><?php echo esc_html(get_user_meta($user->ID, 'department', true)); ?></td>
                 <td><?php echo esc_html($user->motorcycle); ?></td>
                 <td><?php echo esc_html($user->company); ?></td>
+                <td><?php if ($first_aid_completed): echo "Kyllä"; endif;?></td>
+                <td><?php if ($tilanne_koulutus_completed): echo "Kyllä"; endif;?> </td>
                 <td><?php echo esc_html($biographical_info); ?></td>
+
             </tr>
             <?php
         }
@@ -192,12 +196,12 @@ function display_all_user_profiles_shortcode($atts) {
             userProfileContainer.style.display = 'none';
             userTableContainer.style.display = 'table';
             this.setAttribute('data-view', 'table');
-            this.textContent = 'Switch to Grid View';
+            this.textContent = 'Vaihda ruudukkonäkymäksi ';
         } else {
             userProfileContainer.style.display = 'flex';
             userTableContainer.style.display = 'none';
             this.setAttribute('data-view', 'grid');
-            this.textContent = 'Switch to Table View';
+            this.textContent = 'Vaihda taulukkonäkymäksi';
         }
     });
 

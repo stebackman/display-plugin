@@ -47,7 +47,7 @@ function display_selected_user_profile_shortcode() {
     ?>
     
     <div class="user-profile">
-    <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Show all profiles</a></p>
+    <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Näytä kaikki profiilit</a></p>
     <div class="user-profile"> 
         <div class="user-avatar">
             <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
@@ -55,33 +55,32 @@ function display_selected_user_profile_shortcode() {
                 <span class="vip-crown">&#x1F451;</span>
                 <?php endif; ?>
                 <?php if ($last_login) : ?>
-    <span class="last-login">Last Logged In: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
+    <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
 <?php else : ?>
-    <span class="last-login">No login record found.</span>
+    <span class="last-login">Ei kirjautumistietoja</span>
 <?php endif; ?>
             </div>
         <div class="user-details">
             <h2><?php echo esc_html($user->display_name); ?></h2>
-            <p><strong>Name:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
+            <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
             <p><strong>Jäsennumero:</strong> <?php echo esc_html($custom_user_id); ?></p>
             <?php if (!$hide_email) : ?>
-                <p><strong>Email:</strong> <?php echo esc_html($user->user_email); ?></p>
+                <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
             <?php endif; ?>
             <?php if (!$hide_phone_number) : ?>
-                <p><strong>Phone Number:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
+                <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
             <?php endif; ?>
-            <p><strong>Department:</strong> <?php echo esc_html($department); ?></p>
-            <p><strong>Company:</strong><?php echo esc_html($company);?></p>
-            <p><strong>Motorcycle:</strong><?php echo esc_html($motorcycle);?></p>
+            <p><strong>Osasto:</strong> <?php echo esc_html($department); ?></p>
+            <p><strong>Yritys:</strong><?php echo esc_html($company);?></p>
+            <p><strong>Moottoripyörä:</strong><?php echo esc_html($motorcycle);?></p>
             <div class="biography">
-                <label for="biographical_info">Biographical Info:</label>
                 <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
             </div>
             <?php if ($first_aid_completed) : ?>
-                <p><strong>First aid completed: 2024</strong> 
+                <p><strong>Ensiapukoulutus suoritettu: 2024</strong> 
             <?php endif; ?>
             <?php if ($tilanne_koulutus_completed) : ?>
-                <p><strong>Tilanneturvallisuuskurssi completed: 2024 </strong> 
+                <p><strong>Tilanneturvallisuuskurssi suoritettu: 2024 </strong> 
             <?php endif; ?>
             <?php if (get_current_user_id() === $user->ID) : ?>
                 <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>

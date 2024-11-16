@@ -50,10 +50,10 @@ function custom_user_profile_fields($user) {
             </td>
         </tr>
         <tr>
-            <th><label for="tilanne_koulutus">Tilannekoulutus Course Completed</label></th>
+            <th><label for="tilanne_koulutus">Tilanneturvallisuuskoulutus suoritettu</label></th>
             <td>
                 <input type="checkbox" name="tilanne_koulutus" id="tilanne_koulutus" value="yes" d <?php checked(get_user_meta($user->ID, 'tilanne_koulutus', true), 'yes'); ?>>
-                <label for="tilanne_koulutus">Yes, I have completed a tilannekoulutus</label>
+                <label for="tilanne_koulutus">Kyllä,olen suorittanut tilanneturvallisuuskurssin</label>
             </td>
         </tr>
         
@@ -67,7 +67,7 @@ function custom_user_profile_fields($user) {
         </tr>
         <?php endif; ?>
         <tr>
-            <th><label for="biographical_info">Biographical Info</label></th>
+            <th><label for="biographical_info">Kerro vähän itsestäsi</label></th>
             <td>
                 <textarea name="biographical_info" id="biographical_info" rows="5" class="regular-text"><?php echo esc_textarea(get_user_meta($user->ID, 'biographical_info', true)); ?></textarea>
             </td>
@@ -296,49 +296,49 @@ $style = "
     ?>
     <form method="POST" enctype="multipart/form-data">
         <div class="user-info">
-        <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Show all profiles</a></p>
+        <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Näytä kaikki profiilit</a></p>
             <div class="user-avatar">
                 <img src="<?php echo esc_url($profile_picture); ?>" alt="Profile Picture">
-                <p><label for="profile_picture">Change Profile Picture:</label></p>
+                <p><label for="profile_picture">Vaihda profiilikuvaa:</label></p>
                 <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
                 <?php if ($vip_member): ?>
                         <span class="vip-crown">&#x1F451;</span>
                         <?php endif; ?>
             </div>
             <div class="user-details">
-                <p><strong>Username:</strong> <?php echo esc_html($current_user->user_login); ?></p>
-                <p><strong>First Name:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
-                <p><strong>Last Name:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
+                <p><strong>Käyttäjänimi:</strong> <?php echo esc_html($current_user->user_login); ?></p>
+                <p><strong>Etunimi:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
+                <p><strong>Sukunimi:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
-                <p><strong>Email:</strong> <?php echo esc_html($current_user->user_email); ?></p>
-                <p><strong>Phone Number:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
+                <p><strong>Sähköposti:</strong> <?php echo esc_html($current_user->user_email); ?></p>
+                <p><strong>Puhelinnumero:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
                 <p>
-    <strong>Department:</strong> 
+    <strong>Osasto:</strong> 
     <select name="department" id="department-filter">
         <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa'); ?>>MC Executors - Uusimaa</option>
         <option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa'); ?>>MC Executors - Pohjanmaa</option>
     </select>
 </p>
-                <p><strong>Company:</strong> <input type="text" name="company" value="<?php echo esc_attr($company); ?>" class="regular-text"></p>
-                <p><strong>Motorcycle:</strong> <input type="text" name="motorcycle" value="<?php echo esc_attr($motorcycle); ?>" class="regular-text"></p>
-                <p><strong>First Aid Course:</strong> <input type="checkbox" name="first_aid" value="yes" <?php checked($first_aid, 'yes'); ?>> Yes, I have completed a first aid course</p>
-                <p><strong>Tilanne Koulutus:</strong> <input type="checkbox" name="tilanne_koulutus" value="yes" <?php checked($tilanne_koulutus, 'yes'); ?>> Yes, I have completed a tilannekoulutuskurssi</p>
+                <p><strong>Yritys:</strong> <input type="text" name="company" value="<?php echo esc_attr($company); ?>" class="regular-text"></p>
+                <p><strong>Moottoripyörä:</strong> <input type="text" name="motorcycle" value="<?php echo esc_attr($motorcycle); ?>" class="regular-text"></p>
+                <p><strong>Ensiapukoulutus:</strong> <input type="checkbox" name="first_aid" value="yes" <?php checked($first_aid, 'yes'); ?>> Kyllä, olen suorittanut ensiapukoulutuksen</p>
+                <p><strong>Tilanneturvallisuuskoulutus</strong> <input type="checkbox" name="tilanne_koulutus" value="yes" <?php checked($tilanne_koulutus, 'yes'); ?>> Kyllä, olen suorittanut tilanneturvallisuuskurssin</p>
                 <div class="biography">
-                        <label for="biographical_info">Biographical Info:</label>
+                        <label for="biographical_info"> Kerro muille hieman itsestäsi:</label>
                         <textarea id="biographical_info" name="biographical_info" ><?php echo esc_textarea($biographical_info); ?></textarea>   
 
                 <!-- Other form fields as before -->
 
                 <div class="visibility-options">
-                    <h4>Profile Visibility Options</h4>
+                    <h4>Profiilin näkyvyysasetukset</h4>
                     <label><input type="checkbox" name="hide_email" value="yes" <?php checked($hide_email, 'yes'); ?>> Piilota sähköpostini muilta käyttäjiltä</label>
                     <label><input type="checkbox" name="hide_phone_number" value="yes" <?php checked($hide_phone_number, 'yes'); ?>> Piilota puhelinnumeroni muilta käyttäjiltä</label>
                 </div>
  <!-- Reset Password Button -->
- <button type="submit" name="reset_password" class="reset-password-button">Reset Password</button>
+ <button type="submit" name="reset_password" class="reset-password-button">Reset Password-placeholder</button>
 
 <!-- Update Profile Button -->
-<button type="submit" name="update_profile" class="update-button">Update Profile</button>
+<button type="submit" name="update_profile" class="update-button">Päivitä profiilia</button>
 </div>
 </div>
 </form>
