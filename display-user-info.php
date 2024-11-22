@@ -20,6 +20,12 @@ function custom_user_profile_fields($user) {
             </td>
         </tr>
         <tr>
+            <th><label for="home_address">Osoite</label></th>
+            <td>
+                <input type="text" name="home_address" id="home_address" value="<?php echo esc_attr(get_user_meta($user->ID, 'home_address', true)); ?>" class="regular-text">
+            </td>
+        </tr>
+        <tr>
             <th><label for="department">Osasto</label></th>
             <td>
                   <select id="department-filter">
@@ -103,7 +109,7 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['first_name','last_name','phone_number', 'department', 'company', 'motorcycle', 'vip_member','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','phone_number', 'home_address', 'department', 'company', 'motorcycle', 'vip_member','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
@@ -141,7 +147,7 @@ function display_user_info_shortcode() {
     }
     $success_message = '';
     if (isset($_GET['profile_updated']) && $_GET['profile_updated'] == '1') {
-        $success_message = '<div class="update-success">Profiili päivitetty onnistuneesti!</div>';
+        $success_message = '<div id="update-success" class="update-success">Profiili päivitetty onnistuneesti!</div>';
     }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
@@ -314,6 +320,7 @@ $style = "
   // Retrieve the profile picture, phone number, department, and biographical info
     $profile_picture = get_user_meta($current_user->ID, 'profile_picture', true) ?: get_avatar_url($current_user->ID, ['size' => 100]);
     $phone_number = get_user_meta($current_user->ID, 'phone_number', true);
+    $home_address = get_user_meta($current_user->ID, 'home_address', true);
     $department = get_user_meta($current_user->ID, 'department', true);
     $company = get_user_meta($current_user->ID, 'company', true);
     $motorcycle = get_user_meta($current_user->ID, 'motorcycle', true);
@@ -343,6 +350,17 @@ $style = "
     echo $style;
     echo $success_message;
     ?>
+    <script>
+    // Check if the success message exists and set a timeout to hide it after 5 seconds
+    document.addEventListener("DOMContentLoaded", function() {
+        const successMessage = document.getElementById("update-success");
+        if (successMessage) {
+            setTimeout(function() {
+                successMessage.style.display = "none";
+            }, 5000); // Hide the message after 5 seconds
+        }
+    });
+</script>
     <form method="POST" enctype="multipart/form-data">
         <div class="user-info">
         <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Näytä kaikki profiilit</a></p>
@@ -361,6 +379,7 @@ $style = "
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
                 <p><strong>Sähköposti:</strong> <?php echo esc_html($current_user->user_email); ?></p>
                 <p><strong>Puhelinnumero:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
+                <p><strong>Kotiosoite:</strong> <input type="text" name="home_address" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
                 <p> <strong>Osasto:</strong>  <select name="department" id="department-filter">
                     <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa'); ?>>MC Executors - Uusimaa</option><option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa'); ?>>MC Executors - Pohjanmaa</option></select>
 </p>
@@ -439,10 +458,13 @@ function hide_unnecessary_profile_fields() {
         .user-yim-wrap,
         .user-nickname-wrap,
         .user-display-name-wrap,
-        .user-profile-picture {
+        .user-profile-picture,
+        .description,
+        #description, label[for="description"],
+        #profile-description
+        {
         display: none !important;
         }
-        #description { display: none; }
     </style>';
 }
 add_action('admin_head', 'hide_unnecessary_profile_fields');
