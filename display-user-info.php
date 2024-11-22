@@ -43,17 +43,18 @@ function custom_user_profile_fields($user) {
         </tr>
         <?php if (current_user_can('administrator')) : ?>
         <tr>
-            <th><label for="first_aid">Ensiapukoulutus suoritettu</label></th>
+            <th><label for="first_aid">Ensiapukoulutus suoritettu:</label></th>
             <td>
-                <input type="checkbox" name="first_aid" id="first_aid" value="yes" <?php checked(get_user_meta($user->ID, 'first_aid', true), 'yes'); ?>>
-                <label for="first_aid">Kyllä,olen suorittanut ensiapukoulutuksen</label>
+            <input type="date" name="first_aid" id="first_aid" 
+            value="<?php echo esc_attr(get_user_meta($user->ID, 'first_aid', true)); ?>">
+                
             </td>
         </tr>
         <tr>
             <th><label for="tilanne_koulutus">Tilanneturvallisuuskoulutus suoritettu</label></th>
             <td>
-                <input type="checkbox" name="tilanne_koulutus" id="tilanne_koulutus" value="yes" d <?php checked(get_user_meta($user->ID, 'tilanne_koulutus', true), 'yes'); ?>>
-                <label for="tilanne_koulutus">Kyllä,olen suorittanut tilanneturvallisuuskurssin</label>
+            <input type="date" name="tilanne_koulutus" id="tilanne_koulutus" 
+       value="<?php echo esc_attr(get_user_meta($user->ID, 'tilanne_koulutus', true)); ?>">
             </td>
         </tr>
         
@@ -61,7 +62,7 @@ function custom_user_profile_fields($user) {
             
             <th><label for="vip_member">Vuoden kunniajäsen</label></th>
             <td>
-                <input type="checkbox" name="vip_member" id="vip_member" value="yes" d <?php checked(get_user_meta($user->ID, 'vip_member', true), 'yes'); ?>>
+                <input type="checkbox" name="vip_member" id="vip_member" value="yes" <?php checked(get_user_meta($user->ID, 'vip_member', true), 'yes'); ?>>
                 <label for="vip_member">Tämä jäsen on viime vuoden kunniajäsen</label>
             </td>
         </tr>
@@ -111,8 +112,23 @@ function save_custom_user_profile_fields($user_id) {
                 update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
             }
         }
-        update_user_meta($user_id, 'tilanne_koulutus', isset($_POST['tilanne_koulutus']) ? 'yes' : 'no');
-        update_user_meta($user_id, 'first_aid', isset($_POST['first_aid']) ? 'yes' : 'no');
+        //Handle first aid
+        if (isset($_POST['first_aid'])) {
+            $date_value = sanitize_text_field($_POST['first_aid']);
+            if (!empty($date_value)) {
+                update_user_meta($user_id, 'first_aid', $date_value);
+            }
+        }
+        
+ // Handle tilanne_koulutus
+ if (isset($_POST['tilanne_koulutus'])) {
+    $date_value = sanitize_text_field($_POST['tilanne_koulutus']);
+    if (!empty($date_value)) {
+        update_user_meta($user_id, 'tilanne_koulutus', $date_value);
+    }
+}
+
+
         update_user_meta($user_id, 'hide_email', isset($_POST['hide_email']) ? 'yes' : 'no');
         update_user_meta($user_id, 'hide_phone_number', isset($_POST['hide_phone_number']) ? 'yes' : 'no');
     }
@@ -280,11 +296,22 @@ $style = "
     $department = get_user_meta($current_user->ID, 'department', true);
     $company = get_user_meta($current_user->ID, 'company', true);
     $motorcycle = get_user_meta($current_user->ID, 'motorcycle', true);
-    $first_aid = get_user_meta($current_user->ID, 'first_aid', true);
-    $tilanne_koulutus = get_user_meta($current_user->ID, 'tilanne_koulutus', true);
     $biographical_info=get_user_meta($current_user->ID,'biographical_info',true);
     $custom_user_id = get_user_meta($current_user->ID, 'custom_user_id', true);
     $vip_member= get_user_meta($current_user->ID,'vip_member',true)==='yes';
+
+
+
+    $first_aid= get_user_meta($current_user->ID,'first_aid',true);
+    if (!empty($first_aid)) {
+        $first_aid = date('d.m.Y', strtotime($first_aid)); 
+    }
+
+    $tilanne_koulutus= get_user_meta($current_user->ID,'tilanne_koulutus',true);
+    if (!empty($tilanne_koulutus)) {
+        $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
+    }
+    
 
 
     // Retrieve visibility options
@@ -312,17 +339,17 @@ $style = "
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
                 <p><strong>Sähköposti:</strong> <?php echo esc_html($current_user->user_email); ?></p>
                 <p><strong>Puhelinnumero:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
-                <p>
-    <strong>Osasto:</strong> 
-    <select name="department" id="department-filter">
-        <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa'); ?>>MC Executors - Uusimaa</option>
-        <option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa'); ?>>MC Executors - Pohjanmaa</option>
-    </select>
+                <p> <strong>Osasto:</strong>  <select name="department" id="department-filter">
+                    <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa'); ?>>MC Executors - Uusimaa</option><option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa'); ?>>MC Executors - Pohjanmaa</option></select>
 </p>
                 <p><strong>Yritys:</strong> <input type="text" name="company" value="<?php echo esc_attr($company); ?>" class="regular-text"></p>
                 <p><strong>Moottoripyörä:</strong> <input type="text" name="motorcycle" value="<?php echo esc_attr($motorcycle); ?>" class="regular-text"></p>
-                <p><strong>Ensiapukoulutus:</strong> <input type="checkbox" name="first_aid" value="yes" <?php checked($first_aid, 'yes'); ?>> Kyllä, olen suorittanut ensiapukoulutuksen</p>
-                <p><strong>Tilanneturvallisuuskoulutus</strong> <input type="checkbox" name="tilanne_koulutus" value="yes" <?php checked($tilanne_koulutus, 'yes'); ?>> Kyllä, olen suorittanut tilanneturvallisuuskurssin</p>
+                <?php if (!empty($first_aid) && $first_aid !== '01.01.1970') : ?>
+                    <p><strong> Ensiapukoulutus suoritettu: <?php echo esc_attr($first_aid); ?> </strong> 
+                    <?php endif; ?>
+                <?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : ?>
+                    <p><strong>Tilanneturvallisuuskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
+                    <?php endif; ?>
                 <div class="biography">
                         <label for="biographical_info"> Kerro muille hieman itsestäsi:</label>
                         <textarea id="biographical_info" name="biographical_info" ><?php echo esc_textarea($biographical_info); ?></textarea>   
@@ -380,38 +407,45 @@ function update_last_login($user_login, $user) {
 }
 add_action('wp_login', 'update_last_login', 10, 2);
 
-// Step 4: Handle Password Reset Requests
-
-function handle_password_reset_request() {
-    if (isset($_POST['reset_password'])) {
-        $current_user = wp_get_current_user();
-        $user_login = $current_user->user_login;
-        $user_data = get_user_by('login', $user_login);
-
-        if (!$user_data) {
-            return '<p>Error: User not found.</p>';
-        }
-
-        // Generate password reset link
-        $reset_key = get_password_reset_key($user_data);
-        if (is_wp_error($reset_key)) {
-            return '<p>Error: Unable to generate password reset link.</p>';
-        }
-
-        // Construct the reset link
-        $reset_link = network_site_url("wp-login.php?action=rp&key=$reset_key&login=" . rawurlencode($user_data->user_login), 'login');
-
-        // Send password reset email
-        $message = "Hi " . $user_data->user_login . ",\n\n";
-        $message .= "You requested a password reset. To reset your password, click the link below:\n\n";
-        $message .= "<a href='$reset_link'>$reset_link</a>\n\n";
-        $message .= "If you did not request a password reset, please ignore this email.";
-
-        // Use wp_mail to send email
-        wp_mail($user_data->user_email, 'Password Reset Request', $message);
-
-        // Confirmation message
-        return '<p>A password reset link has been sent to your email address.</p>';
+/*
+function custom_password_change_form() {
+    if (!is_user_logged_in()) {
+        echo '<p>You must be logged in to change your password.</p>';
+        return;
     }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_password_change_nonce'])) {
+        if (!wp_verify_nonce($_POST['custom_password_change_nonce'], 'custom_password_change')) {
+            echo '<p>Error: Invalid nonce.</p>';
+            return;
+        }
+        $current_user = wp_get_current_user();
+        $current_password = $_POST['current_password'] ?? '';
+        $new_password = $_POST['new_password'] ?? '';
+        $confirm_password = $_POST['confirm_password'] ?? '';
+        if (!wp_check_password($current_password, $current_user->user_pass, $current_user->ID)) {
+            echo '<p>Error: Current password is incorrect.</p>';
+            return;
+        }
+        if (empty($new_password) || $new_password !== $confirm_password) {
+            echo '<p>Error: New passwords do not match or are empty.</p>';
+            return;
+        }
+        $update_result = wp_update_user(['ID' => $current_user->ID, 'user_pass' => $new_password]);
+        if (is_wp_error($update_result)) {
+            echo '<p>Error: Failed to update password. Please try again.</p>';
+        } else {
+            echo '<p>Success: Your password has been updated!</p>';
+        }
+    }
+    ?>
+    <form method="post" action="">
+        <?php wp_nonce_field('custom_password_change', 'custom_password_change_nonce'); ?>
+        <p><label for="current_password">Current Password</label><br><input type="password" name="current_password" id="current_password" required></p>
+        <p><label for="new_password">New Password</label><br><input type="password" name="new_password" id="new_password" required></p>
+        <p><label for="confirm_password">Confirm New Password</label><br><input type="password" name="confirm_password" id="confirm_password" required></p>
+        <p><input type="submit" value="Change Password"></p>
+    </form>
+    <?php
 }
-add_shortcode('handle_password_reset', 'handle_password_reset_request');
+add_shortcode('custom_password_change_form', 'custom_password_change_form');
+?>*/

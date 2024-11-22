@@ -76,8 +76,14 @@ function display_all_user_profiles_shortcode($atts) {
             // Get the last login timestamp
             $last_login = get_user_meta($user->ID, 'last_login', true);
             //Get first aid and tilannekoulutus:
-            $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
-            $tilanne_koulutus_completed= get_user_meta($user->ID,'tilanne_koulutus',true)==='yes';
+            $first_aid=get_user_meta($user->ID,'first_aid',true);
+            if (!empty($first_aid)) {
+                $first_aid = date('d.m.Y', strtotime($first_aid)); 
+            }
+            $tilanne_koulutus= get_user_meta($user->ID,'tilanne_koulutus',true);
+            if (!empty($tilanne_koulutus)) {
+                $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
+            }
 
             $vip_member =get_user_meta($user->ID,'vip_member',true)==='yes';
 
@@ -119,11 +125,11 @@ function display_all_user_profiles_shortcode($atts) {
                     <?php if(!empty($user->company)): ?>
                     <p><strong>Yritys:</strong> <?php echo esc_html($user->company); ?></p>
                     <?php endif ;?>
-                    <?php if ($first_aid_completed) : ?>
-                        <p><strong>Ensiapukoulutus suoritettu: 2024</strong> 
-                        <?php endif; ?>
-                        <?php if ($tilanne_koulutus_completed) : ?>
-                            <p><strong>Tilanneturvallisuuskurssi suoritettu: 2024 </strong> 
+                    <?php if (!empty($first_aid) && $first_aid !== '01.01.1970') : ?>
+                            <p><strong>Ensiapukoulutus suoritettu: <?php echo esc_attr($first_aid); ?> </strong> 
+                            <?php endif; ?>
+                        <?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : ?>
+                            <p><strong>Tilanneturvallisuuskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
                             <?php endif; ?>
                             <?php if (!empty($biographical_info)): ?>
                                 <div class="biography">
@@ -160,8 +166,14 @@ function display_all_user_profiles_shortcode($atts) {
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
-            $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
-            $tilanne_koulutus_completed= get_user_meta($user->ID,'tilanne_koulutus',true)==='yes';
+            $first_aid=get_user_meta($user->ID,'first_aid',true);
+            if (!empty($first_aid)){
+                $first_aid = date('d.m.Y',strtotime($first_aid));
+            }
+            $tilanne_koulutus= get_user_meta($user->ID,'tilanne_koulutus',true);
+            if (!empty($tilanne_koulutus)) {
+                $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
+            }
             ?>
             <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
                 <td><?php echo esc_html($user->first_name); ?></td>
@@ -171,8 +183,8 @@ function display_all_user_profiles_shortcode($atts) {
                 <td><?php echo esc_html(get_user_meta($user->ID, 'department', true)); ?></td>
                 <td><?php echo esc_html($user->motorcycle); ?></td>
                 <td><?php echo esc_html($user->company); ?></td>
-                <td><?php if ($first_aid_completed): echo "Kyllä"; endif;?></td>
-                <td><?php if ($tilanne_koulutus_completed): echo "Kyllä"; endif;?> </td>
+                <td><?php if (!empty($first_aid) && $first_aid!== '01.01.1970'): echo $first_aid; endif;?></td>
+                <td><?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : echo $tilanne_koulutus; endif;?> </td>
                 <td><?php echo esc_html($biographical_info); ?></td>
 
             </tr>

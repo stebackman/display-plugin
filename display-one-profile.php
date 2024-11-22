@@ -34,8 +34,14 @@ function display_selected_user_profile_shortcode() {
     $vip_member= get_user_meta($user->ID,'vip_member',true)==="yes";
 
     //Get first aid and tilannekoulutus:
-    $first_aid_completed=get_user_meta($user->ID,'first_aid',true)==='yes';
-    $tilanne_koulutus_completed= get_user_meta($user->ID,'tilanne_koulutus',true)==='yes';
+    $first_aid=get_user_meta($user->ID,'first_aid',true);
+    if (!empty($first_aid)) {
+        $first_aid = date('d.m.Y', strtotime($first_aid)); 
+    }
+    $tilanne_koulutus= get_user_meta($user->ID,'tilanne_koulutus',true);
+    if (!empty($tilanne_koulutus)) {
+        $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
+    }
 // Get the last login timestamp
     $last_login = get_user_meta($user->ID, 'last_login', true);
 
@@ -76,12 +82,12 @@ function display_selected_user_profile_shortcode() {
             <div class="biography">
                 <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
             </div>
-            <?php if ($first_aid_completed) : ?>
-                <p><strong>Ensiapukoulutus suoritettu: 2024</strong> 
-            <?php endif; ?>
-            <?php if ($tilanne_koulutus_completed) : ?>
-                <p><strong>Tilanneturvallisuuskurssi suoritettu: 2024 </strong> 
-            <?php endif; ?>
+            <?php if (!empty($first_aid) && $first_aid !== '01.01.1970') : ?>
+                <p><strong>Ensiapukoulutus suoritettu: <?php echo esc_attr($first_aid); ?> </strong> 
+                <?php endif; ?>
+            <?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : ?>
+                <p><strong>Tilanneturvallisuuskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
+                <?php endif; ?>
             <?php if (get_current_user_id() === $user->ID) : ?>
                 <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>
             <?php endif; ?>
