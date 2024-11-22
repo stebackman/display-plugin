@@ -9,7 +9,6 @@ License: GPL2
 */
 
 // Step 1: Add custom fields to the user profile
-
 function custom_user_profile_fields($user) {
     ?>
     <h3>Profiili</h3>
@@ -82,8 +81,6 @@ add_action('edit_user_profile', 'custom_user_profile_fields');
 // Step 2: Save custom profile fields
 
 function save_custom_user_profile_fields($user_id) {
-    
-
     // Update 'vip_member' meta based on checkbox
     if (isset($_POST['vip_member'])) {
         update_user_meta($user_id, 'vip_member', 'yes');
@@ -142,9 +139,17 @@ function display_user_info_shortcode() {
     if (!is_user_logged_in()) {
         return '<p>You need to be logged in to see your profile information.</p>';
     }
+    $success_message = '';
+    if (isset($_GET['profile_updated']) && $_GET['profile_updated'] == '1') {
+        $success_message = '<div class="update-success">Profiili päivitetty onnistuneesti!</div>';
+    }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
         save_custom_user_profile_fields($current_user->ID);
+
+        // Redirect to avoid resubmission and show success message
+        wp_redirect(add_query_arg('profile_updated', '1', get_permalink()));
+        exit;
     }
 
 $style = "
@@ -288,6 +293,22 @@ $style = "
     .view-profile-button a:hover {
         background-color: #495057;
     }
+        .update-success {
+            margin: 20px auto;
+            padding: 10px;
+            max-width: 600px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            font-size: 1em;
+            text-align: center;
+        }
+.success-message {
+    color: green;
+    font-weight: bold;
+    margin-top: 20px;
+}
 </style>
 ";
   // Retrieve the profile picture, phone number, department, and biographical info
@@ -320,6 +341,7 @@ $style = "
 
     ob_start();
     echo $style;
+    echo $success_message;
     ?>
     <form method="POST" enctype="multipart/form-data">
         <div class="user-info">
@@ -362,23 +384,46 @@ $style = "
                     <label><input type="checkbox" name="hide_phone_number" value="yes" <?php checked($hide_phone_number, 'yes'); ?>> Piilota puhelinnumeroni muilta käyttäjiltä</label>
                 </div>
  <!-- Reset Password Button -->
- <button type="submit" name="reset_password" class="reset-password-button">Reset Password-placeholder</button>
+ <button type="button" name="reset_password-button" class="reset-password-button" onclick="toggleChangePasswordForm()">Vaihda salasanaa:</button>
 
 <!-- Update Profile Button -->
 <button type="submit" name="update_profile" class="update-button">Päivitä profiilia</button>
 </div>
 </div>
 </form>
+<div id="change-password-form" class="user-info" style="display: none; margin-top: 20px;">
+        <h4>Vaihda salasanaa</h4>
+        <form method="post" action="">
+            <?php wp_nonce_field('custom_password_change', 'custom_password_change_nonce'); ?>
+            <p><label for="current_password">Nykyinen salasana</label><br><input type="password" name="current_password" id="current_password" required></p>
+            <p><label for="new_password">Uusi salasana</label><br><input type="password" name="new_password" id="new_password" required></p>
+            <p><label for="confirm_password">Vahvista uusi salasana</label><br><input type="password" name="confirm_password" id="confirm_password" required></p>
+            <p><input type="submit" value="Vaihda salasanaa"></p>
+        </form>
+    </div>
 
-<!-- Handle Password Reset Shortcode Output -->
- <!-- Handle Password Reset Shortcode Output -->
+    <script>
+    function toggleChangePasswordForm() {
+        const form = document.getElementById('change-password-form');
+        const updateButton = document.querySelector('button[name="update_profile"]');
+        const resetButton = document.querySelector('button[name="reset_password-button"]');
 
-
-<?php echo do_shortcode('[handle_password_reset]'); ?>
-    <?php
-    return ob_get_clean();
-    
+        // Toggle form visibility
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+            updateButton.disabled = true; // Disable profile update while changing password
+            resetButton.disabled = true; // Disable the password reset button itself
+        } else {
+            form.style.display = 'none';
+            updateButton.disabled = false; // Enable profile update button
+            resetButton.disabled = false; // Enable the password reset button
+        }
+    }
+</script>
+<?php 
+return ob_get_clean();
 }
+    
 add_shortcode('display_user_info', 'display_user_info_shortcode');
 // Hide unnecessary fields on the admin profile page
 function hide_unnecessary_profile_fields() {
@@ -407,29 +452,37 @@ function update_last_login($user_login, $user) {
 }
 add_action('wp_login', 'update_last_login', 10, 2);
 
-/*
+
 function custom_password_change_form() {
     if (!is_user_logged_in()) {
         echo '<p>You must be logged in to change your password.</p>';
         return;
     }
+    $password_change_message = '';
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_password_change_nonce'])) {
         if (!wp_verify_nonce($_POST['custom_password_change_nonce'], 'custom_password_change')) {
             echo '<p>Error: Invalid nonce.</p>';
             return;
         }
+
         $current_user = wp_get_current_user();
         $current_password = $_POST['current_password'] ?? '';
         $new_password = $_POST['new_password'] ?? '';
         $confirm_password = $_POST['confirm_password'] ?? '';
+
+        // Check if the current password is correct
         if (!wp_check_password($current_password, $current_user->user_pass, $current_user->ID)) {
             echo '<p>Error: Current password is incorrect.</p>';
             return;
         }
+
+        // Check if the new passwords match
         if (empty($new_password) || $new_password !== $confirm_password) {
             echo '<p>Error: New passwords do not match or are empty.</p>';
             return;
         }
+
+        // Update the password
         $update_result = wp_update_user(['ID' => $current_user->ID, 'user_pass' => $new_password]);
         if (is_wp_error($update_result)) {
             echo '<p>Error: Failed to update password. Please try again.</p>';
@@ -437,15 +490,29 @@ function custom_password_change_form() {
             echo '<p>Success: Your password has been updated!</p>';
         }
     }
+    // Display the password change form and message
+    echo $password_change_message;
     ?>
-    <form method="post" action="">
-        <?php wp_nonce_field('custom_password_change', 'custom_password_change_nonce'); ?>
-        <p><label for="current_password">Current Password</label><br><input type="password" name="current_password" id="current_password" required></p>
-        <p><label for="new_password">New Password</label><br><input type="password" name="new_password" id="new_password" required></p>
-        <p><label for="confirm_password">Confirm New Password</label><br><input type="password" name="confirm_password" id="confirm_password" required></p>
-        <p><input type="submit" value="Change Password"></p>
-    </form>
+    <div id="change-password-form" style="display: none; margin-top: 20px;">
+        <h4>Vaihda salasanaa</h4>
+        <form method="post" action="">
+            <?php wp_nonce_field('custom_password_change', 'custom_password_change_nonce'); ?>
+            <p><label for="current_password">Nykyinen salasana</label><br><input type="password" name="current_password" id="current_password" required></p>
+            <p><label for="new_password">Uusi salasana</label><br><input type="password" name="new_password" id="new_password" required></p>
+            <p><label for="confirm_password">Vahvista uusi salasana</label><br><input type="password" name="confirm_password" id="confirm_password" required></p>
+            <p><input type="submit" value="Vaihda salasanaa"></p>
+        </form>
+    </div>
+
+    <button type="button" onclick="toggleChangePasswordForm()">Vaihda salasanaa</button>
+
+    <script>
+        function toggleChangePasswordForm() {
+            const form = document.getElementById('change-password-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+
     <?php
 }
 add_shortcode('custom_password_change_form', 'custom_password_change_form');
-?>*/
