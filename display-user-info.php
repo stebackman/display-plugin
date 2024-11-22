@@ -61,10 +61,8 @@ function custom_user_profile_fields($user) {
             <input type="date" name="tilanne_koulutus" id="tilanne_koulutus" 
        value="<?php echo esc_attr(get_user_meta($user->ID, 'tilanne_koulutus', true)); ?>">
             </td>
-        </tr>
-        
-        <tr>
-            
+        </tr>     
+        <tr>       
             <th><label for="vip_member">Vuoden kunniajäsen</label></th>
             <td>
                 <input type="checkbox" name="vip_member" id="vip_member" value="yes" <?php checked(get_user_meta($user->ID, 'vip_member', true), 'yes'); ?>>
@@ -130,11 +128,10 @@ function save_custom_user_profile_fields($user_id) {
         update_user_meta($user_id, 'tilanne_koulutus', $date_value);
     }
 }
-
-
         update_user_meta($user_id, 'hide_email', isset($_POST['hide_email']) ? 'yes' : 'no');
         update_user_meta($user_id, 'hide_phone_number', isset($_POST['hide_phone_number']) ? 'yes' : 'no');
     }
+    update_user_meta($user_id, '_profile_last_updated', current_time('mysql'));
 }
 add_action('personal_options_update', 'save_custom_user_profile_fields');
 add_action('edit_user_profile_update', 'save_custom_user_profile_fields');
