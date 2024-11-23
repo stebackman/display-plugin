@@ -139,7 +139,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <?php if ($current_user_id === (int) $user->ID) : ?>
                         <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Muokkaa profiilia</a></p>
                     <?php else: ?>
-                        <p><a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
+                        <p><a href="<?php echo esc_url(add_query_arg('user', $user->user_login, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
                     <?php endif; ?>
                 </div>
             </div>

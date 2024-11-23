@@ -9,15 +9,15 @@ License: GPL2
 
 // Shortcode to Display Selected User Profile
 function display_selected_user_profile_shortcode() {
-    // Check if a user ID is provided in the URL
-    $user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
-
-    // If no user ID is specified, show a message or handle it as needed
-    if (!$user_id) {
-        return '<p>No user selected. Please choose a profile to view.</p>';
+    //Get the username from the URL 
+    $user_name = isset($_GET['user']) ? $_GET['user'] : '';
+    //If the 'user' parameter is not provided, return an error message
+    if ($user_name=='') {
+        return '<p>User profile not found.</p>';
     }
-
-    $user = get_user_by('ID', $user_id);
+  
+    //Retrieve the user object by username
+    $user=get_user_by('login',$user_name);
 
     // If the user does not exist, display an error message
     if (!$user) {
