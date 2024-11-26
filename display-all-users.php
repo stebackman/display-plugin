@@ -139,7 +139,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <?php if ($current_user_id === (int) $user->ID) : ?>
                         <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Muokkaa profiilia</a></p>
                     <?php else: ?>
-                        <p><a href="<?php echo esc_url(add_query_arg('user_id', $user->ID, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
+                        <p><a href="<?php echo esc_url(add_query_arg('user', $user->user_login, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -249,6 +249,12 @@ function display_all_user_profiles_shortcode($atts) {
             row.style.display = name.includes(searchTerm) ? '' : 'none';
         });
     });
+
+    document.querySelectorAll('.user-profile').forEach(function (profile) {
+    if (profile.querySelector('.edit-profile-button')) {
+        profile.classList.add('current-user');
+    }
+});
 </script>
     <?php
 
@@ -259,87 +265,107 @@ add_shortcode('display_all_user_profiles', 'display_all_user_profiles_shortcode'
 // Step 4: Add CSS for Styling (Optional)
 function display_user_profiles_styles() {
     echo "
-    <style>
-        .user-profiles {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .user-profile {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            max-width: 300px;
-            flex: 1 1 calc(33% - 40px);
-        }
-        .user-avatar {
-            margin-bottom: 15px;
-            text-align: center;
-            position: relative;
-            display: inline-block;
-        }
-        .user-avatar img {
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-        }
-        .user-details h2 {
-            font-size: 1.25em;
-            margin: 0 0 10px;
-        }
-        .user-details p {
-            margin: 5px 0;
-        }
-        .view-profile-button {
-            display: inline-block;
-            padding: 8px 12px;
-            color: #1F2518;
-            background-color: #E2C274;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        .view-profile-button:hover {
-            background-color: #1F2518;
-        }
-            .edit-profile-button {
-            display: inline-block;
-            padding: 8px 12px;
-            color: #1F2518;
-            background-color: #e2c274;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        .edit-profile-button:hover {
-            background-color: #1F2518;
-        }
+<style>
+    .user-profiles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
 
-        /* Styles for table view */
-        .user-profiles-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .user-profiles-table th, .user-profiles-table td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-            .vip-crown {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 24px;
-            color: gold;
-}
-            .last-login {
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
-    font-style: italic;
-}
-    </style>
+    .user-profile {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        max-width: 300px;
+        flex: 1 1 calc(33% - 40px);
+        position: relative;
+    }
+
+    .user-avatar {
+        margin-bottom: 15px;
+        text-align: center;
+        position: relative;
+        display: inline-block;
+    }
+
+    .user-avatar img {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+
+    .user-details h2 {
+        font-size: 1.25em;
+        margin: 0 0 10px;
+    }
+
+    .user-details p {
+        margin: 5px 0;
+    }
+
+    .view-profile-button {
+        display: inline-block;
+        padding: 8px 12px;
+        color: #1F2518;
+        background-color: #E2C274;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .view-profile-button:hover {
+        background-color: #1F2518;
+    }
+
+    .edit-profile-button {
+        display: inline-block;
+        padding: 8px 12px;
+        color: #1F2518;
+        background-color: #e2c274;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .edit-profile-button:hover {
+        background-color: #1F2518;
+    }
+
+    /* Highlight the user's own profile */
+    .user-profile.current-user {
+        background-color: #fff7d1; /* Light yellow background */
+        border: 2px solid #e2c274; /* Distinct border color */
+    }
+
+    /* Styles for table view */
+    .user-profiles-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .user-profiles-table th,
+    .user-profiles-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .vip-crown {
+        position: absolute;
+        top: 10px;
+        right: 15px; /* Adjust closer to the image */
+        font-size: 20px; /* Slightly smaller */
+        color: gold;
+    }
+
+    .last-login {
+        display: block;
+        margin-top: 10px;
+        font-size: 14px;
+        color: #555;
+        font-style: italic;
+    }
+</style>
     ";
 }
 add_action('wp_head', 'display_user_profiles_styles');
