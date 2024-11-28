@@ -20,6 +20,8 @@ function custom_user_profile_fields($user) {
         <select id="titteli" name="titteli">
             <option value="Puheenjohtaja" <?php selected($titteli, 'Puheenjohtaja', true); ?>>Puheenjohtaja</option>
             <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
+            <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
+            <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
         </select>
     </td>
 </tr>
@@ -136,7 +138,7 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['first_name','last_name','phone_number', 'home_address', 'department', 'company', 'motorcycle', 'vip_member','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','phone_number', 'titteli', 'home_address', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));

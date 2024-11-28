@@ -62,6 +62,8 @@ function display_all_user_profiles_shortcode($atts) {
         <option value="all">Kaikki tittelit</option>
         <option value="Puheenjohtaja">Puheenjohtaja</option>
         <option value="Kokelas">Kokelas</option>
+        <option value="Jäsen">Jäsen</option>
+        <option value="Kunniajäsen">Kunniajäsen</option>
     </select>
 
     <button id="toggle-view" data-view="grid">Vaihda taulukkonäkymäksi</button>
@@ -115,7 +117,7 @@ function display_all_user_profiles_shortcode($atts) {
 <?php endif; ?>
                 </div>
                 <div class="user-details">
-                    <h2><?php echo esc_html($user->user_login); ?></h2>
+                    <h2><?php echo esc_html($user->display_name); ?></h2>
                     <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
                     <?php if(!empty($user->titteli)): ?>
                     <p><strong>Titteli:</strong> <?php echo esc_html($titteli); ?></p>
@@ -182,6 +184,8 @@ function display_all_user_profiles_shortcode($atts) {
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
+            $biographical_excerpt= wp_trim_words($biographical_info,20,'...');
+            $profile_url=site_url('/view-profile(?user_id=' . $user->ID);
             $first_aid=get_user_meta($user->ID,'first_aid',true);
             if (!empty($first_aid)){
                 $first_aid = date('d.m.Y',strtotime($first_aid));
@@ -191,7 +195,7 @@ function display_all_user_profiles_shortcode($atts) {
                 $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
             }
             ?>
-            <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
+            <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>" data-title="<?php echo esc_attr(get_user_meta($user->ID,'titteli',true)); ?>">
                 <td><?php echo esc_html($user->first_name); ?></td>
                 <td><?php echo esc_html($user->last_name); ?></td>
                 <td><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></td>
@@ -201,7 +205,10 @@ function display_all_user_profiles_shortcode($atts) {
                 <td><?php echo esc_html($user->company); ?></td>
                 <td><?php if (!empty($first_aid) && $first_aid!== '01.01.1970'): echo $first_aid; endif;?></td>
                 <td><?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : echo $tilanne_koulutus; endif;?> </td>
-                <td><?php echo esc_html($biographical_info); ?></td>
+                <td><?php echo esc_html($biographical_excerpt); ?>
+                <?php if (!empty($biographical_info)) : ?>
+                    <a href="<?php echo esc_url(add_query_arg('user', $user->display_name, get_permalink(get_page_by_path('view-profile')))); ?>">Näytä koko profiili</a>
+                <?php endif; ?></td>
 
             </tr>
             <?php

@@ -31,6 +31,7 @@ function display_selected_user_profile_shortcode() {
     $motorcycle = get_user_meta($user->ID,'motorcycle',true);
     $custom_user_id= get_user_meta($user->ID,'custom_user_id',true);
     $vip_member= get_user_meta($user->ID,'vip_member',true)==="yes";
+    $profile_title = get_user_meta($user->ID, 'titteli', true);
 
     //Get first aid and tilannekoulutus:
     $first_aid=get_user_meta($user->ID,'first_aid',true);
@@ -55,7 +56,7 @@ function display_selected_user_profile_shortcode() {
     <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Näytä kaikki profiilit</a></p>
     <div class="user-profile"> 
         <div class="user-avatar">
-            <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
+            <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->user_login); ?>'s Profile Picture">
             <?php if ($vip_member): ?>
                 <span class="vip-crown">&#x1F451;</span>
                 <?php endif; ?>
@@ -66,12 +67,13 @@ function display_selected_user_profile_shortcode() {
 <?php endif; ?>
             </div>
         <div class="user-details">
-            <h2><?php echo esc_html($user->display_name); ?></h2>
+            <h2><?php echo esc_html($user->user_login); ?></h2>
             <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
             <p><strong>Jäsennumero:</strong> <?php echo esc_html($custom_user_id); ?></p>
+            <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
             <?php if (!$hide_email) : ?>
                 <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
-            <?php endif; ?>
+            <?php endif; ?>     
             <?php if (!$hide_phone_number) : ?>
                 <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
             <?php endif; ?>
