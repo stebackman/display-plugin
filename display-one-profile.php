@@ -87,7 +87,7 @@ function display_selected_user_profile_shortcode() {
                 <p><strong>Ensiapukoulutus suoritettu: <?php echo esc_attr($first_aid); ?> </strong> 
                 <?php endif; ?>
             <?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : ?>
-                <p><strong>Tilanneturvallisuuskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
+                <p><strong>Tilannejohtamiskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
                 <?php endif; ?>
             <?php if (get_current_user_id() === $user->ID) : ?>
                 <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>">Edit Profile</a></p>

@@ -80,7 +80,7 @@ function custom_user_profile_fields($user) {
             </td>
         </tr>
         <tr>
-            <th><label for="tilanne_koulutus">Tilanneturvallisuuskoulutus suoritettu</label></th>
+            <th><label for="tilanne_koulutus">Tilannejohtamiskoulutus suoritettu</label></th>
             <td>
             <input type="date" name="tilanne_koulutus" id="tilanne_koulutus" 
        value="<?php echo esc_attr(get_user_meta($user->ID, 'tilanne_koulutus', true)); ?>">
@@ -424,7 +424,7 @@ $style = "
                     <p><strong> Ensiapukoulutus suoritettu: <?php echo esc_attr($first_aid); ?> </strong> 
                     <?php endif; ?>
                 <?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : ?>
-                    <p><strong>Tilanneturvallisuuskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
+                    <p><strong>Tilannejohtamiskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
                     <?php endif; ?>
                 <div class="biography">
                         <label for="biographical_info"> Kerro muille hieman itsestäsi:</label>

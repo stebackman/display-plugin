@@ -110,6 +110,11 @@ function display_all_user_profiles_shortcode($atts) {
                     <?php if ($vip_member): ?>
                         <span class="vip-crown">&#x1F451;</span>
                         <?php endif; ?>
+                        <?php if (!empty($vip_member_info)) : ?>
+                    <div class="biography">
+                        <textarea id="vip_member_info" name="vip_member_info" disabled><?php echo esc_textarea($vip_member_info); ?></textarea>   
+                        </div>
+                        <?php endif; ?>
                         <?php if ($last_login) : ?>
     <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
 <?php else : ?>
@@ -123,11 +128,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <p><strong>Titteli:</strong> <?php echo esc_html($titteli); ?></p>
                     <?php endif; ?>
                     <p><strong>Jäsennumero: </strong> <?php echo esc_html(($custom_user_id)); ?></p>
-                    <?php if (!empty($vip_member_info)) : ?>
-                    <div class="biography">
-                        <textarea id="vip_member_info" name="vip_member_info" disabled><?php echo esc_textarea($vip_member_info); ?></textarea>   
-                        </div>
-                        <?php endif; ?>
+                   
                     <?php if (!$hide_email &&(!empty($user->user_email))) : ?>
                         <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
                     <?php endif; ?>
@@ -147,7 +148,7 @@ function display_all_user_profiles_shortcode($atts) {
                             <p><strong>Ensiapukoulutus suoritettu: <?php echo esc_attr($first_aid); ?> </strong> 
                             <?php endif; ?>
                         <?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : ?>
-                            <p><strong>Tilanneturvallisuuskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
+                            <p><strong>Tilannejohtamiskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
                             <?php endif; ?>
                             <?php if (!empty($biographical_info)): ?>
                                 <div class="biography">
@@ -206,8 +207,8 @@ function display_all_user_profiles_shortcode($atts) {
                 <td><?php if (!empty($first_aid) && $first_aid!== '01.01.1970'): echo $first_aid; endif;?></td>
                 <td><?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : echo $tilanne_koulutus; endif;?> </td>
                 <td><?php echo esc_html($biographical_excerpt); ?>
-                <?php if (!empty($biographical_info)) : ?>
-                    <a href="<?php echo esc_url(add_query_arg('user', $user->display_name, get_permalink(get_page_by_path('view-profile')))); ?>">Näytä koko profiili</a>
+                <?php if (str_word_count($biographical_info)>20) : ?>
+                    <a href="<?php echo esc_url(add_query_arg('user', $user->display_name, get_permalink(get_page_by_path('view-profile')))); ?>">Lue koko tarina käyttäjän profiilisivulla</a>
                 <?php endif; ?></td>
 
             </tr>
@@ -403,6 +404,15 @@ function display_user_profiles_styles() {
         color: #555;
         font-style: italic;
     }
+    .user-profiles-table a {
+        color: #0073aa;
+        text-decoration: none;
+    }
+
+    .user-profiles-table a:hover {
+        text-decoration: underline;
+    }
+
 </style>
     ";
 }
