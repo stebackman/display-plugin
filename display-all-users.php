@@ -86,6 +86,7 @@ function display_all_user_profiles_shortcode($atts) {
             }
 
             $vip_member =get_user_meta($user->ID,'vip_member',true)==='yes';
+            $vip_member_info=get_user_meta($user->ID,'vip_member_info',true);
 
             // Get visibility settings
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
@@ -108,8 +109,12 @@ function display_all_user_profiles_shortcode($atts) {
                 </div>
                 <div class="user-details">
                     <h2><?php echo esc_html($user->display_name); ?></h2>
-                    <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
                     <p><strong>Jäsennumero: </strong> <?php echo esc_html(($custom_user_id)); ?></p>
+                    <?php if (!empty($vip_member_info)) : ?>
+                    <div class="biography">
+                        <textarea id="vip_member_info" name="vip_member_info" disabled><?php echo esc_textarea($vip_member_info); ?></textarea>   
+                        </div>
+                        <?php endif; ?>
                     <?php if (!$hide_email &&(!empty($user->user_email))) : ?>
                         <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
                     <?php endif; ?>
@@ -139,7 +144,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <?php if ($current_user_id === (int) $user->ID) : ?>
                         <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Muokkaa profiilia</a></p>
                     <?php else: ?>
-                        <p><a href="<?php echo esc_url(add_query_arg('user', $user->user_login, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
+                        <p><a href="<?php echo esc_url(add_query_arg('user', $user->display_name, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -240,7 +245,7 @@ function display_all_user_profiles_shortcode($atts) {
         var rows = document.querySelectorAll('.user-profiles-table tbody tr');
 
         profiles.forEach(function(profile) {
-            var name = profile.querySelector('p').textContent.toLowerCase();
+            var name = profile.querySelector('h2').textContent.toLowerCase();
             profile.style.display = name.includes(searchTerm) ? 'block' : 'none';
         });
 

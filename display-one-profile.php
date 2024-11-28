@@ -55,7 +55,7 @@ function display_selected_user_profile_shortcode() {
     <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Näytä kaikki profiilit</a></p>
     <div class="user-profile"> 
         <div class="user-avatar">
-            <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
+            <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_html($user->user_login); ?>'s Profile Picture">
             <?php if ($vip_member): ?>
                 <span class="vip-crown">&#x1F451;</span>
                 <?php endif; ?>

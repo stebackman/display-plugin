@@ -66,9 +66,16 @@ function custom_user_profile_fields($user) {
             <th><label for="vip_member">Vuoden kunniajäsen</label></th>
             <td>
                 <input type="checkbox" name="vip_member" id="vip_member" value="yes" <?php checked(get_user_meta($user->ID, 'vip_member', true), 'yes'); ?>>
-                <label for="vip_member">Tämä jäsen on viime vuoden kunniajäsen</label>
+                <label for="vip_member">Tämä jäsen on tämän vuoden kunniajäsen</label>
             </td>
         </tr>
+        <tr>
+            <th><label for="vip_member_info">Kirjoita halutessasi hieman tekstiä milloin tämä jäsen on nimitetty kunniajäseneksi tms.</label></th>
+            <td>
+                <textarea name="vip_member_info" id="vip_member_info" rows="5" class="regular-text"><?php echo esc_textarea(get_user_meta($user->ID, 'vip_member_info', true)); ?></textarea>
+            </td>
+        </tr>
+
         <?php endif; ?>
         <tr>
             <th><label for="biographical_info">Kerro vähän itsestäsi</label></th>
@@ -107,7 +114,7 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['first_name','last_name','phone_number', 'home_address', 'department', 'company', 'motorcycle', 'vip_member','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','phone_number', 'home_address', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
@@ -370,7 +377,7 @@ $style = "
                         <?php endif; ?>
             </div>
             <div class="user-details">
-                <p><strong>Käyttäjänimi:</strong> <?php echo esc_html($current_user->user_login); ?></p>
+                <p><strong>Käyttäjänimi:</strong> <?php echo esc_html($current_user->display_name); ?></p>
                 <p><strong>Etunimi:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
                 <p><strong>Sukunimi:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
