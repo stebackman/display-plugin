@@ -57,6 +57,12 @@ function display_all_user_profiles_shortcode($atts) {
         <option value="MC Executors - Uusimaa">MC Executors - Uusimaa</option>
         <option value="MC Executors - Pohjanmaa">MC Executors - Pohjanmaa</option>
     </select>
+    <label for="titteli">Valitse titteli:</label>
+    <select id="titteli-filter">
+        <option value="all">Kaikki tittelit</option>
+        <option value="Puheenjohtaja">Puheenjohtaja</option>
+        <option value="Kokelas">Kokelas</option>
+    </select>
 
     <button id="toggle-view" data-view="grid">Vaihda taulukkonäkymäksi</button>
 
@@ -71,6 +77,7 @@ function display_all_user_profiles_shortcode($atts) {
         foreach ($users as $user) {
             $profile_picture = get_user_meta($user->ID, 'profile_picture', true) ?: get_avatar_url($user->ID, ['size' => 100]);
             $department = get_user_meta($user->ID, 'department', true);
+            $titteli = get_user_meta($user->ID, 'titteli', true);
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
 
             // Get the last login timestamp
@@ -95,7 +102,7 @@ function display_all_user_profiles_shortcode($atts) {
 
             ob_start();
             ?>
-            <div class="user-profile" data-department="<?php echo esc_attr($department); ?>">
+         <div class="user-profile" data-department="<?php echo esc_attr($department); ?>" data-title="<?php echo esc_attr($titteli); ?>">
                 <div class="user-avatar">
                     <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
                     <?php if ($vip_member): ?>
@@ -108,7 +115,11 @@ function display_all_user_profiles_shortcode($atts) {
 <?php endif; ?>
                 </div>
                 <div class="user-details">
-                    <h2><?php echo esc_html($user->display_name); ?></h2>
+                    <h2><?php echo esc_html($user->user_login); ?></h2>
+                    <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
+                    <?php if(!empty($user->titteli)): ?>
+                    <p><strong>Titteli:</strong> <?php echo esc_html($titteli); ?></p>
+                    <?php endif; ?>
                     <p><strong>Jäsennumero: </strong> <?php echo esc_html(($custom_user_id)); ?></p>
                     <?php if (!empty($vip_member_info)) : ?>
                     <div class="biography">
@@ -223,20 +234,35 @@ function display_all_user_profiles_shortcode($atts) {
     });
 
     document.getElementById('department-filter').addEventListener('change', function () {
-        var selectedDepartment = this.value;
-        var profiles = document.querySelectorAll('.user-profile');
-        var rows = document.querySelectorAll('.user-profiles-table tbody tr');
+    filterProfiles();
+});
 
-        profiles.forEach(function(profile) {
-            var department = profile.getAttribute('data-department');
-            profile.style.display = (selectedDepartment === 'all' || department === selectedDepartment) ? 'block' : 'none';
-        });
+document.getElementById('titteli-filter').addEventListener('change', function () {
+    filterProfiles();
+});
 
-        rows.forEach(function(row) {
-            var department = row.getAttribute('data-department');
-            row.style.display = (selectedDepartment === 'all' || department === selectedDepartment) ? '' : 'none';
-        });
+function filterProfiles() {
+    var selectedDepartment = document.getElementById('department-filter').value;
+    var selectedTitle = document.getElementById('titteli-filter').value;
+    
+    var profiles = document.querySelectorAll('.user-profile');
+    var rows = document.querySelectorAll('.user-profiles-table tbody tr');
+
+    profiles.forEach(function(profile) {
+        var department = profile.getAttribute('data-department');
+        var title = profile.getAttribute('data-title');
+        var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
+        profile.style.display = isVisible ? 'block' : 'none';
     });
+
+    rows.forEach(function(row) {
+        var department = row.getAttribute('data-department');
+        var title = row.getAttribute('data-title');
+        var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
+        row.style.display = isVisible ? '' : 'none';
+    });
+}
+
 
     // Live search functionality
     document.getElementById('search-user-input').addEventListener('input', function () {

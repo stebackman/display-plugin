@@ -13,27 +13,49 @@ function custom_user_profile_fields($user) {
     ?>
     <h3>Profiili</h3>
     <table class="form-table">
-        <tr>
+    <tr>
+    <th><label for="titteli">Titteli</label></th>
+    <td>
+        <?php $titteli = get_user_meta($user->ID, 'titteli', true); ?>
+        <select id="titteli" name="titteli">
+            <option value="Puheenjohtaja" <?php selected($titteli, 'Puheenjohtaja', true); ?>>Puheenjohtaja</option>
+            <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
+        </select>
+    </td>
+</tr>
             <th><label for="phone_number">Puhelinnumero</label></th>
             <td>
                 <input type="text" name="phone_number" id="phone_number" value="<?php echo esc_attr(get_user_meta($user->ID, 'phone_number', true)); ?>" class="regular-text">
             </td>
         </tr>
         <tr>
-            <th><label for="home_address">Osoite</label></th>
+            <th><label for="osoite">Osoite</label></th>
             <td>
-                <input type="text" name="home_address" id="home_address" value="<?php echo esc_attr(get_user_meta($user->ID, 'home_address', true)); ?>" class="regular-text">
+                <input type="text" name="osoite" id="osoite" value="<?php echo esc_attr(get_user_meta($user->ID, 'osoite', true)); ?>" class="regular-text">
             </td>
         </tr>
         <tr>
-            <th><label for="department">Osasto</label></th>
+            <th><label for="postinumero">Postinumero</label></th>
             <td>
-                  <select id="department-filter">
-        <option value="MC Executors - Uusimaa">MC Executors - Uusimaa</option>
-        <option value="MC Executors - Pohjanmaa">MC Executors - Pohjanmaa</option>
-    </select>
+                <input type="text" name="postinumero" id="postinumero" value="<?php echo esc_attr(get_user_meta($user->ID, 'postinumero', true)); ?>" class="regular-text">
             </td>
         </tr>
+        <tr>
+            <th><label for="postitoimipaikka">Postitoimipaikka</label></th>
+            <td>
+                <input type="text" name="postitoimipaikka" id="postitoimipaikka" value="<?php echo esc_attr(get_user_meta($user->ID, 'postitoimipaikka', true)); ?>" class="regular-text">
+            </td>
+        </tr>
+        <tr>
+    <th><label for="department">Osasto</label></th>
+    <td>
+        <?php $department = get_user_meta($user->ID, 'department', true); ?>
+        <select id="department" name="department">
+            <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa', true); ?>>MC Executors - Uusimaa</option>
+            <option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa', true); ?>>MC Executors - Pohjanmaa</option>
+        </select>
+    </td>
+</tr>
         <tr>
             <th><label for="company">Yritys</label></th>
             <td>
@@ -114,7 +136,7 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['first_name','last_name','phone_number', 'home_address', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','phone_number', 'home_address', 'department', 'company', 'motorcycle', 'vip_member','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
@@ -324,7 +346,11 @@ $style = "
   // Retrieve the profile picture, phone number, department, and biographical info
     $profile_picture = get_user_meta($current_user->ID, 'profile_picture', true) ?: get_avatar_url($current_user->ID, ['size' => 100]);
     $phone_number = get_user_meta($current_user->ID, 'phone_number', true);
-    $home_address = get_user_meta($current_user->ID, 'home_address', true);
+    $home_address = get_user_meta($current_user->ID, 'osoite', true);
+    $zipcode = get_user_meta($current_user->ID, 'postinumero', true);
+    $city = get_user_meta($current_user->ID, 'postitoimipaikka', true);
+
+    $profile_title = get_user_meta($current_user->ID, 'titteli', true);
     $department = get_user_meta($current_user->ID, 'department', true);
     $company = get_user_meta($current_user->ID, 'company', true);
     $motorcycle = get_user_meta($current_user->ID, 'motorcycle', true);
@@ -350,6 +376,7 @@ $style = "
     $hide_email = get_user_meta($current_user->ID, 'hide_email', true);
     $hide_phone_number = get_user_meta($current_user->ID, 'hide_phone_number', true);
 
+    
     ob_start();
     echo $style;
     echo $success_message;
@@ -380,13 +407,15 @@ $style = "
                 <p><strong>Käyttäjänimi:</strong> <?php echo esc_html($current_user->display_name); ?></p>
                 <p><strong>Etunimi:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
                 <p><strong>Sukunimi:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
+                <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
                 <p><strong>Sähköposti:</strong> <?php echo esc_html($current_user->user_email); ?></p>
                 <p><strong>Puhelinnumero:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
-                <p><strong>Kotiosoite:</strong> <input type="text" name="home_address" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
-                <p> <strong>Osasto:</strong>  <select name="department" id="department-filter">
-                    <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa'); ?>>MC Executors - Uusimaa</option><option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa'); ?>>MC Executors - Pohjanmaa</option></select>
-</p>
+                <p><strong>Osoite:</strong> <input type="text" name="osoite" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
+                <p><strong>Postinumero:</strong> <input type="text" name="postinumero" value="<?php echo esc_attr($zipcode); ?>" class="regular-text"></p>
+                <p><strong>Postitoimipaikka:</strong> <input type="text" name="postitoimipaikka" value="<?php echo esc_attr($city); ?>" class="regular-text"></p>
+                <p> <strong>Osasto:</strong>  <select name="department" id="department">
+                    <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa',true); ?>>MC Executors - Uusimaa</option><option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa'); ?>>MC Executors - Pohjanmaa</option></select></p>
                 <p><strong>Yritys:</strong> <input type="text" name="company" value="<?php echo esc_attr($company); ?>" class="regular-text"></p>
                 <p><strong>Moottoripyörä:</strong> <input type="text" name="motorcycle" value="<?php echo esc_attr($motorcycle); ?>" class="regular-text"></p>
                 <?php if (!empty($first_aid) && $first_aid !== '01.01.1970') : ?>
@@ -426,23 +455,24 @@ $style = "
     </div>
 
     <script>
-    function toggleChangePasswordForm() {
-        const form = document.getElementById('change-password-form');
-        const updateButton = document.querySelector('button[name="update_profile"]');
-        const resetButton = document.querySelector('button[name="reset_password-button"]');
+function toggleChangePasswordForm() {
+    const form = document.getElementById('change-password-form');
+    const updateButton = document.querySelector('button[name="update_profile"]');
+    const resetButton = document.querySelector('button[name="reset_password-button"]');
 
-        // Toggle form visibility
-        if (form.style.display === 'none') {
-            form.style.display = 'block';
-            updateButton.disabled = true; // Disable profile update while changing password
-            resetButton.disabled = true; // Disable the password reset button itself
-        } else {
-            form.style.display = 'none';
-            updateButton.disabled = false; // Enable profile update button
-            resetButton.disabled = false; // Enable the password reset button
-        }
+    // Check current form display status and toggle
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block'; // Show the form
+        updateButton.disabled = true; // Disable update profile button
+        resetButton.textContent = 'Peruuta'; // Change button text to "Cancel"
+    } else {
+        form.style.display = 'none'; // Hide the form
+        updateButton.disabled = false; // Re-enable update profile button
+        resetButton.textContent = 'Vaihda salasanaa'; // Reset button text to "Change Password"
     }
+}
 </script>
+
 <?php 
 return ob_get_clean();
 }
@@ -473,10 +503,7 @@ function hide_unnecessary_profile_fields() {
 }
 add_action('admin_head', 'hide_unnecessary_profile_fields');
 
-function update_last_login($user_login, $user) {
-    update_user_meta($user->ID, 'last_login', current_time('mysql'));
-}
-add_action('wp_login', 'update_last_login', 10, 2);
+
 
 
 function custom_password_change_form() {
