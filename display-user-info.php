@@ -53,9 +53,12 @@ function custom_user_profile_fields($user) {
     <td>
         <?php $department = get_user_meta($user->ID, 'department', true); ?>
         <select id="department" name="department">
-            <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa', true); ?>>MC Executors - Uusimaa</option>
-            <option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa', true); ?>>MC Executors - Pohjanmaa</option>
-        </select>
+        <option value="Pirkanmaa" <?php selected($department, 'Pirkanmaa', true); ?>>Pirkanmaa</option>    
+        <option value="Pohjanmaa" <?php selected($department, 'Pohjanmaa', true); ?>>Pohjanmaa</option>
+        <option value="Päijät-Häme&Kaakkois-Suomi" <?php selected($department, 'Päijät-Häme&Kaakkois-Suomi', true); ?>>Päijät-Häme&Kaakkois-Suomi</option>
+        <option value="Uusimaa" <?php selected($department, 'Uusimaa', true); ?>>Uusimaa</option>
+        <option value="Varsinais-Suomi" <?php selected($department, 'Varsinais-Suomi', true); ?>>Varsinais-Suomi</option>
+    </select>
     </td>
 </tr>
         <tr>
@@ -431,7 +434,11 @@ $style = "
                 <p><strong>Postinumero:</strong> <input type="text" name="postinumero" value="<?php echo esc_attr($zipcode); ?>" class="regular-text"></p>
                 <p><strong>Postitoimipaikka:</strong> <input type="text" name="postitoimipaikka" value="<?php echo esc_attr($city); ?>" class="regular-text"></p>
                 <p> <strong>Osasto:</strong>  <select name="department" id="department">
-                    <option value="MC Executors - Uusimaa" <?php selected($department, 'MC Executors - Uusimaa',true); ?>>MC Executors - Uusimaa</option><option value="MC Executors - Pohjanmaa" <?php selected($department, 'MC Executors - Pohjanmaa'); ?>>MC Executors - Pohjanmaa</option></select></p>
+                <option value="Pirkanmaa" <?php selected($department, 'Pirkanmaa'); ?>>Pirkanmaa</option>
+                    <option value="Pohjanmaa" <?php selected($department, 'Pohjanmaa'); ?>>Pohjanmaa</option>
+                    <option value="Päijät-Häme&Kaakkois-Suomi" <?php selected($department, 'Päijät-Häme&Kaakkois-Suomi'); ?>>Päijät-Häme&Kaakkois-Suomi</option>
+                    <option value="Uusimaa" <?php selected($department, 'Uusimaa',true); ?>>Uusimaa</option>
+                    <option value="Varsinais-Suomi" <?php selected($department, 'Varsinais-Suomi',true); ?>>Varsinais-Suomi</option></select></p>
                 <p><strong>Yritys:</strong> <input type="text" name="company" value="<?php echo esc_attr($company); ?>" class="regular-text"></p>
                 <p><strong>Moottoripyörä:</strong> <input type="text" name="motorcycle" value="<?php echo esc_attr($motorcycle); ?>" class="regular-text"></p>
                 <?php if (!empty($first_aid) && $first_aid !== '01.01.1970') : ?>
@@ -452,7 +459,7 @@ $style = "
                     <label><input type="checkbox" name="hide_phone_number" value="yes" <?php checked($hide_phone_number, 'yes'); ?>> Piilota puhelinnumeroni muilta käyttäjiltä</label>
                 </div>
  <!-- Reset Password Button -->
- <button type="button" name="reset_password-button" class="reset-password-button" onclick="toggleChangePasswordForm()">Vaihda salasanaa:</button>
+ <button type="button" name="reset_password-button" class="reset-password-button" onclick="toggleChangePasswordForm()">Aseta uusi salasana:</button>
 
 <!-- Update Profile Button -->
 <button type="submit" name="update_profile" class="update-button">Päivitä profiilia</button>

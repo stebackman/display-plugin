@@ -54,8 +54,11 @@ function display_all_user_profiles_shortcode($atts) {
     <label for="department">Valitse osasto:</label>
     <select id="department-filter">
         <option value="all">Kaikki osastot</option>
-        <option value="MC Executors - Uusimaa">MC Executors - Uusimaa</option>
-        <option value="MC Executors - Pohjanmaa">MC Executors - Pohjanmaa</option>
+        <option value="Pirkanmaa">Pirkanmaa</option>
+        <option value="Pohjanmaa">Pohjanmaa</option>
+         <option value="Päijät-Häme&Kaakkois-Suomi">Päijät-Häme&Kaakkois-Suomi</option>
+        <option value="Uusimaa">Uusimaa</option>
+        <option value="Varsinais-Suomi">Varsinais-Suomi</option>
     </select>
     <label for="titteli">Valitse titteli:</label>
     <select id="titteli-filter">
@@ -111,7 +114,7 @@ function display_all_user_profiles_shortcode($atts) {
                         <span class="vip-crown">&#x1F451;</span>
                         <?php endif; ?>
                 </div>
-                        <?php if ($last_login) : ?>
+                <?php if ($last_login) : ?>
     <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
 <?php else : ?>
     <span class="last-login">Ei sisäänkirjautumistietoja</span>
@@ -158,7 +161,7 @@ function display_all_user_profiles_shortcode($atts) {
                     </div>
             <?php endif; ?>
                     <?php if ($current_user_id === (int) $user->ID) : ?>
-                        <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Muokkaa profiilia</a></p>
+                        <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Muokkaa profiiliasi</a></p>
                     <?php else: ?>
                         <p><a href="<?php echo esc_url(add_query_arg('user', $user->display_name, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
                     <?php endif; ?>
@@ -181,7 +184,17 @@ function display_all_user_profiles_shortcode($atts) {
 
         // Table structure for list view
         echo '<table class="user-profiles-table" style="display:none;">';
-        echo '<thead><tr><th>Nimi</th><th>Numero</th><th>Puhelinnumero</th><th>Sähköposti</th><th>Yritys</th><th>Ensiapu</th><th>Tilanneturvallisuus</th></tr></thead>';
+        echo '<thead>
+        <tr>
+            <th data-sortable="true" onclick="sortTable(0)">Nimi</th>
+            <th data-sortable="true" onclick="sortTable(1)">Numero</th>
+            <th data-sortable="true" onclick="sortTable(2)">Puhelinnumero</th>
+            <th data-sortable="true" onclick="sortTable(3)">Sähköposti</th>
+            <th data-sortable="true" onclick="sortTable(4)">Yritys</th>
+            <th data-sortable="true" onclick="sortTable(5)">Ensiapu</th>
+            <th data-sortable="true" onclick="sortTable(6)">Tilanneturvallisuus</th>
+        </tr>
+    </thead>';
         echo '<tbody>';
         foreach ($users as $user) {
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
@@ -195,6 +208,7 @@ function display_all_user_profiles_shortcode($atts) {
             if (!empty($tilanne_koulutus)) {
                 $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
             }
+            $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
             ?>
             <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>" data-title="<?php echo esc_attr(get_user_meta($user->ID,'titteli',true)); ?>">
                 <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
@@ -288,7 +302,84 @@ function filterProfiles() {
         profile.classList.add('current-user');
     }
 });
+function sortTable(columnIndex) {
+    var table = document.querySelector('.user-profiles-table');
+    var rows = Array.from(table.querySelectorAll('tbody tr'));
+    var isAscending = table.getAttribute('data-sort-order') === 'asc';
+    
+    // Reset sorting indicators on all headers
+    table.querySelectorAll('th').forEach(function (th) {
+        th.classList.remove('sort-asc', 'sort-desc');
+    });
+
+    // Apply the active class to the clicked header
+    var activeHeader = table.querySelectorAll('th')[columnIndex];
+    activeHeader.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
+
+    rows.sort(function (rowA, rowB) {
+        var cellA = rowA.querySelectorAll('td')[columnIndex].textContent.trim().toLowerCase();
+        var cellB = rowB.querySelectorAll('td')[columnIndex].textContent.trim().toLowerCase();
+
+        if (!isNaN(Date.parse(cellA)) && !isNaN(Date.parse(cellB))) {
+            return isAscending
+                ? new Date(cellA) - new Date(cellB)
+                : new Date(cellB) - new Date(cellA);
+        }
+
+        if (!isNaN(cellA) && !isNaN(cellB)) {
+            return isAscending ? cellA - cellB : cellB - cellA;
+        }
+
+        return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+    });
+
+    var tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+    rows.forEach(function (row) {
+        tbody.appendChild(row);
+    });
+
+    table.setAttribute('data-sort-order', isAscending ? 'desc' : 'asc');
+}
 </script>
+<style>
+/* Add a pointer cursor to indicate interactivity */
+.user-profiles-table th[data-sortable="true"] {
+    cursor: pointer;
+    background-color: #f8f9fa; /* Light background to differentiate */
+    position: relative; /* For adding sort icons */
+}
+
+/* Highlight column headers on hover */
+.user-profiles-table th[data-sortable="true"]:hover {
+    background-color: #e2e6ea; /* Slightly darker shade */
+    color: #007bff; /* Change text color for emphasis */
+}
+
+/* Sort icons */
+.user-profiles-table th[data-sortable="true"]::after {
+    content: '▲▼'; /* Placeholder sort arrows */
+    font-size: 0.8em;
+    color: #6c757d;
+    position: absolute;
+    right: 10px; /* Space between text and icon */
+    opacity: 0.5;
+}
+
+/* Active sort (ascending) */
+.user-profiles-table th[data-sortable="true"].sort-asc::after {
+    content: '▲'; /* Show only ascending arrow */
+    opacity: 1;
+    color: #007bff; /* Highlight active sort */
+}
+
+/* Active sort (descending) */
+.user-profiles-table th[data-sortable="true"].sort-desc::after {
+    content: '▼'; /* Show only descending arrow */
+    opacity: 1;
+    color: #007bff; /* Highlight active sort */
+}
+</style>
     <?php
 
     return ob_get_clean();
@@ -388,13 +479,14 @@ gap: 20px;
             border: 1px solid #ddd;
             text-align: left;
         }
-.user-profile .vip-crown {
+.user-profile .vip-crown{
             position: absolute;
             top: -15px;
             right: 0px;
             font-size: 24px;
             color: gold;
         }
+            
                 .biography textarea {
         resize: both;
         min-height: 80px;
@@ -409,8 +501,7 @@ gap: 20px;
             color: #555;
             font-style: italic;
         }
-
-
+            
 </style>
     ";
 }
