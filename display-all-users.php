@@ -110,19 +110,21 @@ function display_all_user_profiles_shortcode($atts) {
                     <?php if ($vip_member): ?>
                         <span class="vip-crown">&#x1F451;</span>
                         <?php endif; ?>
-                        <?php if (!empty($vip_member_info)) : ?>
-                    <div class="biography">
-                        <textarea id="vip_member_info" name="vip_member_info" disabled><?php echo esc_textarea($vip_member_info); ?></textarea>   
-                        </div>
-                        <?php endif; ?>
+ 
                         <?php if ($last_login) : ?>
     <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
 <?php else : ?>
     <span class="last-login">Ei sisäänkirjautumistietoja</span>
 <?php endif; ?>
+
                 </div>
                 <div class="user-details">
                     <h2><?php echo esc_html($user->display_name); ?></h2>
+                    <?php if (!empty($vip_member_info)) : ?>
+                    <div class="biography">
+                        <textarea id="vip_member_info" name="vip_member_info" disabled><?php echo esc_textarea($vip_member_info); ?></textarea>   
+                        </div>
+                        <?php endif; ?>
                     <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
                     <?php if(!empty($user->titteli)): ?>
                     <p><strong>Titteli:</strong> <?php echo esc_html($titteli); ?></p>
@@ -407,6 +409,13 @@ function display_user_profiles_styles() {
     .user-profiles-table a {
         color: #0073aa;
         text-decoration: none;
+    }
+        .biography textarea {
+        resize: vertical;
+        min-height: 80px;
+        overflow: auto; 
+        max-width:100%;
+        box-sizing:border-box;
     }
 
     .user-profiles-table a:hover {

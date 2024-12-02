@@ -270,8 +270,13 @@ $style = "
         margin-bottom: 5px;
     }
     .biography textarea {
-        resize: vertical;
+        resize: both;
         min-height: 80px;
+        overflow: auto; 
+        position:relative;
+        z-index:10000;
+        max-width:100%;
+        box-sizing:border-box;
     }
 
     /* Visibility options */

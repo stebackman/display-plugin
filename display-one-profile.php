@@ -139,7 +139,7 @@ function display_user_profile_styles() {
         .biography textarea {
             width: 100%;
             height: 80px;
-            resize: none;
+            resize: both;
         }
             .view-profile-button {
             display: inline-block;
