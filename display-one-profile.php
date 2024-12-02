@@ -53,19 +53,20 @@ function display_selected_user_profile_shortcode() {
     ?>
     
     <div class="user-profile">
-    <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Näytä kaikki profiilit</a></p>
+    <a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>"><p class="view-profile-button">Näytä kaikki profiilit</p></a>
     <div class="user-profile"> 
         <div class="user-avatar">
             <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->user_login); ?>'s Profile Picture">
             <?php if ($vip_member): ?>
                 <span class="vip-crown">&#x1F451;</span>
                 <?php endif; ?>
+        </div>
                 <?php if ($last_login) : ?>
     <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
 <?php else : ?>
     <span class="last-login">Ei kirjautumistietoja</span>
 <?php endif; ?>
-            </div>
+            
         <div class="user-details">
             <h2><?php echo esc_html($user->user_login); ?></h2>
             <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
@@ -114,6 +115,16 @@ function display_user_profile_styles() {
             margin: 20px auto;
             text-align: center;
         }
+
+        .user-info p {
+            font-family: 'Montserrat', sans-serif;
+            margin: auto;
+        }
+
+        .user-info h1, h2, h3, h4, h5, h6 {
+            font-family: 'EB Garamond', serif;
+        }
+
         .user-avatar {
             margin-bottom: 15px;
             text-align:center;
@@ -125,6 +136,7 @@ function display_user_profile_styles() {
             width: 100px;
             height: 100px;
             object-fit: cover;
+
         }
         .user-details h2 {
             font-size: 1.25em;
@@ -140,32 +152,43 @@ function display_user_profile_styles() {
             width: 100%;
             height: 80px;
             resize: both;
+            font-family: 'Montserrat', sans-serif;
         }
-            .view-profile-button {
+        .view-profile-button {
             display: inline-block;
-            padding: 8px 12px;
+            padding: 0px 20px;
             color: #1F2518;
-            background-color: #E2C274;
-            border-radius: 5px;
+            width: 12rem;
+            font-weight: bold;
+            background-color: #e2c275;
+            border-radius: 10px;
             text-decoration: none;
+            box-shadow: 0.1rem 0.2rem 3px #5a6142;
+            text-align: center;
+            margin: 0 auto; 
+margin-bottom: 10px;
+
         }
-            .view-profile-button:hover {
+        .view-profile-button:hover {
             background-color: #1F2518;
+            color: #e2c275;
         }
-            .vip-crown {
+
+        .user-avatar .vip-crown {
             position: absolute;
-            top: -10px;
-            right: -10px;
+            top: -15px;
+            right: -5px;
             font-size: 24px;
             color: gold;
-}
-              .last-login {
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
-    font-style: italic;
-}
+        }
+        .last-login {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+            font-style: italic;
+        }
+
     </style>
     ";
 }

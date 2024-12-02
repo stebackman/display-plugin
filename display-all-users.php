@@ -110,14 +110,14 @@ function display_all_user_profiles_shortcode($atts) {
                     <?php if ($vip_member): ?>
                         <span class="vip-crown">&#x1F451;</span>
                         <?php endif; ?>
- 
+                </div>
                         <?php if ($last_login) : ?>
     <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
 <?php else : ?>
     <span class="last-login">Ei sisäänkirjautumistietoja</span>
 <?php endif; ?>
 
-                </div>
+            
                 <div class="user-details">
                     <h2><?php echo esc_html($user->display_name); ?></h2>
                     <?php if (!empty($vip_member_info)) : ?>
@@ -181,14 +181,12 @@ function display_all_user_profiles_shortcode($atts) {
 
         // Table structure for list view
         echo '<table class="user-profiles-table" style="display:none;">';
-        echo '<thead><tr><th>Etunimi</th><th>Sukunim</th><th>Sähköposti</th><th>Puhelinnumero</th><th>Osasto</th><th>Moottoripyörä</th><th>Yritys</th><th>Ensiapu</th><th>Tilanneturvallisuus</th><th>Kuvailu</th></tr></thead>';
+        echo '<thead><tr><th>Nimi</th><th>Numero</th><th>Puhelinnumero</th><th>Sähköposti</th><th>Yritys</th><th>Ensiapu</th><th>Tilanneturvallisuus</th></tr></thead>';
         echo '<tbody>';
         foreach ($users as $user) {
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
-            $biographical_excerpt= wp_trim_words($biographical_info,20,'...');
-            $profile_url=site_url('/view-profile(?user_id=' . $user->ID);
             $first_aid=get_user_meta($user->ID,'first_aid',true);
             if (!empty($first_aid)){
                 $first_aid = date('d.m.Y',strtotime($first_aid));
@@ -199,19 +197,13 @@ function display_all_user_profiles_shortcode($atts) {
             }
             ?>
             <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>" data-title="<?php echo esc_attr(get_user_meta($user->ID,'titteli',true)); ?>">
-                <td><?php echo esc_html($user->first_name); ?></td>
-                <td><?php echo esc_html($user->last_name); ?></td>
-                <td><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></td>
+                <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
+                <td><?php echo esc_html(($custom_user_id)); ?></p></td>
                 <td><?php echo (!$hide_phone_number) ? esc_html(get_user_meta($user->ID, 'phone_number', true)) : 'Private'; ?></td>
-                <td><?php echo esc_html(get_user_meta($user->ID, 'department', true)); ?></td>
-                <td><?php echo esc_html($user->motorcycle); ?></td>
+                <td><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></td>
                 <td><?php echo esc_html($user->company); ?></td>
                 <td><?php if (!empty($first_aid) && $first_aid!== '01.01.1970'): echo $first_aid; endif;?></td>
                 <td><?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : echo $tilanne_koulutus; endif;?> </td>
-                <td><?php echo esc_html($biographical_excerpt); ?>
-                <?php if (str_word_count($biographical_info)>20) : ?>
-                    <a href="<?php echo esc_url(add_query_arg('user', $user->display_name, get_permalink(get_page_by_path('view-profile')))); ?>">Lue koko tarina käyttäjän profiilisivulla</a>
-                <?php endif; ?></td>
 
             </tr>
             <?php
@@ -307,120 +299,117 @@ add_shortcode('display_all_user_profiles', 'display_all_user_profiles_shortcode'
 function display_user_profiles_styles() {
     echo "
 <style>
-    .user-profiles {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
+.user-profiles {
+display: flex;
+flex-wrap: wrap;
+gap: 20px;
+        }
 
-    .user-profile {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 20px;
-        background-color: #f9f9f9;
-        max-width: 300px;
-        flex: 1 1 calc(33% - 40px);
-        position: relative;
-    }
+        a {
+            text-decoration: none;
+        }
+        .user-profile {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            max-width: 300px;
+            flex: 1 1 calc(33% - 40px);
+            box-shadow: 0.1rem 0.2rem 5px #5a6142;
+        }
 
-    .user-avatar {
-        margin-bottom: 15px;
-        text-align: center;
-        position: relative;
-        display: inline-block;
-    }
+        .user-avatar {
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+        }
+        .user-avatar img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            box-shadow: 0.1rem 0.2rem 3px #5a6142;
 
-    .user-avatar img {
-        border-radius: 50%;
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-    }
+        }
+        .user-profile h2 {
+            font-size: 1.25em;
+            margin: 0 0 10px;
+            font-family: 'EB Garamond', serif;
 
-    .user-details h2 {
-        font-size: 1.25em;
-        margin: 0 0 10px;
-    }
+        }
+        .user-profile p {
+            margin: 5px 0;
+            font-family: 'Montserrat', sans-serif;
 
-    .user-details p {
-        margin: 5px 0;
-    }
-
-    .view-profile-button {
-        display: inline-block;
-        padding: 8px 12px;
-        color: #1F2518;
-        background-color: #E2C274;
-        border-radius: 5px;
-        text-decoration: none;
-    }
-
-    .view-profile-button:hover {
-        background-color: #1F2518;
-    }
-
-    .edit-profile-button {
-        display: inline-block;
-        padding: 8px 12px;
-        color: #1F2518;
-        background-color: #e2c274;
-        border-radius: 5px;
-        text-decoration: none;
-    }
-
-    .edit-profile-button:hover {
-        background-color: #1F2518;
-    }
-
-    /* Highlight the user's own profile */
+        }
+        .view-profile-button a {
+            display: inline-block;
+            padding: 0px 20px;
+            color: #1F2518;
+            width: 12rem;
+            font-weight: bold;
+            background-color: #E2C275;
+            border-radius: 10px;
+            text-decoration: none;
+            box-shadow: 0.1rem 0.2rem 3px #5a6142;
+        }
+        .view-profile-button a:hover {
+            background-color: #1F2518;
+            color: #e2c275;
+        }
+        .edit-profile-button {
+           display: inline-block;
+            padding: 0px 20px;
+            color: #1F2518;
+            width: 12rem;
+            font-weight: bold;
+            background-color: #E2C275;
+            border-radius: 10px;
+            text-decoration: none;
+            box-shadow: 0.1rem 0.2rem 3px #5a6142;
+        }
+        .edit-profile-button:hover {
+            background-color: #1F2518;
+            color: #e2c275;
+        }
+ /* Highlight the user's own profile */
     .user-profile.current-user {
-        background-color: #fff7d1; /* Light yellow background */
+        background-color: #e2c275; /* Light yellow background */
         border: 2px solid #e2c274; /* Distinct border color */
     }
-
-    /* Styles for table view */
-    .user-profiles-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .user-profiles-table th,
-    .user-profiles-table td {
-        padding: 10px;
-        border: 1px solid #ddd;
-        text-align: left;
-    }
-
-    .vip-crown {
-        position: absolute;
-        top: 10px;
-        right: 15px; /* Adjust closer to the image */
-        font-size: 20px; /* Slightly smaller */
-        color: gold;
-    }
-
-    .last-login {
-        display: block;
-        margin-top: 10px;
-        font-size: 14px;
-        color: #555;
-        font-style: italic;
-    }
-    .user-profiles-table a {
-        color: #0073aa;
-        text-decoration: none;
-    }
-        .biography textarea {
-        resize: vertical;
+        /* Styles for table view */
+        .user-profiles-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .user-profiles-table th, .user-profiles-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+.user-profile .vip-crown {
+            position: absolute;
+            top: -15px;
+            right: 0px;
+            font-size: 24px;
+            color: gold;
+        }
+                .biography textarea {
+        resize: both;
         min-height: 80px;
         overflow: auto; 
         max-width:100%;
         box-sizing:border-box;
     }
+        .last-login {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+            font-style: italic;
+        }
 
-    .user-profiles-table a:hover {
-        text-decoration: underline;
-    }
 
 </style>
     ";

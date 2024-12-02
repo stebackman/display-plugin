@@ -188,7 +188,16 @@ function display_user_info_shortcode() {
 
 $style = "
 <style>
-   /* Container for user info and profile details */
+  /* Container for user info and profile details */
+
+    .user-info p {
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .user-info h1, h2, h3, h4, h5, h6 {
+        font-family: 'EB Garamond', serif;
+    }
+
     .user-info {
         display: flex;
         flex-direction: column;
@@ -198,9 +207,9 @@ $style = "
         margin: 20px auto;
         border: 1px solid #ddd;
         border-radius: 8px;
+        text-decoration: none;
         background-color: #f3f3f3;
-        font-family: Arial, sans-serif;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0.1rem 0.2rem 5px #5a6142;
     }
 
     /* Avatar section */
@@ -217,10 +226,10 @@ $style = "
         object-fit: cover;
         margin-bottom: 10px;
     }
-    .vip-crown {
+    .user-avatar .vip-crown {
         position: absolute;
-        top: -10px;
-        right: -10px;
+        top: -15px;
+        right: 230px;
         font-size: 24px;
         color: gold;
     }
@@ -250,6 +259,7 @@ $style = "
         color: #333;
         box-sizing: border-box;
     }
+
     .user-details input:focus,
     .user-details select:focus,
     .user-details textarea:focus {
@@ -263,91 +273,90 @@ $style = "
         border-top: 1px solid #ddd;
         padding-top: 10px;
         margin-top: 15px;
+        font-size: 16px;
+
     }
     .biography label {
         display: block;
         font-weight: bold;
         margin-bottom: 5px;
+        color: #555;
     }
     .biography textarea {
-        resize: both;
+        resize: vertical;
         min-height: 80px;
-        overflow: auto; 
-        position:relative;
-        z-index:10000;
-        max-width:100%;
-        box-sizing:border-box;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .biography .visibility-options h4 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: bold;
+        font-size: 16px;
+        color: #555;
     }
 
     /* Visibility options */
     .visibility-options {
         border-top: 1px solid #ddd;
-        padding-top: 10px;
+        padding-top: 0px;
         margin-top: 15px;
+ 
     }
     .visibility-options label {
         display: block;
         margin: 5px 0;
         color: #444;
+        font-weight: normal;    
     }
 
     /* Action buttons */
     .update-button,
     .reset-password-button {
         display: inline-block;
-        padding: 10px 20px;
-        color: #fff;
-        background-color: #0073aa;
+        padding: 5px 20px;
+        color: #e7e6da;
+         width: 12rem;
+        font-weight: bold;
         border: none;
-        border-radius: 5px;
+        border-radius: 10px;
         cursor: pointer;
         transition: background-color 0.3s ease;
         font-size: 1em;
         margin-top: 15px;
         width: calc(50% - 10px);
         box-sizing: border-box;
+        box-shadow: 0.1rem 0.2rem 3px #5a6142;
     }
     .reset-password-button {
-        background-color: #d9534f;
+        background-color: #734e30;
+         color: #e7e6da;
     }
-    .update-button:hover,
-    .reset-password-button:hover {
-        background-color: #005177;
+     .reset-password-button:hover {
+        background-color: #5d3f27;
     }
-    .reset-password-button:hover {
-        background-color: #b52b2b;
+    .update-button {
+        background-color: #e2c275;
+         color: #1f2518;
     }
-
-    /* Link button */
-    .view-profile-button a {
-        display: inline-block;
-        text-decoration: none;
-        padding: 10px 15px;
-        background-color: #6c757d;
-        color: #fff;
-        border-radius: 5px;
-        margin-top: 10px;
-        transition: background-color 0.3s ease;
+    .update-button:hover {
+        background-color: #c79a55;
     }
-    .view-profile-button a:hover {
-        background-color: #495057;
-    }
-        .update-success {
+    .update-success {
             margin: 20px auto;
             padding: 10px;
             max-width: 600px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: #a4ac86;
+            color: #5a6142;
+            border: 1px solid #5a6142;
             border-radius: 5px;
             font-size: 1em;
             text-align: center;
         }
-.success-message {
-    color: green;
-    font-weight: bold;
-    margin-top: 20px;
-}
+        .success-message {
+            color: #5a6142;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
 </style>
 ";
   // Retrieve the profile picture, phone number, department, and biographical info
@@ -401,7 +410,7 @@ $style = "
 </script>
     <form method="POST" enctype="multipart/form-data">
         <div class="user-info">
-        <p class="view-profile-button"><a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>">Näytä kaikki profiilit</a></p>
+       <a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>"><p class="view-profile-button">Näytä kaikki profiilit</p></a> 
             <div class="user-avatar">
                 <img src="<?php echo esc_url($profile_picture); ?>" alt="Profile Picture">
                 <p><label for="profile_picture">Vaihda profiilikuvaa:</label></p>
@@ -409,7 +418,7 @@ $style = "
                 <?php if ($vip_member): ?>
                         <span class="vip-crown">&#x1F451;</span>
                         <?php endif; ?>
-            </div>
+        
             <div class="user-details">
                 <p><strong>Käyttäjänimi:</strong> <?php echo esc_html($current_user->display_name); ?></p>
                 <p><strong>Etunimi:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
