@@ -18,6 +18,8 @@ require_once('includes/disable-test.php');
 require_once('includes/user-profile-tracker.php');
 
 
-
-
+//update user meta with last login time
+add_action('wp_login', function($user_login, $user) {
+    update_user_meta($user->ID, 'last_login', current_time('mysql'));
+}, 10, 2);
 ?>
