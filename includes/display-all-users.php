@@ -181,34 +181,6 @@ function display_all_user_profiles_shortcode($atts) {
         echo $other_users_profiles;
 
         echo '</div>';
-// Table for "kunniajäsen"
-echo '<table class="honorary-member-table" style="display:none;">';
-echo '<thead>
-        <tr>
-            <th onclick="sortTable(0, \'honorary-member-table\')">Nimi</th>
-            <th onclick="sortTable(1, \'honorary-member-table\')">Kunniajäsennumero</th>
-            <th onclick="sortTable(2, \'honorary-member-table\')">Nimitetty</th>
-        </tr>
-    </thead>';
-echo '<tbody>';
-foreach ($users as $user) {
-    $is_honorary = get_user_meta($user->ID, 'is_honorary', true) === 'yes';
-    if ($is_honorary) {
-        $honorary_number = get_user_meta($user->ID, 'honorary_number', true);
-        $appointed_date = get_user_meta($user->ID, 'appointed_date', true);
-        if (!empty($appointed_date)) {
-            $appointed_date = date('d.m.Y', strtotime($appointed_date));
-        }
-        ?>
-        <tr>
-            <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
-            <td><?php echo esc_html($honorary_number); ?></td>
-            <td><?php echo esc_html($appointed_date); ?></td>
-        </tr>
-        <?php
-    }
-}
-echo '</tbody></table>';
         // Table structure for list view
         echo '<table class="user-profiles-table" style="display:none;">';
         echo '<thead>
