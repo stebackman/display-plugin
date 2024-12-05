@@ -51,9 +51,9 @@ function display_all_user_profiles_shortcode($atts) {
     <button type="submit">Hae</button>
 </form>
 
-    <label for="department">Valitse osasto:</label>
+    <label for="department">Valitse alue:</label>
     <select id="department-filter">
-        <option value="all">Kaikki osastot</option>
+        <option value="all">Kaikki alueet:</option>
         <option value="Pirkanmaa">Pirkanmaa</option>
         <option value="Pohjanmaa">Pohjanmaa</option>
          <option value="Päijät-Häme&Kaakkois-Suomi">Päijät-Häme&Kaakkois-Suomi</option>
@@ -84,7 +84,7 @@ function display_all_user_profiles_shortcode($atts) {
             $department = get_user_meta($user->ID, 'department', true);
             $titteli = get_user_meta($user->ID, 'titteli', true);
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
-
+            $user_email= ($user->user_email);
             // Get the last login timestamp
             $last_login = get_user_meta($user->ID, 'last_login', true);
             //Get first aid and tilannekoulutus:
@@ -133,15 +133,15 @@ function display_all_user_profiles_shortcode($atts) {
                     <p><strong>Titteli:</strong> <?php echo esc_html($titteli); ?></p>
                     <?php endif; ?>
                     <p><strong>Jäsennumero: </strong> <?php echo esc_html(($custom_user_id)); ?></p>
-                   
-                    <?php if (!$hide_email &&(!empty($user->user_email))) : ?>
+                    <?php if (!$hide_email &&(!empty($user_email))) : ?>
                         <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
-                    <?php endif; ?>
+                    
+                   <?php endif; ?>
                     <?php if (!$hide_phone_number &&(!empty($user->phone_number))) : ?>
                         <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
                     <?php endif; ?>
                     <?php if(!empty($user->department)): ?>
-                    <p><strong>Osasto:</strong> <?php echo esc_html($department); ?></p>
+                    <p><strong>Alue:</strong> <?php echo esc_html($department); ?></p>
                     <?php endif; ?>
                     <?php if (!empty($user->motorcycle)) :?>
                     <p><strong>Moottoripyörä:</strong> <?php echo esc_html($user->motorcycle); ?></p>
@@ -181,7 +181,34 @@ function display_all_user_profiles_shortcode($atts) {
         echo $other_users_profiles;
 
         echo '</div>';
-
+// Table for "kunniajäsen"
+echo '<table class="honorary-member-table" style="display:none;">';
+echo '<thead>
+        <tr>
+            <th onclick="sortTable(0, \'honorary-member-table\')">Nimi</th>
+            <th onclick="sortTable(1, \'honorary-member-table\')">Kunniajäsennumero</th>
+            <th onclick="sortTable(2, \'honorary-member-table\')">Nimitetty</th>
+        </tr>
+    </thead>';
+echo '<tbody>';
+foreach ($users as $user) {
+    $is_honorary = get_user_meta($user->ID, 'is_honorary', true) === 'yes';
+    if ($is_honorary) {
+        $honorary_number = get_user_meta($user->ID, 'honorary_number', true);
+        $appointed_date = get_user_meta($user->ID, 'appointed_date', true);
+        if (!empty($appointed_date)) {
+            $appointed_date = date('d.m.Y', strtotime($appointed_date));
+        }
+        ?>
+        <tr>
+            <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
+            <td><?php echo esc_html($honorary_number); ?></td>
+            <td><?php echo esc_html($appointed_date); ?></td>
+        </tr>
+        <?php
+    }
+}
+echo '</tbody></table>';
         // Table structure for list view
         echo '<table class="user-profiles-table" style="display:none;">';
         echo '<thead>
@@ -220,6 +247,7 @@ function display_all_user_profiles_shortcode($atts) {
                 <td><?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : echo $tilanne_koulutus; endif;?> </td>
 
             </tr>
+            
             <?php
         }
         echo '</tbody></table>';

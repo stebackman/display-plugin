@@ -78,7 +78,7 @@ function display_selected_user_profile_shortcode() {
             <?php if (!$hide_phone_number) : ?>
                 <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
             <?php endif; ?>
-            <p><strong>Osasto:</strong> <?php echo esc_html($department); ?></p>
+            <p><strong>Alue:</strong> <?php echo esc_html($department); ?></p>
             <p><strong>Yritys:</strong><?php echo esc_html($company);?></p>
             <p><strong>Moottoripyörä:</strong><?php echo esc_html($motorcycle);?></p>
             <div class="biography">

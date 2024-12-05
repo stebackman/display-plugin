@@ -49,7 +49,7 @@ function custom_user_profile_fields($user) {
             </td>
         </tr>
         <tr>
-    <th><label for="department">Osasto</label></th>
+    <th><label for="department">Alue</label></th>
     <td>
         <?php $department = get_user_meta($user->ID, 'department', true); ?>
         <select id="department" name="department">
@@ -141,10 +141,19 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['first_name','last_name','phone_number', 'titteli', 'home_address', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','user_email','phone_number','titteli','osoite','postinumero','postitoimipaikka', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
-                update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
+                if ($field === 'user_email') {
+                    // Update user email separately
+                    $user_data = [
+                        'ID'         => $user_id,
+                        'user_email' => sanitize_email($_POST[$field]),
+                    ];
+                    wp_update_user($user_data);
+                } else {
+                    update_user_meta($user_id, $field, sanitize_text_field($_POST[$field]));
+                }
             }
         }
         //Handle first aid
@@ -377,8 +386,6 @@ $style = "
     $custom_user_id = get_user_meta($current_user->ID, 'custom_user_id', true);
     $vip_member= get_user_meta($current_user->ID,'vip_member',true)==='yes';
 
-
-
     $first_aid= get_user_meta($current_user->ID,'first_aid',true);
     if (!empty($first_aid)) {
         $first_aid = date('d.m.Y', strtotime($first_aid)); 
@@ -428,12 +435,12 @@ $style = "
                 <p><strong>Sukunimi:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
                 <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
-                <p><strong>Sähköposti:</strong> <?php echo esc_html($current_user->user_email); ?></p>
+                <p><strong>Sähköposti:</strong> <input type="text" name="user_email" value="<?php echo esc_attr($current_user->user_email); ?>" class="regular-text"></p>
                 <p><strong>Puhelinnumero:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
                 <p><strong>Osoite:</strong> <input type="text" name="osoite" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
                 <p><strong>Postinumero:</strong> <input type="text" name="postinumero" value="<?php echo esc_attr($zipcode); ?>" class="regular-text"></p>
                 <p><strong>Postitoimipaikka:</strong> <input type="text" name="postitoimipaikka" value="<?php echo esc_attr($city); ?>" class="regular-text"></p>
-                <p> <strong>Osasto:</strong>  <select name="department" id="department">
+                <p> <strong>Alue:</strong>  <select name="department" id="department">
                 <option value="Pirkanmaa" <?php selected($department, 'Pirkanmaa'); ?>>Pirkanmaa</option>
                     <option value="Pohjanmaa" <?php selected($department, 'Pohjanmaa'); ?>>Pohjanmaa</option>
                     <option value="Päijät-Häme&Kaakkois-Suomi" <?php selected($department, 'Päijät-Häme&Kaakkois-Suomi'); ?>>Päijät-Häme&Kaakkois-Suomi</option>
