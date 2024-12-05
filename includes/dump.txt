@@ -1,0 +1,2 @@
+  <td><?php echo esc_html($honorary_number); ?></td>
+            <td><?php echo esc_html($appointed_date); ?></td>

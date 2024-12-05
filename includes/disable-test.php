@@ -21,3 +21,4 @@ function bypass_email_confirmation_for_admin($user_id) {
         clean_user_cache($user_id);
     }
 }
+

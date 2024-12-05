@@ -226,60 +226,115 @@ function display_all_user_profiles_shortcode($atts) {
     } else {
         echo '<p>No user profiles found.</p>';
     }
+    echo '<table class="honorary-member-table" style="display:none;">';
+echo '<thead>
+<tr>
+    <th>Nimi</th>
+    <th>Kunniajäsennumero</th>
+    <th>Nimitetty</th>
+</tr>
+</thead>';
+echo '<tbody>';
 
+foreach ($users as $user) {
+    // Check if the user is an honorary member
+    $title = get_user_meta($user->ID, 'titteli', true);
+    if ($title === 'Kunniajäsen') {
+        $honorary_number = get_user_meta($user->ID, 'honorary_number', true);
+        $appointed_date = get_user_meta($user->ID, 'appointed_date', true);
+        $first_aid=get_user_meta($user->ID,'first_aid',true);
+
+        if (!empty($appointed_date)) {
+            $appointed_date = date('d.m.Y', strtotime($appointed_date));
+            
+        }
+        
+        ?>
+        <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
+            <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
+            <td><?php if (!empty($first_aid) && $first_aid!== '01.01.1970'): echo $first_aid; endif;?></td>
+          
+        </tr>
+        <?php
+    }
+}
+echo '</tbody></table>';
     // JavaScript for view toggle and department filtering
     ?>
    <!-- JavaScript for view toggle, department filtering, and live search functionality -->
 <script>
-    document.getElementById('toggle-view').addEventListener('click', function () {
-        var userProfileContainer = document.querySelector('.user-profiles');
-        var userTableContainer = document.querySelector('.user-profiles-table');
-        var currentView = this.getAttribute('data-view');
+document.getElementById('toggle-view').addEventListener('click', function () {
+    var userProfileContainer = document.querySelector('.user-profiles'); // Grid view
+    var userTableContainer = document.querySelector('.user-profiles-table'); // Regular table view
+    var honoraryTableContainer = document.querySelector('.honorary-member-table'); // Honorary member table view
+    var currentView = this.getAttribute('data-view');
 
-        if (currentView === 'grid') {
-            userProfileContainer.style.display = 'none';
-            userTableContainer.style.display = 'table';
-            this.setAttribute('data-view', 'table');
-            this.textContent = 'Vaihda ruudukkonäkymäksi ';
-        } else {
-            userProfileContainer.style.display = 'flex';
+    if (currentView === 'grid') {
+        // Switch to table view
+        userProfileContainer.style.display = 'none';
+
+        if (document.getElementById('titteli-filter').value === 'Kunniajäsen') {
+            honoraryTableContainer.style.display = 'table';
             userTableContainer.style.display = 'none';
-            this.setAttribute('data-view', 'grid');
-            this.textContent = 'Vaihda taulukkonäkymäksi';
+        } else {
+            userTableContainer.style.display = 'table';
+            honoraryTableContainer.style.display = 'none';
         }
-    });
 
-    document.getElementById('department-filter').addEventListener('change', function () {
-    filterProfiles();
+        this.setAttribute('data-view', 'table');
+        this.textContent = 'Vaihda ruudukkonäkymäksi';
+    } else {
+        // Switch to grid view
+        userProfileContainer.style.display = 'flex';
+        userTableContainer.style.display = 'none';
+        honoraryTableContainer.style.display = 'none';
+
+        this.setAttribute('data-view', 'grid');
+        this.textContent = 'Vaihda taulukkonäkymäksi';
+    }
 });
 
-document.getElementById('titteli-filter').addEventListener('change', function () {
-    filterProfiles();
-});
+document.getElementById('department-filter').addEventListener('change', filterProfiles);
+document.getElementById('titteli-filter').addEventListener('change', filterProfiles);
 
 function filterProfiles() {
     var selectedDepartment = document.getElementById('department-filter').value;
     var selectedTitle = document.getElementById('titteli-filter').value;
-    
-    var profiles = document.querySelectorAll('.user-profile');
-    var rows = document.querySelectorAll('.user-profiles-table tbody tr');
 
+    // Grid view profiles
+    var profiles = document.querySelectorAll('.user-profile'); // Assuming grid view elements have this class
+
+    // Table rows
+    var rows = document.querySelectorAll('.user-profiles-table tbody tr');
+    var honoraryRows = document.querySelectorAll('.honorary-member-table tbody tr');
+
+    // Filter grid view profiles
     profiles.forEach(function(profile) {
         var department = profile.getAttribute('data-department');
         var title = profile.getAttribute('data-title');
-        var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
-        profile.style.display = isVisible ? 'block' : 'none';
+        var isVisible =
+            (selectedDepartment === 'all' || department === selectedDepartment) &&
+            (selectedTitle === 'all' || title === selectedTitle);
+        profile.style.display = isVisible ? 'block' : 'none'; // Adjust to match your grid view structure
     });
 
+    // Filter regular table rows
     rows.forEach(function(row) {
         var department = row.getAttribute('data-department');
         var title = row.getAttribute('data-title');
-        var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
+        var isVisible =
+            (selectedDepartment === 'all' || department === selectedDepartment) &&
+            (selectedTitle === 'all' || title === selectedTitle);
+        row.style.display = isVisible ? '' : 'none';
+    });
+
+    // Filter honorary member rows (only if honorary-member-table is visible)
+    honoraryRows.forEach(function(row) {
+        var department = row.getAttribute('data-department');
+        var isVisible = selectedDepartment === 'all' || department === selectedDepartment;
         row.style.display = isVisible ? '' : 'none';
     });
 }
-
-
     // Live search functionality
     document.getElementById('search-user-input').addEventListener('input', function () {
         var searchTerm = this.value.toLowerCase();
@@ -470,11 +525,11 @@ gap: 20px;
         border: 2px solid #e2c274; /* Distinct border color */
     }
         /* Styles for table view */
-        .user-profiles-table {
+        .user-profiles-table, .honorary-member-table{
             width: 100%;
             border-collapse: collapse;
         }
-        .user-profiles-table th, .user-profiles-table td {
+        .user-profiles-table th, .user-profiles-table td, .honorary-member-table th, .honorary-member-table td  {
             padding: 10px;
             border: 1px solid #ddd;
             text-align: left;
