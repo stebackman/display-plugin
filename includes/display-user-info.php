@@ -11,26 +11,95 @@ License: GPL2
 // Step 1: Add custom fields to the user profile
 function custom_user_profile_fields($user) {
     ?>
+    <!-- Table 1: Profiili -->
     <h3>Profiili</h3>
     <table class="form-table">
-    <tr>
-    <th><label for="titteli">Titteli</label></th>
-    <td>
-        <?php $titteli = get_user_meta($user->ID, 'titteli', true); ?>
-        <select id="titteli" name="titteli">
-            <option value="Puheenjohtaja" <?php selected($titteli, 'Puheenjohtaja', true); ?>>Puheenjohtaja</option>
-            <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
-            <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
-            <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
-        </select>
-    </td>
-</tr>
+        <tr>
+            <th><label for="titteli">Titteli</label></th>
+            <td>
+                <?php $titteli = get_user_meta($user->ID, 'titteli', true); ?>
+                <select id="titteli" name="titteli">
+                    <option value="Puheenjohtaja" <?php selected($titteli, 'Puheenjohtaja', true); ?>>Puheenjohtaja</option>
+                    <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
+                    <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
+                    <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
+                </select>
+            </td>
+        </tr>
+        <?php if ($titteli === "Kunniajäsen"):?>
+        <tr>
+            <th><label for="vip_member">Vuoden kunniajäsen</label></th>
+            <td>
+                <input type="checkbox" name="vip_member" id="vip_member" value="yes" <?php checked(get_user_meta($user->ID, 'vip_member', true), 'yes'); ?>>
+                <label for="vip_member">Lisää kruunu profiilikuvaan</label>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="vip_member_info">Tähän laatikkoon voi halutessaan kirjoittaa tietoa kunniajäsenestä. HUOM! Näytetään verkkosivuilla kaikille!</label></th>
+            <td>
+                <textarea name="vip_member_info" id="vip_member_info" rows="5" class="regular-text"><?php echo esc_textarea(get_user_meta($user->ID, 'vip_member_info', true)); ?></textarea>
+            </td>
+        </tr>
+        <?php endif; ?>
+        <tr>
             <th><label for="phone_number">Puhelinnumero</label></th>
             <td>
                 <input type="text" name="phone_number" id="phone_number" value="<?php echo esc_attr(get_user_meta($user->ID, 'phone_number', true)); ?>" class="regular-text">
             </td>
         </tr>
         <tr>
+            <th><label for="company">Yritys</label></th>
+            <td>
+                <input type="text" name="company" id="company" value="<?php echo esc_attr(get_user_meta($user->ID, 'company', true)); ?>" class="regular-text">
+            </td>
+        </tr>
+        <tr>
+            <th><label for="motorcycle">Moottoripyörä</label></th>
+            <td>
+                <input type="text" name="motorcycle" id="motorcycle" value="<?php echo esc_attr(get_user_meta($user->ID, 'motorcycle', true)); ?>" class="regular-text">
+            </td>
+        </tr>
+        <tr>
+            <th><label for="department">Alue</label></th>
+            <td>
+                <?php $department = get_user_meta($user->ID, 'department', true); ?>
+                <select id="department" name="department">
+                    <option value="Pirkanmaa" <?php selected($department, 'Pirkanmaa', true); ?>>Pirkanmaa</option>
+                    <option value="Pohjanmaa" <?php selected($department, 'Pohjanmaa', true); ?>>Pohjanmaa</option>
+                    <option value="Päijät-Häme&Kaakkois-Suomi" <?php selected($department, 'Päijät-Häme&Kaakkois-Suomi', true); ?>>Päijät-Häme&Kaakkois-Suomi</option>
+                    <option value="Uusimaa" <?php selected($department, 'Uusimaa', true); ?>>Uusimaa</option>
+                    <option value="Varsinais-Suomi" <?php selected($department, 'Varsinais-Suomi', true); ?>>Varsinais-Suomi</option>
+                </select>
+            </td>
+        </tr>
+               <tr>
+            <th><label for="biographical_info">Tähän laatikkoon käyttäjä voi lisätä hieman tietoa itsestään</label></th>
+            <td>
+                <textarea name="biographical_info" id="biographical_info" rows="5" class="regular-text"><?php echo esc_textarea(get_user_meta($user->ID, 'biographical_info', true)); ?></textarea>
+            </td>
+        </tr>
+    </table>
+<!-- Table 2: Laskutustiedot -->
+<h3>Laskutustiedot</h3>
+<table class="form-table">
+<tr>
+            <th><label for="use_different_invoice_email"><?php _e("Laskutus-sposti eroaa käyttäjä-spostista", "custom-invoice-email"); ?></label></th>
+            <td>
+                <input type="checkbox" name="use_different_invoice_email" id="use_different_invoice_email" value="1" <?php checked(get_user_meta($user->ID, 'use_different_invoice_email', true), '1'); ?> />
+                <span class="description"><?php _e("Check this box if you want to use a different email for invoices.", "custom-invoice-email"); ?></span>
+            </td>
+        </tr>
+        
+        <tr id="invoice_email_row" style="display: <?php echo (get_user_meta($user->ID, 'use_different_invoice_email', true) == '1') ? 'table-row' : 'none'; ?>;">
+            <th><label for="invoice_email"><?php _e("Laskutus-sposti", "custom-invoice-email"); ?></label></th>
+            <td>
+                <input type="email" name="invoice_email" id="invoice_email" value="<?php echo esc_attr(get_user_meta($user->ID, 'invoice_email', true)); ?>" class="regular-text" />
+                <span class="description"><?php _e("Enter a different email address for invoices (if checked above).", "custom-invoice-email"); ?></span>
+            </td>
+        </tr>
+    <tr>
+  
+
             <th><label for="osoite">Osoite</label></th>
             <td>
                 <input type="text" name="osoite" id="osoite" value="<?php echo esc_attr(get_user_meta($user->ID, 'osoite', true)); ?>" class="regular-text">
@@ -48,69 +117,36 @@ function custom_user_profile_fields($user) {
                 <input type="text" name="postitoimipaikka" id="postitoimipaikka" value="<?php echo esc_attr(get_user_meta($user->ID, 'postitoimipaikka', true)); ?>" class="regular-text">
             </td>
         </tr>
-        <tr>
-    <th><label for="department">Alue</label></th>
-    <td>
-        <?php $department = get_user_meta($user->ID, 'department', true); ?>
-        <select id="department" name="department">
-        <option value="Pirkanmaa" <?php selected($department, 'Pirkanmaa', true); ?>>Pirkanmaa</option>    
-        <option value="Pohjanmaa" <?php selected($department, 'Pohjanmaa', true); ?>>Pohjanmaa</option>
-        <option value="Päijät-Häme&Kaakkois-Suomi" <?php selected($department, 'Päijät-Häme&Kaakkois-Suomi', true); ?>>Päijät-Häme&Kaakkois-Suomi</option>
-        <option value="Uusimaa" <?php selected($department, 'Uusimaa', true); ?>>Uusimaa</option>
-        <option value="Varsinais-Suomi" <?php selected($department, 'Varsinais-Suomi', true); ?>>Varsinais-Suomi</option>
-    </select>
-    </td>
-</tr>
-        <tr>
-            <th><label for="company">Yritys</label></th>
-            <td>
-                <input type="text" name="company" id="company" value="<?php echo esc_attr(get_user_meta($user->ID, 'company', true)); ?>" class="regular-text">
-            </td>
-        </tr>
-        <tr>
-            <th><label for="motorcycle">Moottoripyörä</label></th>
-            <td>
-                <input type="text" name="motorcycle" id="motorcycle" value="<?php echo esc_attr(get_user_meta($user->ID, 'motorcycle', true)); ?>" class="regular-text">
-            </td>
-        </tr>
-        <?php if (current_user_can('administrator')) : ?>
+    </table>
+
+    <!-- Table 3: Koulutukset -->
+    <h3>Koulutukset</h3>
+    <table class="form-table">
         <tr>
             <th><label for="first_aid">Ensiapukoulutus suoritettu:</label></th>
             <td>
-            <input type="date" name="first_aid" id="first_aid" 
-            value="<?php echo esc_attr(get_user_meta($user->ID, 'first_aid', true)); ?>">
-                
+                <input type="date" name="first_aid" id="first_aid" value="<?php echo esc_attr(get_user_meta($user->ID, 'first_aid', true)); ?>">
             </td>
         </tr>
         <tr>
             <th><label for="tilanne_koulutus">Tilannejohtamiskoulutus suoritettu</label></th>
             <td>
-            <input type="date" name="tilanne_koulutus" id="tilanne_koulutus" 
-       value="<?php echo esc_attr(get_user_meta($user->ID, 'tilanne_koulutus', true)); ?>">
-            </td>
-        </tr>     
-        <tr>       
-            <th><label for="vip_member">Vuoden kunniajäsen</label></th>
-            <td>
-                <input type="checkbox" name="vip_member" id="vip_member" value="yes" <?php checked(get_user_meta($user->ID, 'vip_member', true), 'yes'); ?>>
-                <label for="vip_member">Tämä jäsen on tämän vuoden kunniajäsen</label>
-            </td>
-        </tr>
-        <tr>
-            <th><label for="vip_member_info">Kirjoita halutessasi hieman tekstiä milloin tämä jäsen on nimitetty kunniajäseneksi tms.</label></th>
-            <td>
-                <textarea name="vip_member_info" id="vip_member_info" rows="5" class="regular-text"><?php echo esc_textarea(get_user_meta($user->ID, 'vip_member_info', true)); ?></textarea>
-            </td>
-        </tr>
-
-        <?php endif; ?>
-        <tr>
-            <th><label for="biographical_info">Kerro vähän itsestäsi</label></th>
-            <td>
-                <textarea name="biographical_info" id="biographical_info" rows="5" class="regular-text"><?php echo esc_textarea(get_user_meta($user->ID, 'biographical_info', true)); ?></textarea>
+                <input type="date" name="tilanne_koulutus" id="tilanne_koulutus" value="<?php echo esc_attr(get_user_meta($user->ID, 'tilanne_koulutus', true)); ?>">
             </td>
         </tr>
     </table>
+    <script type="text/javascript">
+        jQuery(document).ready(function($){
+            // Toggle the invoice email input field based on the checkbox
+            $('#use_different_invoice_email').change(function(){
+                if($(this).is(':checked')) {
+                    $('#invoice_email_row').show();
+                } else {
+                    $('#invoice_email_row').hide();
+                }
+            }).trigger('change');
+        });
+    </script>
     <?php
 }
 add_action('show_user_profile', 'custom_user_profile_fields');
@@ -156,24 +192,39 @@ function save_custom_user_profile_fields($user_id) {
                 }
             }
         }
-        //Handle first aid
+
+        // Handle first aid date
         if (isset($_POST['first_aid'])) {
             $date_value = sanitize_text_field($_POST['first_aid']);
             if (!empty($date_value)) {
                 update_user_meta($user_id, 'first_aid', $date_value);
             }
         }
-        
- // Handle tilanne_koulutus
- if (isset($_POST['tilanne_koulutus'])) {
-    $date_value = sanitize_text_field($_POST['tilanne_koulutus']);
-    if (!empty($date_value)) {
-        update_user_meta($user_id, 'tilanne_koulutus', $date_value);
+
+        // Handle tilanne_koulutus date
+        if (isset($_POST['tilanne_koulutus'])) {
+            $date_value = sanitize_text_field($_POST['tilanne_koulutus']);
+            if (!empty($date_value)) {
+                update_user_meta($user_id, 'tilanne_koulutus', $date_value);
+            }
+        }
+        // Save the checkbox value
+    update_user_meta($user_id, 'use_different_invoice_email', isset($_POST['use_different_invoice_email']) ? '1' : '0');
+
+    // Save the invoice email if the checkbox is checked
+    if (isset($_POST['use_different_invoice_email']) && !empty($_POST['invoice_email'])) {
+        update_user_meta($user_id, 'invoice_email', sanitize_email($_POST['invoice_email']));
+    } elseif (!isset($_POST['use_different_invoice_email'])) {
+        // If checkbox is unchecked, set invoice_email to user_email
+        update_user_meta($user_id, 'invoice_email', get_userdata($user_id)->user_email);
     }
-}
+
+        // Handle hide email and phone number
         update_user_meta($user_id, 'hide_email', isset($_POST['hide_email']) ? 'yes' : 'no');
         update_user_meta($user_id, 'hide_phone_number', isset($_POST['hide_phone_number']) ? 'yes' : 'no');
     }
+
+    // Save the last updated timestamp
     update_user_meta($user_id, '_profile_last_updated', current_time('mysql'));
 }
 add_action('personal_options_update', 'save_custom_user_profile_fields');
@@ -386,6 +437,7 @@ $style = "
     $custom_user_id = get_user_meta($current_user->ID, 'custom_user_id', true);
     $vip_member= get_user_meta($current_user->ID,'vip_member',true)==='yes';
 
+
     $first_aid= get_user_meta($current_user->ID,'first_aid',true);
     if (!empty($first_aid)) {
         $first_aid = date('d.m.Y', strtotime($first_aid)); 
@@ -396,7 +448,7 @@ $style = "
         $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
     }
     
-
+    $different_email=get_user_meta($current_user->ID,'different_email',true);
 
     // Retrieve visibility options
     $hide_email = get_user_meta($current_user->ID, 'hide_email', true);
@@ -433,33 +485,33 @@ $style = "
                 <p><strong>Käyttäjänimi:</strong> <?php echo esc_html($current_user->display_name); ?></p>
                 <p><strong>Etunimi:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
                 <p><strong>Sukunimi:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
-                <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
-                <p><strong>Sähköposti:</strong> <input type="text" name="user_email" value="<?php echo esc_attr($current_user->user_email); ?>" class="regular-text"></p>
-                <p><strong>Puhelinnumero:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
-                <p><strong>Osoite:</strong> <input type="text" name="osoite" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
-                <p><strong>Postinumero:</strong> <input type="text" name="postinumero" value="<?php echo esc_attr($zipcode); ?>" class="regular-text"></p>
-                <p><strong>Postitoimipaikka:</strong> <input type="text" name="postitoimipaikka" value="<?php echo esc_attr($city); ?>" class="regular-text"></p>
+                <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
                 <p> <strong>Alue:</strong>  <select name="department" id="department">
                 <option value="Pirkanmaa" <?php selected($department, 'Pirkanmaa'); ?>>Pirkanmaa</option>
                     <option value="Pohjanmaa" <?php selected($department, 'Pohjanmaa'); ?>>Pohjanmaa</option>
                     <option value="Päijät-Häme&Kaakkois-Suomi" <?php selected($department, 'Päijät-Häme&Kaakkois-Suomi'); ?>>Päijät-Häme&Kaakkois-Suomi</option>
                     <option value="Uusimaa" <?php selected($department, 'Uusimaa',true); ?>>Uusimaa</option>
                     <option value="Varsinais-Suomi" <?php selected($department, 'Varsinais-Suomi',true); ?>>Varsinais-Suomi</option></select></p>
+                <p><strong>Käytäjäsähköposti:</strong> <input type="text" name="user_email" value="<?php echo esc_attr($current_user->user_email); ?>" class="regular-text"></p>
+                <p><strong>Puhelinnumero:</strong> <input type="text" name="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text"></p>
                 <p><strong>Yritys:</strong> <input type="text" name="company" value="<?php echo esc_attr($company); ?>" class="regular-text"></p>
                 <p><strong>Moottoripyörä:</strong> <input type="text" name="motorcycle" value="<?php echo esc_attr($motorcycle); ?>" class="regular-text"></p>
-                <?php if (!empty($first_aid) && $first_aid !== '01.01.1970') : ?>
+                <div class="biography">
+                        <label for="biographical_info"> Kerro muille hieman itsestäsi:</label>
+                        <textarea id="biographical_info" name="biographical_info" ><?php echo esc_textarea($biographical_info); ?></textarea>    
+                <p style="text-decoration: underline;"><strong>Koulutukset</strong></p> 
+                  <?php if (!empty($first_aid) && $first_aid !== '01.01.1970') : ?>
                     <p><strong> Ensiapukoulutus suoritettu: <?php echo esc_attr($first_aid); ?> </strong> 
                     <?php endif; ?>
                 <?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : ?>
                     <p><strong>Tilannejohtamiskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
                     <?php endif; ?>
-                <div class="biography">
-                        <label for="biographical_info"> Kerro muille hieman itsestäsi:</label>
-                        <textarea id="biographical_info" name="biographical_info" ><?php echo esc_textarea($biographical_info); ?></textarea>   
-
-                <!-- Other form fields as before -->
-
+                    <p style="text-decoration: underline;"><strong>Laskutustiedot</strong></p>
+                    <label><input type="checkbox" name="different_email" value="yes" <?php checked(get_user_meta(get_current_user_id(), 'different_email', true), 'yes'); ?>> Laskutussähköpostini eroaa käyttäjäsähköpostistani</label>
+                <p><strong>Osoite:</strong> <input type="text" name="osoite" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
+                <p><strong>Postinumero:</strong> <input type="text" name="postinumero" value="<?php echo esc_attr($zipcode); ?>" class="regular-text"></p>
+                <p><strong>Postitoimipaikka:</strong> <input type="text" name="postitoimipaikka" value="<?php echo esc_attr($city); ?>" class="regular-text"></p>
                 <div class="visibility-options">
                     <h4>Profiilin näkyvyysasetukset</h4>
                     <label><input type="checkbox" name="hide_email" value="yes" <?php checked($hide_email, 'yes'); ?>> Piilota sähköpostini muilta käyttäjiltä</label>
@@ -501,6 +553,7 @@ function toggleChangePasswordForm() {
         resetButton.textContent = 'Vaihda salasanaa'; // Reset button text to "Change Password"
     }
 }
+
 </script>
 
 <?php 
