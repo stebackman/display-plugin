@@ -15,7 +15,7 @@ require_once('includes/display-all-users.php');
 require_once('includes/display-one-profile.php');
 require_once('includes/display-user-info.php');
 require_once('includes/disable-test.php');
-
+require_once('includes/user-profile-tracker.php');
 
 
 
