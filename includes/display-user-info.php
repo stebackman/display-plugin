@@ -18,7 +18,6 @@ function custom_user_profile_fields($user) {
             <td>
                 <?php $titteli = get_user_meta($user->ID, 'titteli', true); ?>
                 <select id="titteli" name="titteli">
-                    <option value="Puheenjohtaja" <?php selected($titteli, 'Puheenjohtaja', true); ?>>Puheenjohtaja</option>
                     <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
                     <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
                     <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
@@ -249,14 +248,8 @@ function display_user_info_shortcode() {
 
 $style = "
 <style>
-  /* Container for user info and profile details */
-
-    .user-info p {
-        font-family: 'Montserrat', sans-serif;
-    }
-
-    .user-info h1, h2, h3, h4, h5, h6 {
-        font-family: 'EB Garamond', serif;
+    .user-info p,h1, h2, h3, h4, h5, h6 {
+        font-family: 'Montserrat', serif;
     }
 
     .user-info {
@@ -301,7 +294,7 @@ $style = "
         align-items: center;
         gap: 10px;
         color: #333;
-        font-size: 0.95em;
+        font-size: 12px;
         margin-bottom: 8px;
     }
     .user-details p strong {
@@ -315,7 +308,7 @@ $style = "
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 5px;
-        font-size: 0.95em;
+        font-size: 12px;
         background-color: #fafafa;
         color: #333;
         box-sizing: border-box;
@@ -334,7 +327,7 @@ $style = "
         border-top: 1px solid #ddd;
         padding-top: 10px;
         margin-top: 15px;
-        font-size: 16px;
+        font-size: 12px;
 
     }
     .biography label {
@@ -346,12 +339,12 @@ $style = "
     .biography textarea {
         resize: vertical;
         min-height: 80px;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Montserrat', serif;
     }
     .biography .visibility-options h4 {
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Montserrat', serif;
         font-weight: bold;
-        font-size: 16px;
+        font-size: 12px;
         color: #555;
     }
 
@@ -381,7 +374,7 @@ $style = "
         border-radius: 10px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        font-size: 1em;
+        font-size: 12px;
         margin-top: 15px;
         width: calc(50% - 10px);
         box-sizing: border-box;
@@ -391,32 +384,51 @@ $style = "
         background-color: #734e30;
          color: #e7e6da;
     }
-     .reset-password-button:hover {
-        background-color: #5d3f27;
+    .reset-password-button:hover {
+        background-color: #1f2518;
+        color: #e2c275;
     }
     .update-button {
         background-color: #e2c275;
-         color: #1f2518;
+         color: #1F2518;
     }
     .update-button:hover {
-        background-color: #c79a55;
+         background-color: #1f2518;
+        color: #e2c275;
     }
     .update-success {
-            margin: 20px auto;
-            padding: 10px;
-            max-width: 600px;
-            background-color: #a4ac86;
-            color: #5a6142;
-            border: 1px solid #5a6142;
-            border-radius: 5px;
-            font-size: 1em;
-            text-align: center;
-        }
-        .success-message {
-            color: #5a6142;
-            font-weight: bold;
-            margin-top: 20px;
-        }
+           margin: 20px auto;
+        padding: 10px;
+        max-width: 600px;
+        background-color: #a4ac86;
+        color: #5a6142;
+        border: 1px solid #5a6142;
+        border-radius: 5px;
+        font-size: 12px;
+        text-align: center;
+    }
+    .success-message {
+        color: #5a6142;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+    input[type='submit'] {
+        font-family: 'Montserrat', serif;
+        padding: 5px 20px;
+        background-color: #e2c275;
+        color: #1F2518;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 12px;
+        border: none;
+        cursor: pointer;
+        font-family: 'Montserrat', serif;
+        box-shadow: 0.1rem 0.2rem 3px #5a6142;
+    }   
+    
+    #change-password-form h4 {
+        font-size: 12px;  
+    }
 
 </style>
 ";

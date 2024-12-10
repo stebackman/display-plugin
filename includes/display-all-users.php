@@ -48,8 +48,8 @@ function display_all_user_profiles_shortcode($atts) {
     <form action="" method="get">
     <input type="hidden" name="page_id" value="<?php echo get_the_ID(); ?>" />
     <input type="text" name="search_user" id="search-user-input" placeholder="Hae profiili..." value="<?php echo esc_attr($search_query); ?>" />
-    <button type="submit">Hae</button>
-</form>
+    <button type="submit"><span class="search-icon">&#x1F50D;</span>Hae</button>
+    </form>
 
     <label for="department">Valitse alue:</label>
     <select id="department-filter">
@@ -60,6 +60,7 @@ function display_all_user_profiles_shortcode($atts) {
         <option value="Uusimaa">Uusimaa</option>
         <option value="Varsinais-Suomi">Varsinais-Suomi</option>
     </select>
+    </br>
     <label for="titteli">Valitse titteli:</label>
     <select id="titteli-filter">
         <option value="all">Kaikki tittelit</option>
@@ -125,6 +126,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <h2><?php echo esc_html($user->display_name); ?></h2>
                     <?php if (!empty($vip_member_info)) : ?>
                     <div class="biography">
+                    <img src="<?php echo plugin_dir_url( __DIR__ ); ?>wp-content/plugins/display-user-info/includes/images/exe-logo-nobackround.png" alt="logo" class="biography-logo">
                         <textarea id="vip_member_info" name="vip_member_info" disabled><?php echo esc_textarea($vip_member_info); ?></textarea>   
                         </div>
                         <?php endif; ?>
@@ -445,118 +447,216 @@ add_shortcode('display_all_user_profiles', 'display_all_user_profiles_shortcode'
 function display_user_profiles_styles() {
     echo "
 <style>
-.user-profiles {
-display: flex;
-flex-wrap: wrap;
-gap: 20px;
-        }
-
-        a {
-            text-decoration: none;
-        }
-        .user-profile {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            max-width: 300px;
-            flex: 1 1 calc(33% - 40px);
-            box-shadow: 0.1rem 0.2rem 5px #5a6142;
-        }
-
-        .user-avatar {
-            margin-bottom: 15px;
-            text-align: center;
-            position: relative;
-            display: inline-block;
-        }
-        .user-avatar img {
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            box-shadow: 0.1rem 0.2rem 3px #5a6142;
-
-        }
-        .user-profile h2 {
-            font-size: 1.25em;
-            margin: 0 0 10px;
-            font-family: 'EB Garamond', serif;
-
-        }
-        .user-profile p {
-            margin: 5px 0;
-            font-family: 'Montserrat', sans-serif;
-
-        }
-        .view-profile-button a {
-            display: inline-block;
-            padding: 0px 20px;
-            color: #1F2518;
-            width: 12rem;
-            font-weight: bold;
-            background-color: #E2C275;
-            border-radius: 10px;
-            text-decoration: none;
-            box-shadow: 0.1rem 0.2rem 3px #5a6142;
-        }
-        .view-profile-button a:hover {
-            background-color: #1F2518;
-            color: #e2c275;
-        }
-        .edit-profile-button {
-           display: inline-block;
-            padding: 0px 20px;
-            color: #1F2518;
-            width: 12rem;
-            font-weight: bold;
-            background-color: #E2C275;
-            border-radius: 10px;
-            text-decoration: none;
-            box-shadow: 0.1rem 0.2rem 3px #5a6142;
-        }
-        .edit-profile-button:hover {
-            background-color: #1F2518;
-            color: #e2c275;
-        }
- /* Highlight the user's own profile */
-    .user-profile.current-user {
-        background-color: #e2c275; /* Light yellow background */
-        border: 2px solid #e2c274; /* Distinct border color */
+ .user-profiles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
     }
-        /* Styles for table view */
-        .user-profiles-table, .honorary-member-table{
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .user-profiles-table th, .user-profiles-table td, .honorary-member-table th, .honorary-member-table td  {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-.user-profile .vip-crown{
-            position: absolute;
-            top: -15px;
-            right: 0px;
-            font-size: 24px;
-            color: gold;
-        }
+
+    a {
+        text-decoration: none;
+    }
+    
+    p {
+        font-size: 12px;
+    }
+    
+    .user-profile {
+        border-radius: 8px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        max-width: 300px;
+        flex: 1 1 calc(33% - 40px);
+        box-shadow: 0.1rem 0.2rem 5px #5a6142;
+        background-image: url('wp-content/plugins/display-user-info/includes/images/4.jpg');
+    }
+
+    .user-avatar {
+        margin-bottom: 15px;
+        text-align: center;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .user-avatar img {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        box-shadow: 0.1rem 0.2rem 3px #5a6142;
+    }
+        
+    .user-profile h2 {
+        font-size: 1.25em;
+        margin: 0 0 10px;
+        font-family: 'EB Garamond', serif;
+    }
+
+    .user-profile p {
+        margin: 5px 0;
+        font-family: 'Montserrat', serif;
+    }
+
+    .view-profile-button a {
+        display: inline-block;
+        padding: 5px 20px;
+        color: #1F2518;
+        width: 12rem;
+        font-weight: bold;
+        background-color: #E2C275;
+        border-radius: 8px;
+        text-decoration: none;
+        box-shadow: 0.1rem 0.2rem 3px #5a6142;
+    }
+    
+    .view-profile-button a:hover {
+        background-color: #1F2518;
+        color: #e2c275;
+    }
+        
+    .edit-profile-button {
+        display: inline-block;
+        padding: 5px 20px;
+        color: #1F2518;
+        width: 12rem;
+        font-weight: bold;
+        background-color: #E2C275;
+        border-radius: 8px;
+        text-decoration: none;
+        box-shadow: 0.1rem 0.2rem 3px #5a6142;
+    }
+
+    .edit-profile-button:hover {
+        background-color: #1F2518;
+        color: #e2c275;
+    }
+
+/* Styles for table view */
+        
+    .user-profiles-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .user-profiles-table th, .user-profiles-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .user-profile .vip-crown{
+        position: absolute;
+        top: -15px;
+        right: 0px;
+        font-size: 24px;
+        color: gold;
+    }
             
-                .biography textarea {
+    .biography textarea {
         resize: both;
         min-height: 80px;
         overflow: auto; 
         max-width:100%;
+        padding: 5px;
         box-sizing:border-box;
     }
-        .last-login {
-            display: block;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #555;
-            font-style: italic;
-        }
+    .last-login {
+        display: block;
+        margin-top: 10px;
+        font-size: 12px;
+        color: #555;
+        font-style: italic;
+    }
             
+ /* Highlight the user's own profile */
+
+    .user-profile.current-user {
+    position: relative;
+    box-shadow: 0.1rem 0.2rem 5px #5a6142;
+    border: solid 2px #5a6142;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 1.00), rgba(255, 255, 255, 0.5)), 
+        url('wp-content/plugins/display-user-info/includes/images/6.jpg');
+    background-size: cover;
+    background-position: center;
+}
+    
+    .user-profile.user-profile.current-user p {
+        color: #1F2518;
+        font-weight: bold;
+    }
+
+    #search-user-input {
+        width: 30%; 
+        padding: 5px;
+        margin-bottom: 10px;
+        margin-right: 10px; 
+        box-shadow: 0.1rem 0.2rem 3px #5a6142;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Montserrat', serif;
+    }
+
+    button {
+        padding: 5px 20px;
+        background-color: #e2c275;
+        color: #1F2518;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 0.75rem;
+        border: none;
+        cursor: pointer;
+        font-family: 'Montserrat', serif;
+        box-shadow: 0.1rem 0.2rem 3px #5a6142;
+    }
+
+    button:hover {
+        background-color: #1F2518;
+        color: #e2c275;
+    }
+
+    #toggle-view {
+        margin-right: 10px; 
+        float: right; 
+    }
+
+    label[for='department'], label[for='titteli']  {
+        display: inline-block;
+        width: 120px; 
+        font-size: 14px;
+    }
+
+    select#titteli-filter, select#department-filter {
+        padding: 5px;
+        box-shadow: 0.1rem 0.2rem 3px #5a6142;
+        border-radius: 8px;
+        border: none;
+        margin-bottom: 10px;
+        width: 120px; 
+        font-family: 'Montserrat', serif;
+    }
+
+/* Highlight info field for VIP */
+
+    .biography #vip_member_info {
+        border-left: 4px solid white;  
+        border-right: 4px solid white; 
+        border-bottom: 4px solid white; 
+        border-top: none;  
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        background-color: black;
+        color: #e2c275;
+        margin-top: -40px;
+        box-shadow: inset 0 -1px 0 0 black; 
+    }
+
+    .biography-logo {
+        width: 100%; 
+        height: 100%; 
+        object-fit: contain;  
+        display: block;
+    }  
+         
 </style>
     ";
 }

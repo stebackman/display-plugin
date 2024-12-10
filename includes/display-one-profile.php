@@ -108,7 +108,7 @@ function display_user_profile_styles() {
     <style>
         .user-profile {
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
             padding: 20px;
             background-color: #f9f9f9;
             max-width: 300px;
@@ -117,7 +117,7 @@ function display_user_profile_styles() {
         }
 
         .user-info p {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Montserrat', serif;
             margin: auto;
         }
 
@@ -152,21 +152,21 @@ function display_user_profile_styles() {
             width: 100%;
             height: 80px;
             resize: both;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Montserrat', serif;
         }
         .view-profile-button {
             display: inline-block;
-            padding: 0px 20px;
+            padding: 5px 20px;
             color: #1F2518;
             width: 12rem;
             font-weight: bold;
             background-color: #e2c275;
-            border-radius: 10px;
+            border-radius: 8px;
             text-decoration: none;
             box-shadow: 0.1rem 0.2rem 3px #5a6142;
             text-align: center;
             margin: 0 auto; 
-margin-bottom: 10px;
+            margin-bottom: 10px;
 
         }
         .view-profile-button:hover {
@@ -187,6 +187,9 @@ margin-bottom: 10px;
             font-size: 14px;
             color: #555;
             font-style: italic;
+        }
+            .regular-text, #department {
+            font-family: 'Montserrat', serif;
         }
 
     </style>
