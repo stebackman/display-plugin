@@ -78,7 +78,7 @@ function display_selected_user_profile_shortcode() {
             <?php if (!$hide_phone_number) : ?>
                 <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
             <?php endif; ?>
-            <p><strong>Alue:</strong> <?php echo esc_html($department); ?></p>
+            <p><strong>Osasto:</strong> <?php echo esc_html($department); ?></p>
             <p><strong>Yritys:</strong><?php echo esc_html($company);?></p>
             <p><strong>Moottoripyörä:</strong><?php echo esc_html($motorcycle);?></p>
             <div class="biography">
@@ -108,7 +108,7 @@ function display_user_profile_styles() {
     <style>
         .user-profile {
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
             padding: 20px;
             background-color: #f9f9f9;
             max-width: 300px;
@@ -117,7 +117,7 @@ function display_user_profile_styles() {
         }
 
         .user-info p {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Montserrat', serif;
             margin: auto;
         }
 
@@ -131,44 +131,49 @@ function display_user_profile_styles() {
             position: relative;
             display: inline-block;
         }
+
         .user-avatar img {
             border-radius: 50%;
             width: 100px;
             height: 100px;
             object-fit: cover;
-
         }
+
         .user-details h2 {
             font-size: 1.25em;
             margin: 0 0 10px;
         }
+
         .user-details p {
             margin: 5px 0;
         }
+
         .biography {
             margin-top: 10px;
         }
+
         .biography textarea {
             width: 100%;
             height: 80px;
             resize: both;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Montserrat', serif;
         }
+
         .view-profile-button {
             display: inline-block;
-            padding: 0px 20px;
+            padding: 5px 20px;
             color: #1F2518;
             width: 12rem;
             font-weight: bold;
             background-color: #e2c275;
-            border-radius: 10px;
+            border-radius: 8px;
             text-decoration: none;
             box-shadow: 0.1rem 0.2rem 3px #5a6142;
             text-align: center;
             margin: 0 auto; 
-margin-bottom: 10px;
-
+            margin-bottom: 10px;  
         }
+
         .view-profile-button:hover {
             background-color: #1F2518;
             color: #e2c275;
@@ -187,6 +192,10 @@ margin-bottom: 10px;
             font-size: 14px;
             color: #555;
             font-style: italic;
+        }
+
+        .regular-text, #department {
+            font-family: 'Montserrat', serif;
         }
 
     </style>
