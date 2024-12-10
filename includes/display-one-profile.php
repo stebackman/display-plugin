@@ -193,4 +193,7 @@ margin-bottom: 10px;
     ";
 }
 add_action('wp_head', 'display_user_profile_styles');
+add_action('wp_login', function($user_login, $user) {
+    update_user_meta($user->ID, 'last_login', current_time('mysql'));
+}, 10, 2);
 ?>

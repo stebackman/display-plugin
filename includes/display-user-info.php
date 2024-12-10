@@ -1,7 +1,6 @@
 <?php
 /*
 Plugin Name: Display User Info
-Plugin URI: https://yourwebsite.com/
 Description: A plugin that displays and allows editing of user information on the frontend, including a profile picture, first-aid course checkbox, company, and motorcycle fields.
 Version: 1.4
 Author: Group Molto Bene
@@ -151,7 +150,6 @@ function custom_user_profile_fields($user) {
 }
 add_action('show_user_profile', 'custom_user_profile_fields');
 add_action('edit_user_profile', 'custom_user_profile_fields');
-
 // Step 2: Save custom profile fields
 
 function save_custom_user_profile_fields($user_id) {
@@ -576,12 +574,15 @@ function hide_unnecessary_profile_fields() {
         .user-nickname-wrap,
         .user-display-name-wrap,
         .user-profile-picture,
+        .user-syntax-highlighting-wrap,
+        .image-container,
+        .upload-avatar-row,
+        .ratings-row,
+        #simple-local-avatar-section,
         .description,
         #description, label[for="description"],
-        #profile-description
-        {
-        display: none !important;
-        }
+        #profile-description{display: none !important;},
+       
     </style>';
 }
 add_action('admin_head', 'hide_unnecessary_profile_fields');
