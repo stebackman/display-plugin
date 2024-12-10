@@ -126,7 +126,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <h2><?php echo esc_html($user->display_name); ?></h2>
                     <?php if (!empty($vip_member_info)) : ?>
                     <div class="biography">
-                    <img src="<?php echo plugin_dir_url( __DIR__ ); ?>wp-content/plugins/display-user-info/includes/images/exe-logo-nobackround.png" alt="logo" class="biography-logo">
+                    <img src="<?php echo plugin_dir_url( __DIR__ ); ?>includes/images/exe-logo-nobackround.png" alt="logo" class="biography-logo">
                         <textarea id="vip_member_info" name="vip_member_info" disabled><?php echo esc_textarea($vip_member_info); ?></textarea>   
                         </div>
                         <?php endif; ?>
