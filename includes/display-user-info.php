@@ -20,6 +20,7 @@ function custom_user_profile_fields($user) {
                 <select id="titteli" name="titteli">
                     <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
                     <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
+                    <option value="Hallituksen Jäsen" <?php selected($titteli, 'Hallituksen Jäsen', true); ?>>Hallituksen Jäsen</option>
                     <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
                 </select>
             </td>
@@ -31,6 +32,17 @@ function custom_user_profile_fields($user) {
                 <input type="checkbox" name="vip_member" id="vip_member" value="yes" <?php checked(get_user_meta($user->ID, 'vip_member', true), 'yes'); ?>>
                 <label for="vip_member">Lisää kruunu profiilikuvaan</label>
             </td>
+            <tr>
+            <th><label for="honorary_number">Kunniajäsennumero</label></th>
+            <td>
+                <input type="text" name="honorary_number" id="honorary_number" value="<?php echo esc_attr(get_user_meta($user->ID, 'honorary_number', true)); ?>" class="regular-text">
+            </td>
+            <tr>
+            <th><label for="appointed_date">Nimitetty kunniajäseneksi vuonna: Vain vuosi näytetään</label></th>
+            <td>
+                <input type="date" name="appointed_date" id="appointed_date" value="<?php echo esc_attr(get_user_meta($user->ID, 'appointed_date', true)); ?>">
+            </td>
+        </tr>
         </tr>
         <tr>
             <th><label for="vip_member_info">Tähän laatikkoon voi halutessaan kirjoittaa tietoa kunniajäsenestä. HUOM! Näytetään verkkosivuilla kaikille!</label></th>
@@ -174,7 +186,7 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['first_name','last_name','user_email','phone_number','titteli','osoite','postinumero','postitoimipaikka', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','user_email','phone_number','titteli','honorary_number','osoite','postinumero','postitoimipaikka', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 if ($field === 'user_email') {
@@ -195,6 +207,12 @@ function save_custom_user_profile_fields($user_id) {
             $date_value = sanitize_text_field($_POST['first_aid']);
             if (!empty($date_value)) {
                 update_user_meta($user_id, 'first_aid', $date_value);
+            }
+        }
+        if (isset($_POST['appointed_date'])) {
+            $date_value = sanitize_text_field($_POST['appointed_date']);
+            if (!empty($date_value)) {
+                update_user_meta($user_id, 'appointed_date', $date_value);
             }
         }
 
@@ -434,6 +452,7 @@ $style = "
 ";
   // Retrieve the profile picture, phone number, department, and biographical info
     $profile_picture = get_user_meta($current_user->ID, 'profile_picture', true) ?: get_avatar_url($current_user->ID, ['size' => 100]);
+    $honorary_number = get_user_meta($current_user->ID, 'honorary_number', true);
     $phone_number = get_user_meta($current_user->ID, 'phone_number', true);
     $home_address = get_user_meta($current_user->ID, 'osoite', true);
     $zipcode = get_user_meta($current_user->ID, 'postinumero', true);
@@ -446,7 +465,7 @@ $style = "
     $biographical_info=get_user_meta($current_user->ID,'biographical_info',true);
     $custom_user_id = get_user_meta($current_user->ID, 'custom_user_id', true);
     $vip_member= get_user_meta($current_user->ID,'vip_member',true)==='yes';
-
+    $kunniajasen=get_user_meta($current_user->ID,'titteli',true)==='Kunniajäsen';
 
     $first_aid= get_user_meta($current_user->ID,'first_aid',true);
     if (!empty($first_aid)) {
@@ -456,6 +475,10 @@ $style = "
     $tilanne_koulutus= get_user_meta($current_user->ID,'tilanne_koulutus',true);
     if (!empty($tilanne_koulutus)) {
         $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
+    }
+    $appointed_date= get_user_meta($current_user->ID,'appointed_date',true);
+    if (!empty($appointed_date)) {
+        $appointed_date = date('Y', strtotime($appointed_date)); 
     }
     
     $different_email=get_user_meta($current_user->ID,'different_email',true);
@@ -496,6 +519,10 @@ $style = "
                 <p><strong>Etunimi:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
                 <p><strong>Sukunimi:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
+                <?php if ($kunniajasen):?>
+                <p><strong>Kunniajäsennumero:</strong> <?php echo esc_attr($honorary_number);?></p>
+                <p><strong> Nimitetty kunniajäseneksi: <?php echo esc_attr($appointed_date); ?> </strong> 
+                <?php endif; ?>
                 <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
                 <p> <strong>Alue:</strong>  <select name="department" id="department">
                 <option value="Pirkanmaa" <?php selected($department, 'Pirkanmaa'); ?>>Pirkanmaa</option>

@@ -106,6 +106,11 @@ function display_all_user_profiles_shortcode($atts) {
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
             $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
 
+            $kunniajasen= get_user_meta($user->ID,'titteli',true)==='Kunniajäsen';
+            $honorary_number =get_user_meta($user->ID,'honorary_number',true);
+            $appointed_date= get_user_meta($user->ID,'appointed_date',true);
+            $appointed_date = date('Y', strtotime($appointed_date));
+
             ob_start();
             ?>
          <div class="user-profile" data-department="<?php echo esc_attr($department); ?>" data-title="<?php echo esc_attr($titteli); ?>">
@@ -113,6 +118,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
                     <?php if ($vip_member): ?>
                         <span class="vip-crown">&#x1F451;</span>
+                        <span class="cross">&#x271D;</span>
                         <?php endif; ?>
                 </div>
                 <?php if ($last_login) : ?>
@@ -135,10 +141,15 @@ function display_all_user_profiles_shortcode($atts) {
                     <p><strong>Titteli:</strong> <?php echo esc_html($titteli); ?></p>
                     <?php endif; ?>
                     <p><strong>Jäsennumero: </strong> <?php echo esc_html(($custom_user_id)); ?></p>
+                    <?php if ($kunniajasen): ?>
+                    <p><strong>Kunniajäsennumero:</strong> <?php echo esc_attr($honorary_number);?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($appointed_date) && $appointed_date !== '1970') : ?>
+                    <p><strong> Nimitetty kunniajäseneksi: <?php echo esc_attr($appointed_date); ?> </strong> 
+                    <?php endif; ?>
                     <?php if (!$hide_email &&(!empty($user_email))) : ?>
-                        <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
-                    
-                   <?php endif; ?>
+                    <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
+                    <?php endif; ?>
                     <?php if (!$hide_phone_number &&(!empty($user->phone_number))) : ?>
                         <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
                     <?php endif; ?>
@@ -233,7 +244,8 @@ echo '<thead>
 <tr>
     <th>Nimi</th>
     <th>Kunniajäsennumero</th>
-    <th>Nimitetty</th>
+    <th>Nimitetty Kunniajäseneksi</th>
+    <th>Kuvailu</th>
 </tr>
 </thead>';
 echo '<tbody>';
@@ -244,17 +256,19 @@ foreach ($users as $user) {
     if ($title === 'Kunniajäsen') {
         $honorary_number = get_user_meta($user->ID, 'honorary_number', true);
         $appointed_date = get_user_meta($user->ID, 'appointed_date', true);
-        $first_aid=get_user_meta($user->ID,'first_aid',true);
+        $vip_member_info=get_user_meta($user->ID,'vip_member_info',true);
 
         if (!empty($appointed_date)) {
-            $appointed_date = date('d.m.Y', strtotime($appointed_date));
+            $appointed_date = date('Y', strtotime($appointed_date));
             
         }
         
         ?>
         <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
             <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
-            <td><?php if (!empty($first_aid) && $first_aid!== '01.01.1970'): echo $first_aid; endif;?></td>
+            <td><?php echo $honorary_number; ?></td>
+            <td><?php echo $appointed_date; ?> </td>
+            <td><?php echo $vip_member_info ?></td>
           
         </tr>
         <?php
@@ -401,20 +415,20 @@ function sortTable(columnIndex) {
 </script>
 <style>
 /* Add a pointer cursor to indicate interactivity */
-.user-profiles-table th[data-sortable="true"] {
+.user-profiles-table th[data-sortable="true"], .honorary-member-table th[data-sortable="true"] {
     cursor: pointer;
     background-color: #f8f9fa; /* Light background to differentiate */
     position: relative; /* For adding sort icons */
 }
 
 /* Highlight column headers on hover */
-.user-profiles-table th[data-sortable="true"]:hover {
+.user-profiles-table th[data-sortable="true"]:hover, .honorary-member-table th[data-sortable="true"]:hover {
     background-color: #e2e6ea; /* Slightly darker shade */
     color: #007bff; /* Change text color for emphasis */
 }
 
 /* Sort icons */
-.user-profiles-table th[data-sortable="true"]::after {
+.user-profiles-table th[data-sortable="true"]::after, .honorary-member-table th[data-sortable="true"]::after {
     content: '▲▼'; /* Placeholder sort arrows */
     font-size: 0.8em;
     color: #6c757d;
@@ -424,14 +438,14 @@ function sortTable(columnIndex) {
 }
 
 /* Active sort (ascending) */
-.user-profiles-table th[data-sortable="true"].sort-asc::after {
+.user-profiles-table th[data-sortable="true"].sort-asc::after, .honorary-member-table th[data-sortable="true"].sort-asc::after {
     content: '▲'; /* Show only ascending arrow */
     opacity: 1;
     color: #007bff; /* Highlight active sort */
 }
 
 /* Active sort (descending) */
-.user-profiles-table th[data-sortable="true"].sort-desc::after {
+.user-profiles-table th[data-sortable="true"].sort-desc::after, .honorary-member-table th[data-sortable="true"].sort-desc::after {
     content: '▼'; /* Show only descending arrow */
     opacity: 1;
     color: #007bff; /* Highlight active sort */
@@ -533,11 +547,11 @@ function display_user_profiles_styles() {
 
 /* Styles for table view */
         
-    .user-profiles-table {
+    .user-profiles-table,.honorary-member-table {
         width: 100%;
         border-collapse: collapse;
     }
-    .user-profiles-table th, .user-profiles-table td {
+    .user-profiles-table th, .user-profiles-table td,.honorary-member-table th,.honorary-member-table td {
         padding: 10px;
         border: 1px solid #ddd;
         text-align: left;
@@ -655,7 +669,13 @@ function display_user_profiles_styles() {
         height: 100%; 
         object-fit: contain;  
         display: block;
-    }  
+    } 
+        .cross {
+    font-size: 1.5em; /* Adjust size as needed */
+    color: #000; /* Set to black or another appropriate color */
+    margin-left: 5px; /* Optional: add space around */
+    vertical-align: middle; /* Align with text if inline */
+}
          
 </style>
     ";
