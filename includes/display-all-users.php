@@ -148,7 +148,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <p><strong> Nimitetty kunniajäseneksi: <?php echo esc_attr($appointed_date); ?> </strong> 
                     <?php endif; ?>
                     <?php if (!$hide_email &&(!empty($user_email))) : ?>
-                    <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
+                        <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>                  
                     <?php endif; ?>
                     <?php if (!$hide_phone_number &&(!empty($user->phone_number))) : ?>
                         <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
@@ -195,18 +195,19 @@ function display_all_user_profiles_shortcode($atts) {
 
         echo '</div>';
         // Table structure for list view
-        echo '<table class="user-profiles-table" style="display:none;">';
-        echo '<thead>
-        <tr>
-            <th data-sortable="true" onclick="sortTable(0)">Nimi</th>
-            <th data-sortable="true" onclick="sortTable(1)">Numero</th>
-            <th data-sortable="true" onclick="sortTable(2)">Puhelinnumero</th>
-            <th data-sortable="true" onclick="sortTable(3)">Sähköposti</th>
-            <th data-sortable="true" onclick="sortTable(4)">Yritys</th>
-            <th data-sortable="true" onclick="sortTable(5)">Ensiapu</th>
-            <th data-sortable="true" onclick="sortTable(6)">Tilanneturvallisuus</th>
-        </tr>
-    </thead>';
+        echo '<div id="user-table">';
+            echo '<table class="user-profiles-table" style="display:none;">';
+            echo '<thead>
+            <tr>
+                <th data-sortable="true" onclick="sortTable(0)">Nimi</th>
+                <th data-sortable="true" onclick="sortTable(1)">Numero</th>
+                <th data-sortable="true" onclick="sortTable(2)">Puhelinnumero</th>
+                <th data-sortable="true" onclick="sortTable(3)">Sähköposti</th>
+                <th data-sortable="true" onclick="sortTable(4)">Yritys</th>
+                <th data-sortable="true" onclick="sortTable(5)">Ensiapu</th>
+                <th data-sortable="true" onclick="sortTable(6)">Tilanne-turvallisuus</th>
+            </tr>
+            </thead>';
         echo '<tbody>';
         foreach ($users as $user) {
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
@@ -236,6 +237,43 @@ function display_all_user_profiles_shortcode($atts) {
             <?php
         }
         echo '</tbody></table>';
+        echo '</div>';
+        ?>
+
+    <?php
+        //list for mobile
+        echo '<div id="user-list" class="userListContainer" style="display:none;">'; 
+       foreach ($users as $user) {
+        $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
+        $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
+        $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
+    ?>
+
+        <ul class="user-info-list">
+            <li>
+                <span class="label">Nimi:</span>
+                <span class="value"><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></span>
+            </li>
+            <li>
+                <span class="label">Numero:</span>
+                <span class="value"><?php echo esc_html(($custom_user_id)); ?></span>
+            </li>   
+            <li>
+                <span class="label">Puhelinnumero:</span>
+                <span class="value"><?php echo (!$hide_phone_number) ? esc_html(get_user_meta($user->ID, 'phone_number', true)) : 'Private'; ?></span>
+            </li>
+            <li>
+                <span class="label">Sähköposti:</span>
+                <span class="value"><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></span>
+            </li>
+       </ul>
+       <hr>
+        
+        <?php
+    }
+       
+
+       echo '</div>';
     } else {
         echo '<p>No user profiles found.</p>';
     }
@@ -282,8 +320,10 @@ echo '</tbody></table>';
 document.getElementById('toggle-view').addEventListener('click', function () {
     var userProfileContainer = document.querySelector('.user-profiles'); // Grid view
     var userTableContainer = document.querySelector('.user-profiles-table'); // Regular table view
+    var userListContainer = document.querySelector('#user-list'); //list
     var honoraryTableContainer = document.querySelector('.honorary-member-table'); // Honorary member table view
     var currentView = this.getAttribute('data-view');
+    var width = window.matchMedia("(min-width: 920px)");//media query
 
     if (currentView === 'grid') {
         // Switch to table view
@@ -292,8 +332,17 @@ document.getElementById('toggle-view').addEventListener('click', function () {
         if (document.getElementById('titteli-filter').value === 'Kunniajäsen') {
             honoraryTableContainer.style.display = 'table';
             userTableContainer.style.display = 'none';
+            userListContainer.style.display = 'none'; 
         } else {
-            userTableContainer.style.display = 'table';
+            if (width.matches) {
+                //console.log('wide');
+                userTableContainer.style.display = 'table';
+                userListContainer.style.display = 'none';
+            } else {
+                //console.log('narrow');
+                userTableContainer.style.display = 'none';
+                userListContainer.style.display = 'block';
+            }
             honoraryTableContainer.style.display = 'none';
         }
 
@@ -304,6 +353,7 @@ document.getElementById('toggle-view').addEventListener('click', function () {
         userProfileContainer.style.display = 'flex';
         userTableContainer.style.display = 'none';
         honoraryTableContainer.style.display = 'none';
+        userListContainer.style.display = 'none'; 
 
         this.setAttribute('data-view', 'grid');
         this.textContent = 'Vaihda taulukkonäkymäksi';
@@ -432,7 +482,7 @@ function sortTable(columnIndex) {
     content: '▲▼'; /* Placeholder sort arrows */
     font-size: 0.8em;
     color: #6c757d;
-    position: absolute;
+    position: z-index;
     right: 10px; /* Space between text and icon */
     opacity: 0.5;
 }
@@ -461,19 +511,20 @@ add_shortcode('display_all_user_profiles', 'display_all_user_profiles_shortcode'
 function display_user_profiles_styles() {
     echo "
 <style>
- .user-profiles {
+    .user-profiles {
         display: flex;
         flex-wrap: wrap;
         gap: 20px;
+        margin-top: 20px;
     }
 
-    a {
-        text-decoration: none;
-    }
+        a {
+            text-decoration: none;
+        }
     
-    p {
-        font-size: 12px;
-    }
+        p {
+            font-size: 12px;
+        }
     
     .user-profile {
         border-radius: 8px;
@@ -546,7 +597,7 @@ function display_user_profiles_styles() {
     }
 
 /* Styles for table view */
-        
+
     .user-profiles-table,.honorary-member-table {
         width: 100%;
         border-collapse: collapse;
@@ -557,6 +608,50 @@ function display_user_profiles_styles() {
         text-align: left;
     }
 
+    @media screen and (max-width:1150px) and (min-width: 921px){
+        #content {
+            width: 100%;   
+        }
+    }
+
+    @media screen and (max-width: 475px) {
+        #content {
+            width: 100%;                 
+        }
+    }
+     
+/* Style for list view */
+
+    .user-info-list {
+        margin-top: 35px;
+        font-size: 0.85rem;
+        list-style-type: none;
+    }
+
+    .user-info-list li {
+        display: flex;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .user-info-list li:nth-child(odd){
+        background-color: #ffffff;
+    }
+
+    .user-info-list li:nth-child(even){
+        background-color: #f0f0e8;
+    }
+
+    .user-info-list li .label {
+        flex-basis: 40%;
+        margin-right: 10px;
+    }
+
+    .user-info-list li .value {
+        flex-basis: 60%;
+    }
+            
     .user-profile .vip-crown{
         position: absolute;
         top: -15px;
