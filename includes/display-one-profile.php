@@ -30,8 +30,10 @@ function display_selected_user_profile_shortcode() {
     $company = get_user_meta($user->ID,'company',true);
     $motorcycle = get_user_meta($user->ID,'motorcycle',true);
     $custom_user_id= get_user_meta($user->ID,'custom_user_id',true);
-    $vip_member= get_user_meta($user->ID,'vip_member',true)==="yes";
+    $vip_member_icon= get_user_meta($user->ID,'vip_member_icon',true)==="yes";
+    $cross_icon=get_user_meta($user->ID,'cross_icon',true)==="yes";
     $profile_title = get_user_meta($user->ID, 'titteli', true);
+    $appointed_date=get_user_meta($user->ID,'appointed_date',true);
 
     //Get first aid and tilannekoulutus:
     $first_aid=get_user_meta($user->ID,'first_aid',true);
@@ -53,12 +55,14 @@ function display_selected_user_profile_shortcode() {
     ?>
     
     <div class="user-profile">
-    <a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>"><p class="view-profile-button">Näytä kaikki profiilit</p></a>
-    <div class="user-profile"> 
+    <a href="<?php echo esc_url(get_permalink(get_page_by_path('kaikki-profiilit'))); ?>"><p class="view-profile-button">Näytä kaikki profiilit</p></a> 
         <div class="user-avatar">
             <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->user_login); ?>'s Profile Picture">
-            <?php if ($vip_member): ?>
+            <?php if ($vip_member_icon): ?>
                 <span class="vip-crown">&#x1F451;</span>
+                <?php endif; ?>
+                <?php if ($cross_icon): ?>
+                <span class="cross">&#x271D;</span>
                 <?php endif; ?>
         </div>
                 <?php if ($last_login) : ?>

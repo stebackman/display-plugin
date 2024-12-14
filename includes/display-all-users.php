@@ -99,8 +99,9 @@ function display_all_user_profiles_shortcode($atts) {
                 $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
             }
 
-            $vip_member =get_user_meta($user->ID,'vip_member',true)==='yes';
+            $vip_member_icon =get_user_meta($user->ID,'vip_member_icon',true)==='yes';
             $vip_member_info=get_user_meta($user->ID,'vip_member_info',true);
+            $cross_icon=get_user_meta($user->ID,'cross_icon',true)==='yes';
             // Get visibility settings
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
@@ -109,7 +110,6 @@ function display_all_user_profiles_shortcode($atts) {
             $kunniajasen= get_user_meta($user->ID,'titteli',true)==='Kunniajäsen';
             $honorary_number =get_user_meta($user->ID,'honorary_number',true);
             $appointed_date= get_user_meta($user->ID,'appointed_date',true);
-            $appointed_date = date('Y', strtotime($appointed_date));
             
 
             ob_start();
@@ -117,10 +117,12 @@ function display_all_user_profiles_shortcode($atts) {
             <div class="user-profile" data-department="<?php echo esc_attr($department); ?>" data-title="<?php echo esc_attr($titteli); ?>">
                 <div class="user-avatar">
                     <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
-                    <?php if ($vip_member): ?>
+                    <?php if ($vip_member_icon): ?>
                         <span class="vip-crown">&#x1F451;</span>
+                    <?php endif; ?>
+                    <?php if ($cross_icon): ?>
                         <span class="cross">&#x271D;</span>
-                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
                 <?php if ($last_login) : ?>
                     <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
@@ -662,10 +664,10 @@ function display_user_profiles_styles() {
         display: block;
     } 
         .cross {
-    font-size: 1.5em; /* Adjust size as needed */
-    color: #000; /* Set to black or another appropriate color */
-    margin-left: 5px; /* Optional: add space around */
-    vertical-align: middle; /* Align with text if inline */
+    font-size: 1.5em; 
+    color: #000000;
+    margin-left: 5px;
+    vertical-align: middle;
 
      @media screen and (max-width:1150px) and (min-width: 921px){
         #content {

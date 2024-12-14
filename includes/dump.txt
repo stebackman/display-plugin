@@ -21,10 +21,12 @@ Lördag, minimi
 - fennoa, check minimi
 1. Min plugin använder fennoa
 2. Ändra namnen
-3. Utveckla om finns tid. Invoice_enmail osv. "default" - värden, instruktioner (Suomi maakoodi ?)
-- display names. 
-- Kruunu-risti juttu
+
+- display names. --- check
+- Kruunu-risti juttu, check
+- Gå igenom view profile speciellt. 
 - Tekijäksi BC, päivitä metatekstit
+- Titteli-filtterit- kokelas, Jäsen, kunniajäsen
 
 
 söndag
@@ -32,4 +34,6 @@ söndag
 
 söndag/jos aikaa riittää
 1. Deaktivoituneet pois, lisää boksi wp-admin "puukko" 
-2. Titteli-filter
+2. Titteli-filter, hallituksen jäsenet, aluevastaava, enemmän titteleitä
+3.Search-filter
+3. Utveckla om finns tid. Invoice_enmail osv. "default" - värden, instruktioner (Suomi maakoodi ?)
