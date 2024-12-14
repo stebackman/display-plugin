@@ -24,7 +24,7 @@ Lördag, minimi
 
 - display names. --- check
 - Kruunu-risti juttu, check
-- Gå igenom view profile speciellt. 
+- Gå igenom view profile speciellt.  check.
 - Tekijäksi BC, päivitä metatekstit
 - Titteli-filtterit- kokelas, Jäsen, kunniajäsen
 

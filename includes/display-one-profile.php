@@ -33,7 +33,10 @@ function display_selected_user_profile_shortcode() {
     $vip_member_icon= get_user_meta($user->ID,'vip_member_icon',true)==="yes";
     $cross_icon=get_user_meta($user->ID,'cross_icon',true)==="yes";
     $profile_title = get_user_meta($user->ID, 'titteli', true);
+    $honorary_number=get_user_meta($user->ID,'honorary_number',true);
     $appointed_date=get_user_meta($user->ID,'appointed_date',true);
+    $kunniajasen=get_user_meta($user->ID,'titteli',true)==='Kunniajäsen';
+    $vip_member_info=get_user_meta($user->ID,'vip_member_info',true);
 
     //Get first aid and tilannekoulutus:
     $first_aid=get_user_meta($user->ID,'first_aid',true);
@@ -73,9 +76,20 @@ function display_selected_user_profile_shortcode() {
             
         <div class="user-details">
             <h2><?php echo esc_html($user->user_login); ?></h2>
+            <?php if (!empty($vip_member_info)) : ?>
+                    <div class="biography">
+                    <img src="<?php echo plugin_dir_url( __DIR__ ); ?>includes/images/exe-logo-nobackround.png" alt="logo" class="biography-logo">
+                        <textarea id="vip_member_info" name="vip_member_info" disabled><?php echo esc_textarea($vip_member_info); ?></textarea>   
+                        </div>
+                        <?php endif; ?>
             <p><strong>Nimi:</strong> <?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></p>
-            <p><strong>Jäsennumero:</strong> <?php echo esc_html($custom_user_id); ?></p>
             <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
+            <p><strong>Jäsennumero:</strong> <?php echo esc_html($custom_user_id); ?></p>
+            <?php if ($kunniajasen):?>
+                <p><strong>Kunniajäsennumero:</strong> <?php echo esc_attr($honorary_number);?></p>
+                <p><strong> Nimitetty kunniajäseneksi: <?php echo esc_attr($appointed_date); ?> </strong> 
+                <?php endif; ?>
+
             <?php if (!$hide_email) : ?>
                 <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
             <?php endif; ?>     

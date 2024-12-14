@@ -102,6 +102,8 @@ function display_all_user_profiles_shortcode($atts) {
             $vip_member_icon =get_user_meta($user->ID,'vip_member_icon',true)==='yes';
             $vip_member_info=get_user_meta($user->ID,'vip_member_info',true);
             $cross_icon=get_user_meta($user->ID,'cross_icon',true)==='yes';
+
+            $phone_number=get_user_meta($user->ID,'phone_number',true);
             // Get visibility settings
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
@@ -154,7 +156,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
                     <?php endif; ?>
                     <?php if (!$hide_phone_number &&(!empty($user->phone_number))) : ?>
-                    <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
+                    <p><strong>Puhelinnumero:</strong> <?php echo esc_html($phone_number); ?></p>
                     <?php endif; ?>
                     <?php if(!empty($user->department)): ?>
                     <p><strong>Alue:</strong> <?php echo esc_html($department); ?></p>

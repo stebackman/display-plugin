@@ -292,12 +292,13 @@ $style = "
                 <p><strong>Käyttäjänimi:</strong> <?php echo esc_html($current_user->display_name); ?></p>
                 <p><strong>Etunimi:</strong> <input type="text" name="first_name" value="<?php echo esc_attr($current_user->first_name); ?>" class="regular-text"></p>
                 <p><strong>Sukunimi:</strong> <input type="text" name="last_name" value="<?php echo esc_attr($current_user->last_name); ?>" class="regular-text"></p>
+                <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
                 <p><strong>Jäsennumero: <?php echo esc_attr(($custom_user_id)); ?></strong></p>
                 <?php if ($kunniajasen):?>
                 <p><strong>Kunniajäsennumero:</strong> <?php echo esc_attr($honorary_number);?></p>
                 <p><strong> Nimitetty kunniajäseneksi: <?php echo esc_attr($appointed_date); ?> </strong> 
                 <?php endif; ?>
-                <p> <strong>Titteli:</strong> <?php echo esc_attr(($profile_title)); ?></strong></p>
+                
                 <p> <strong>Alue:</strong>  <select name="department" id="department">
                 <option value="Pirkanmaa" <?php selected($department, 'Pirkanmaa'); ?>>Pirkanmaa</option>
                     <option value="Pohjanmaa" <?php selected($department, 'Pohjanmaa'); ?>>Pohjanmaa</option>

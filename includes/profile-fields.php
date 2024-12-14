@@ -1,4 +1,6 @@
 <?php function custom_user_profile_fields($user) {
+
+    /*Tämä PHP-koodi lisää WordPress-käyttäjäprofiiliin mukautettuja kenttiä, mahdollistaa niiden muokkauksen ja tallennuksen, ja piilottaa joitain WordPressin oletuskenttiä.*/
     ?>
     <!-- Table 1: Profiili -->
     <h3>Profiili</h3>
@@ -192,7 +194,7 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['first_name','last_name','user_email','phone_number','fennoa_email','fennoa_address','fennoa_postcode','fennoa_city','fennoa_country_code','fennoa_delivery_method','titteli','honorary_number','osoite','postinumero','postitoimipaikka', 'department', 'company', 'motorcycle','cross_icon', 'vip_member_icon','vip_member_info','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','user_email','phone_number','fennoa_email','fennoa_address','fennoa_postcode','fennoa_city','fennoa_country_code','fennoa_customer_number','fennoa_delivery_method','titteli','honorary_number','osoite','postinumero','postitoimipaikka', 'department', 'company', 'motorcycle','cross_icon', 'vip_member_icon','vip_member_info','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 if ($field === 'user_email') {

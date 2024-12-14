@@ -1,9 +1,8 @@
 <?php
 /*
 Plugin Name: Profile plugin
-Description: A plugin that displays all user profiles on the frontend, including profile pictures and biographical info. 
-Version: 1.3
-Author: Group Molto Bene
+Description: Muista Päivittää teksti
+Author: Business College Helsinki
 License: GPL2
 */
 
