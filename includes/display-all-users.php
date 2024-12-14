@@ -277,42 +277,8 @@ function display_all_user_profiles_shortcode($atts) {
     } else {
         echo '<p>No user profiles found.</p>';
     }
-    echo '<table class="honorary-member-table" style="display:none;">';
-echo '<thead>
-<tr>
-    <th>Nimi</th>
-    <th>Kunniajäsennumero</th>
-    <th>Nimitetty Kunniajäseneksi</th>
-    <th>Kuvailu</th>
-</tr>
-</thead>';
-echo '<tbody>';
+   
 
-foreach ($users as $user) {
-    // Check if the user is an honorary member
-    $title = get_user_meta($user->ID, 'titteli', true);
-    if ($title === 'Kunniajäsen') {
-        $honorary_number = get_user_meta($user->ID, 'honorary_number', true);
-        $appointed_date = get_user_meta($user->ID, 'appointed_date', true);
-        $vip_member_info=get_user_meta($user->ID,'vip_member_info',true);
-
-        if (!empty($appointed_date)) {
-            $appointed_date = date('Y', strtotime($appointed_date));
-            
-        }
-        
-        ?>
-        <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>">
-            <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
-            <td><?php echo $honorary_number; ?></td>
-            <td><?php echo $appointed_date; ?> </td>
-            <td><?php echo $vip_member_info ?></td>
-          
-        </tr>
-        <?php
-    }
-}
-echo '</tbody></table>';
     // JavaScript for view toggle and department filtering
     ?>
    <!-- JavaScript for view toggle, department filtering, and live search functionality -->
@@ -320,30 +286,22 @@ echo '</tbody></table>';
 document.getElementById('toggle-view').addEventListener('click', function () {
     var userProfileContainer = document.querySelector('.user-profiles'); // Grid view
     var userTableContainer = document.querySelector('.user-profiles-table'); // Regular table view
-    var userListContainer = document.querySelector('#user-list'); //list-view for the mobile 
-    var honoraryTableContainer = document.querySelector('.honorary-member-table'); // Honorary member table view
+    var userListContainer = document.querySelector('#user-list'); // List view for mobile
     var currentView = this.getAttribute('data-view');
-    var width = window.matchMedia("(min-width: 920px)");//media query
+    var width = window.matchMedia("(min-width: 920px)"); // Media query
 
     if (currentView === 'grid') {
         // Switch to table view
         userProfileContainer.style.display = 'none';
 
-        if (document.getElementById('titteli-filter').value === 'Kunniajäsen') {
-            honoraryTableContainer.style.display = 'table';
-            userTableContainer.style.display = 'none';
-            userListContainer.style.display = 'none'; 
+        if (width.matches) {
+            // Wide screen
+            userTableContainer.style.display = 'table';
+            userListContainer.style.display = 'none';
         } else {
-            if (width.matches) {
-                //console.log('wide');
-                userTableContainer.style.display = 'table';
-                userListContainer.style.display = 'none';
-            } else {
-                //console.log('narrow');
-                userTableContainer.style.display = 'none';
-                userListContainer.style.display = 'block';
-            }
-            honoraryTableContainer.style.display = 'none';
+            // Narrow screen
+            userTableContainer.style.display = 'none';
+            userListContainer.style.display = 'block';
         }
 
         this.setAttribute('data-view', 'table');
@@ -352,8 +310,7 @@ document.getElementById('toggle-view').addEventListener('click', function () {
         // Switch to grid view
         userProfileContainer.style.display = 'flex';
         userTableContainer.style.display = 'none';
-        honoraryTableContainer.style.display = 'none';
-        userListContainer.style.display = 'none'; 
+        userListContainer.style.display = 'none';
 
         this.setAttribute('data-view', 'grid');
         this.textContent = 'Vaihda taulukkonäkymäksi';
@@ -366,38 +323,21 @@ document.getElementById('titteli-filter').addEventListener('change', filterProfi
 function filterProfiles() {
     var selectedDepartment = document.getElementById('department-filter').value;
     var selectedTitle = document.getElementById('titteli-filter').value;
-
-    // Grid view profiles
-    var profiles = document.querySelectorAll('.user-profile'); // Assuming grid view elements have this class
-
-    // Table rows
+    
+    var profiles = document.querySelectorAll('.user-profile');
     var rows = document.querySelectorAll('.user-profiles-table tbody tr');
-    var honoraryRows = document.querySelectorAll('.honorary-member-table tbody tr');
 
-    // Filter grid view profiles
     profiles.forEach(function(profile) {
         var department = profile.getAttribute('data-department');
         var title = profile.getAttribute('data-title');
-        var isVisible =
-            (selectedDepartment === 'all' || department === selectedDepartment) &&
-            (selectedTitle === 'all' || title === selectedTitle);
-        profile.style.display = isVisible ? 'block' : 'none'; // Adjust to match your grid view structure
+        var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
+        profile.style.display = isVisible ? 'block' : 'none';
     });
 
-    // Filter regular table rows
     rows.forEach(function(row) {
         var department = row.getAttribute('data-department');
         var title = row.getAttribute('data-title');
-        var isVisible =
-            (selectedDepartment === 'all' || department === selectedDepartment) &&
-            (selectedTitle === 'all' || title === selectedTitle);
-        row.style.display = isVisible ? '' : 'none';
-    });
-
-    // Filter honorary member rows (only if honorary-member-table is visible)
-    honoraryRows.forEach(function(row) {
-        var department = row.getAttribute('data-department');
-        var isVisible = selectedDepartment === 'all' || department === selectedDepartment;
+        var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
         row.style.display = isVisible ? '' : 'none';
     });
 }
@@ -465,20 +405,20 @@ function sortTable(columnIndex) {
 </script>
 <style>
 /* Add a pointer cursor to indicate interactivity */
-.user-profiles-table th[data-sortable="true"], .honorary-member-table th[data-sortable="true"] {
+.user-profiles-table th[data-sortable="true"] {
     cursor: pointer;
     background-color: #f8f9fa; /* Light background to differentiate */
     position: relative; /* For adding sort icons */
 }
 
 /* Highlight column headers on hover */
-.user-profiles-table th[data-sortable="true"]:hover, .honorary-member-table th[data-sortable="true"]:hover {
+.user-profiles-table th[data-sortable="true"]:hover {
     background-color: #e2e6ea; /* Slightly darker shade */
     color: #007bff; /* Change text color for emphasis */
 }
 
 /* Sort icons */
-.user-profiles-table th[data-sortable="true"]::after, .honorary-member-table th[data-sortable="true"]::after {
+.user-profiles-table th[data-sortable="true"]::after {
     content: '▲▼'; /* Placeholder sort arrows */
     font-size: 0.8em;
     position: absolute;
@@ -488,14 +428,14 @@ function sortTable(columnIndex) {
 }
 
 /* Active sort (ascending) */
-.user-profiles-table th[data-sortable="true"].sort-asc::after, .honorary-member-table th[data-sortable="true"].sort-asc::after {
+.user-profiles-table th[data-sortable="true"].sort-asc::after {
     content: '▲'; /* Show only ascending arrow */
     opacity: 1;
     color: #007bff; /* Highlight active sort */
 }
 
 /* Active sort (descending) */
-.user-profiles-table th[data-sortable="true"].sort-desc::after, .honorary-member-table th[data-sortable="true"].sort-desc::after {
+.user-profiles-table th[data-sortable="true"].sort-desc::after {
     content: '▼'; /* Show only descending arrow */
     opacity: 1;
     color: #007bff; /* Highlight active sort */
@@ -598,11 +538,11 @@ function display_user_profiles_styles() {
 
 /* Styles for table view */
         
-    .user-profiles-table,.honorary-member-table {
+    .user-profiles-table {
         width: 100%;
         border-collapse: collapse;
     }
-    .user-profiles-table th, .user-profiles-table td,.honorary-member-table th,.honorary-member-table td {
+    .user-profiles-table th, .user-profiles-table td {
         padding: 10px;
         border: 1px solid #ddd;
         text-align: left;

@@ -22,7 +22,7 @@ function custom_user_profile_fields($user) {
     <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
     <option value="Puheenjohtaja" <?php selected($titteli, 'Puheenjohtaja', true); ?>>Puheenjohtaja</option>
     <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
-    <option value="Vice_president" <?php selected($titteli, 'Vice_president', true); ?>>Vice President</option>
+    <option value="Vice_president" <?php selected($titteli, 'Vice_president', true); ?>>Vice President/option>
     <option value="Past_president" <?php selected($titteli, 'Past_president', true); ?>>Past President</option>
     <option value="muu_hallituksen_jäsen" <?php selected($titteli, 'Muu hallituksen jäsen', true); ?>>Muu hallituksen jäsen</option>
     <option value="Aluevastaava" <?php selected($titteli, 'Aluevastaavat', true); ?>>Aluevastaavat</option>
@@ -191,7 +191,7 @@ function save_custom_user_profile_fields($user_id) {
         }
 
         // Save additional custom fields
-        $fields = ['first_name','last_name','user_email','phone_number','titteli','honorary_number','osoite','postinumero','postitoimipaikka', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
+        $fields = ['first_name','last_name','user_email','phone_number','fennoa_address','fennoa_city','fennoa_country_code','titteli','honorary_number','osoite','postinumero','postitoimipaikka', 'department', 'company', 'motorcycle', 'vip_member','vip_member_info','member_id', 'biographical_info'];
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 if ($field === 'user_email') {
@@ -459,9 +459,11 @@ $style = "
     $profile_picture = get_user_meta($current_user->ID, 'profile_picture', true) ?: get_avatar_url($current_user->ID, ['size' => 100]);
     $honorary_number = get_user_meta($current_user->ID, 'honorary_number', true);
     $phone_number = get_user_meta($current_user->ID, 'phone_number', true);
-    $home_address = get_user_meta($current_user->ID, 'osoite', true);
-    $zipcode = get_user_meta($current_user->ID, 'postinumero', true);
-    $city = get_user_meta($current_user->ID, 'postitoimipaikka', true);
+    $home_address = get_user_meta($current_user->ID, 'fennoa_address', true);
+    $zipcode = get_user_meta($current_user->ID, 'fennoa_postcode', true);
+    $city = get_user_meta($current_user->ID, 'fennoa_city', true);
+    $country_code = get_user_meta($current_user->ID, 'fennoa_country_code',true);
+    $fennoa_email =get_user_meta($current_user->ID,'fennoa_email',true);
 
     $profile_title = get_user_meta($current_user->ID, 'titteli', true);
     $department = get_user_meta($current_user->ID, 'department', true);
@@ -547,13 +549,14 @@ $style = "
                     <p><strong> Ensiapukoulutus suoritettu: <?php echo esc_attr($first_aid); ?> </strong> 
                     <?php endif; ?>
                 <?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : ?>
-                    <p><strong>Tilannejohtamiskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
-                    <?php endif; ?>
-                    <p style="text-decoration: underline;"><strong>Laskutustiedot</strong></p>
-                    <label><input type="checkbox" name="different_email" value="yes" <?php checked(get_user_meta(get_current_user_id(), 'different_email', true), 'yes'); ?>> Laskutussähköpostini eroaa käyttäjäsähköpostistani</label>
-                <p><strong>Osoite:</strong> <input type="text" name="osoite" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
-                <p><strong>Postinumero:</strong> <input type="text" name="postinumero" value="<?php echo esc_attr($zipcode); ?>" class="regular-text"></p>
-                <p><strong>Postitoimipaikka:</strong> <input type="text" name="postitoimipaikka" value="<?php echo esc_attr($city); ?>" class="regular-text"></p>
+                <p><strong>Tilannejohtamiskurssi suoritettu: <?php echo esc_attr($tilanne_koulutus); ?> </strong> 
+                <?php endif; ?>
+                <p style="text-decoration: underline;"><strong>Laskutustiedot</strong></p>
+                <p><strong>Laskutus-sähköposti:</strong> <input type="text" name="fennoa_email" value="<?php echo esc_attr($fennoa_email); ?>" class="regular-text"></p>
+                <p><strong>Osoite:</strong> <input type="text" name="fennoa_address" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
+                <p><strong>Postinumero:</strong> <input type="text" name="fennoa_postcode" value="<?php echo esc_attr($zipcode); ?>" class="regular-text"></p>
+                <p><strong>Postitoimipaikka:</strong> <input type="text" name="fennoa_city" value="<?php echo esc_attr($city); ?>" class="regular-text"></p>
+                <p><strong>Maa:</strong> <input type="text" name="fennoa_country_code" value="<?php echo esc_attr($country_code); ?>" class="regular-text"></p>
                 <div class="visibility-options">
                     <h4>Profiilin näkyvyysasetukset</h4>
                     <label><input type="checkbox" name="hide_email" value="yes" <?php checked($hide_email, 'yes'); ?>> Piilota sähköpostini muilta käyttäjiltä</label>

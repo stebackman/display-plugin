@@ -17,10 +17,14 @@ Todo:
 
 Lördag, minimi
 - Fiorella, palaa
-- Honorary_member table pois.
-- fennoa 
+- Honorary_member table pois. check. 
+- fennoa, check minimi
+1. Min plugin använder fennoa
+2. Ändra namnen
+3. Utveckla om finns tid. Invoice_enmail osv. "default" - värden, instruktioner (Suomi maakoodi ?)
 - display names. 
 - Kruunu-risti juttu
+- Tekijäksi BC, päivitä metatekstit
 
 
 söndag
