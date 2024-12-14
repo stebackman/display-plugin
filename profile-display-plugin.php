@@ -2,6 +2,7 @@
 /*
 Plugin Name: Profile plugin
 Description: Muista Päivittää teksti
+Version: 1.7
 Author: Business College Helsinki
 License: GPL2
 */

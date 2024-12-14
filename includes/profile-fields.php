@@ -12,14 +12,8 @@
                 <select id="titteli" name="titteli">
     <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
     <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
-    <option value="Puheenjohtaja" <?php selected($titteli, 'Puheenjohtaja', true); ?>>Puheenjohtaja</option>
     <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
-    <option value="Vice_president" <?php selected($titteli, 'Vice_president', true); ?>>Vice President/option>
-    <option value="Past_president" <?php selected($titteli, 'Past_president', true); ?>>Past President</option>
-    <option value="muu_hallituksen_jäsen" <?php selected($titteli, 'Muu hallituksen jäsen', true); ?>>Muu hallituksen jäsen</option>
-    <option value="Aluevastaava" <?php selected($titteli, 'Aluevastaavat', true); ?>>Aluevastaavat</option>
 </select>
-                </select>
 </td>
         </tr>
         

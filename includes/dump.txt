@@ -25,15 +25,15 @@ Lördag, minimi
 - display names. --- check
 - Kruunu-risti juttu, check
 - Gå igenom view profile speciellt.  check.
-- Tekijäksi BC, päivitä metatekstit
 - Titteli-filtterit- kokelas, Jäsen, kunniajäsen
 
 
 söndag
 - Siivoa koodi
+- Tekijäksi BC, päivitä metatekstit. 
 
 söndag/jos aikaa riittää
 1. Deaktivoituneet pois, lisää boksi wp-admin "puukko" 
 2. Titteli-filter, hallituksen jäsenet, aluevastaava, enemmän titteleitä
-3.Search-filter
+3.Search-filter list-view
 3. Utveckla om finns tid. Invoice_enmail osv. "default" - värden, instruktioner (Suomi maakoodi ?)

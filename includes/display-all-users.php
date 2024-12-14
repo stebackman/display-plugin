@@ -64,11 +64,9 @@ function display_all_user_profiles_shortcode($atts) {
  <label for="titteli">Valitse titteli:</label>
 <select id="titteli-filter">
     <option value="all">Kaikki tittelit</option>
-    <option value="hallituksen_jasenet">Hallituksen jäsenet</option>
     <option value="Kokelas">Kokelas</option>
     <option value="Jäsen">Jäsen</option>
     <option value="Kunniajäsen">Kunniajäsen</option>
-    <option value="aluevastaavat">Aluevastaavat</option>
 </select>
     <button id="toggle-view" data-view="grid">Vaihda taulukkonäkymäksi</button>
 
