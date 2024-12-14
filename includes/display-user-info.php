@@ -18,12 +18,17 @@ function custom_user_profile_fields($user) {
             <td>
                 <?php $titteli = get_user_meta($user->ID, 'titteli', true); ?>
                 <select id="titteli" name="titteli">
-                    <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
-                    <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
-                    <option value="Hallituksen Jäsen" <?php selected($titteli, 'Hallituksen Jäsen', true); ?>>Hallituksen Jäsen</option>
-                    <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
+    <option value="Kokelas" <?php selected($titteli, 'Kokelas', true); ?>>Kokelas</option>
+    <option value="Jäsen" <?php selected($titteli, 'Jäsen', true); ?>>Jäsen</option>
+    <option value="Puheenjohtaja" <?php selected($titteli, 'Puheenjohtaja', true); ?>>Puheenjohtaja</option>
+    <option value="Kunniajäsen" <?php selected($titteli, 'Kunniajäsen', true); ?>>Kunniajäsen</option>
+    <option value="Vice_president" <?php selected($titteli, 'Vice_president', true); ?>>Vice President</option>
+    <option value="Past_president" <?php selected($titteli, 'Past_president', true); ?>>Past President</option>
+    <option value="muu_hallituksen_jäsen" <?php selected($titteli, 'Muu hallituksen jäsen', true); ?>>Muu hallituksen jäsen</option>
+    <option value="Aluevastaava" <?php selected($titteli, 'Aluevastaavat', true); ?>>Aluevastaavat</option>
+</select>
                 </select>
-            </td>
+</td>
         </tr>
         <?php if ($titteli === "Kunniajäsen"):?>
         <tr>

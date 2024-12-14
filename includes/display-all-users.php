@@ -53,7 +53,7 @@ function display_all_user_profiles_shortcode($atts) {
 
     <label for="department">Valitse alue:</label>
     <select id="department-filter">
-        <option value="all">Kaikki alueet:</option>
+        <option value="all">Kaikki alueet</option>
         <option value="Pirkanmaa">Pirkanmaa</option>
         <option value="Pohjanmaa">Pohjanmaa</option>
          <option value="Päijät-Häme&Kaakkois-Suomi">Päijät-Häme&Kaakkois-Suomi</option>
@@ -61,15 +61,15 @@ function display_all_user_profiles_shortcode($atts) {
         <option value="Varsinais-Suomi">Varsinais-Suomi</option>
     </select>
     </br>
-    <label for="titteli">Valitse titteli:</label>
-    <select id="titteli-filter">
-        <option value="all">Kaikki tittelit</option>
-        <option value="Puheenjohtaja">Puheenjohtaja</option>
-        <option value="Kokelas">Kokelas</option>
-        <option value="Jäsen">Jäsen</option>
-        <option value="Kunniajäsen">Kunniajäsen</option>
-    </select>
-
+ <label for="titteli">Valitse titteli:</label>
+<select id="titteli-filter">
+    <option value="all">Kaikki tittelit</option>
+    <option value="hallituksen_jasenet">Hallituksen jäsenet</option>
+    <option value="Kokelas">Kokelas</option>
+    <option value="Jäsen">Jäsen</option>
+    <option value="Kunniajäsen">Kunniajäsen</option>
+    <option value="aluevastaavat">Aluevastaavat</option>
+</select>
     <button id="toggle-view" data-view="grid">Vaihda taulukkonäkymäksi</button>
 
     <?php
@@ -81,6 +81,7 @@ function display_all_user_profiles_shortcode($atts) {
         $other_users_profiles = '';
 
         foreach ($users as $user) {
+            
             $profile_picture = get_user_meta($user->ID, 'profile_picture', true) ?: get_avatar_url($user->ID, ['size' => 100]);
             $department = get_user_meta($user->ID, 'department', true);
             $titteli = get_user_meta($user->ID, 'titteli', true);
@@ -100,7 +101,6 @@ function display_all_user_profiles_shortcode($atts) {
 
             $vip_member =get_user_meta($user->ID,'vip_member',true)==='yes';
             $vip_member_info=get_user_meta($user->ID,'vip_member_info',true);
-
             // Get visibility settings
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
@@ -110,10 +110,11 @@ function display_all_user_profiles_shortcode($atts) {
             $honorary_number =get_user_meta($user->ID,'honorary_number',true);
             $appointed_date= get_user_meta($user->ID,'appointed_date',true);
             $appointed_date = date('Y', strtotime($appointed_date));
+            
 
             ob_start();
             ?>
-         <div class="user-profile" data-department="<?php echo esc_attr($department); ?>" data-title="<?php echo esc_attr($titteli); ?>">
+            <div class="user-profile" data-department="<?php echo esc_attr($department); ?>" data-title="<?php echo esc_attr($titteli); ?>">
                 <div class="user-avatar">
                     <img src="<?php echo esc_url($profile_picture); ?>" alt="<?php echo esc_attr($user->display_name); ?>'s Profile Picture">
                     <?php if ($vip_member): ?>
@@ -122,10 +123,10 @@ function display_all_user_profiles_shortcode($atts) {
                         <?php endif; ?>
                 </div>
                 <?php if ($last_login) : ?>
-    <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
-<?php else : ?>
-    <span class="last-login">Ei sisäänkirjautumistietoja</span>
-<?php endif; ?>
+                    <span class="last-login">Viimeksi kirjautuneena: <?php echo esc_html(date('j F, Y', strtotime($last_login))); ?></span>
+                    <?php else : ?>
+                        <span class="last-login">Ei sisäänkirjautumistietoja</span>
+                        <?php endif; ?>
 
             
                 <div class="user-details">
@@ -151,7 +152,7 @@ function display_all_user_profiles_shortcode($atts) {
                     <p><strong>Sähköposti:</strong> <?php echo esc_html($user->user_email); ?></p>
                     <?php endif; ?>
                     <?php if (!$hide_phone_number &&(!empty($user->phone_number))) : ?>
-                        <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
+                    <p><strong>Puhelinnumero:</strong> <?php echo esc_html(get_user_meta($user->ID, 'phone_number', true)); ?></p>
                     <?php endif; ?>
                     <?php if(!empty($user->department)): ?>
                     <p><strong>Alue:</strong> <?php echo esc_html($department); ?></p>
@@ -172,11 +173,11 @@ function display_all_user_profiles_shortcode($atts) {
                                 <div class="biography">
                         <textarea id="biographical_info" name="biographical_info" disabled><?php echo esc_textarea($biographical_info); ?></textarea>
                     </div>
-            <?php endif; ?>
+                    <?php endif; ?>
                     <?php if ($current_user_id === (int) $user->ID) : ?>
                         <p><a href="<?php echo esc_url(get_permalink(get_page_by_path('oma-profiilisivu'))); ?>"class="edit-profile-button">Muokkaa profiiliasi</a></p>
                     <?php else: ?>
-                        <p><a href="<?php echo esc_url(add_query_arg('user', $user->display_name, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
+                        <p><a href="<?php echo esc_url(add_query_arg('user', $user->user_login, get_permalink(get_page_by_path('view-profile')))); ?>" class="view-profile-button">Näytä profiili</a></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -188,8 +189,9 @@ function display_all_user_profiles_shortcode($atts) {
             } else {
                 $other_users_profiles .= $profile_output;
             }
+            
         }
-
+        
         echo $current_user_profile;
         echo $other_users_profiles;
 
@@ -203,8 +205,8 @@ function display_all_user_profiles_shortcode($atts) {
             <th data-sortable="true" onclick="sortTable(2)">Puhelinnumero</th>
             <th data-sortable="true" onclick="sortTable(3)">Sähköposti</th>
             <th data-sortable="true" onclick="sortTable(4)">Yritys</th>
-            <th data-sortable="true" onclick="sortTable(5)">Ensiapu</th>
-            <th data-sortable="true" onclick="sortTable(6)">Tilanneturvallisuus</th>
+            <th data-sortable="true" onclick="sortTable(5)">EA-koulutus</th>
+            <th data-sortable="true" onclick="sortTable(6)">TT-koulutus</th>
         </tr>
     </thead>';
         echo '<tbody>';
@@ -236,6 +238,42 @@ function display_all_user_profiles_shortcode($atts) {
             <?php
         }
         echo '</tbody></table>';
+        echo '</div>';
+        ?>
+    <?php
+        //list for mobile
+        echo '<div id="user-list" class="userListContainer" style="display:none;">'; 
+       foreach ($users as $user) {
+        $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
+        $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
+        $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
+    ?>
+        <ul class="user-info-list">
+            <li>
+                <span class="label">Nimi:</span>
+                <span class="value"><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></span>
+            </li>
+            <li>
+                <span class="label">Numero:</span>
+                <span class="value"><?php echo esc_html(($custom_user_id)); ?></span>
+            </li>   
+            <li>
+                <span class="label">Puhelinnumero:</span>
+                <span class="value"><?php echo (!$hide_phone_number) ? esc_html(get_user_meta($user->ID, 'phone_number', true)) : 'Private'; ?></span>
+            </li>
+            <li>
+                <span class="label">Sähköposti:</span>
+                <span class="value"><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></span>
+            </li>
+       </ul>
+       <hr>
+        
+        <?php
+    }
+       
+       echo '</div>';
+
+
     } else {
         echo '<p>No user profiles found.</p>';
     }
@@ -282,8 +320,10 @@ echo '</tbody></table>';
 document.getElementById('toggle-view').addEventListener('click', function () {
     var userProfileContainer = document.querySelector('.user-profiles'); // Grid view
     var userTableContainer = document.querySelector('.user-profiles-table'); // Regular table view
+    var userListContainer = document.querySelector('#user-list'); //list-view for the mobile 
     var honoraryTableContainer = document.querySelector('.honorary-member-table'); // Honorary member table view
     var currentView = this.getAttribute('data-view');
+    var width = window.matchMedia("(min-width: 920px)");//media query
 
     if (currentView === 'grid') {
         // Switch to table view
@@ -292,8 +332,17 @@ document.getElementById('toggle-view').addEventListener('click', function () {
         if (document.getElementById('titteli-filter').value === 'Kunniajäsen') {
             honoraryTableContainer.style.display = 'table';
             userTableContainer.style.display = 'none';
+            userListContainer.style.display = 'none'; 
         } else {
-            userTableContainer.style.display = 'table';
+            if (width.matches) {
+                //console.log('wide');
+                userTableContainer.style.display = 'table';
+                userListContainer.style.display = 'none';
+            } else {
+                //console.log('narrow');
+                userTableContainer.style.display = 'none';
+                userListContainer.style.display = 'block';
+            }
             honoraryTableContainer.style.display = 'none';
         }
 
@@ -304,6 +353,7 @@ document.getElementById('toggle-view').addEventListener('click', function () {
         userProfileContainer.style.display = 'flex';
         userTableContainer.style.display = 'none';
         honoraryTableContainer.style.display = 'none';
+        userListContainer.style.display = 'none'; 
 
         this.setAttribute('data-view', 'grid');
         this.textContent = 'Vaihda taulukkonäkymäksi';
@@ -431,8 +481,8 @@ function sortTable(columnIndex) {
 .user-profiles-table th[data-sortable="true"]::after, .honorary-member-table th[data-sortable="true"]::after {
     content: '▲▼'; /* Placeholder sort arrows */
     font-size: 0.8em;
-    color: #6c757d;
     position: absolute;
+    color: #6c757d;
     right: 10px; /* Space between text and icon */
     opacity: 0.5;
 }
@@ -465,6 +515,7 @@ function display_user_profiles_styles() {
         display: flex;
         flex-wrap: wrap;
         gap: 20px;
+        margin: 20px;
     }
 
     a {
@@ -675,6 +726,44 @@ function display_user_profiles_styles() {
     color: #000; /* Set to black or another appropriate color */
     margin-left: 5px; /* Optional: add space around */
     vertical-align: middle; /* Align with text if inline */
+
+     @media screen and (max-width:1150px) and (min-width: 921px){
+        #content {
+            width: 100%;   
+        }
+    }
+    @media screen and (max-width: 475px) {
+        #content {
+            width: 100%;                 
+        }
+    }
+     
+/* Style for list view */
+    .user-info-list {
+        margin-top: 35px;
+        font-size: 0.85rem;
+        list-style-type: none;
+    }
+    .user-info-list li {
+        display: flex;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .user-info-list li:nth-child(odd){
+        background-color: #ffffff;
+    }
+    .user-info-list li:nth-child(even){
+        background-color: #f0f0e8;
+    }
+    .user-info-list li .label {
+        flex-basis: 40%;
+        margin-right: 10px;
+    }
+    .user-info-list li .value {
+        flex-basis: 60%;
+    }
+            
 }
          
 </style>
