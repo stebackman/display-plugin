@@ -29,7 +29,7 @@ Lördag, minimi
 
 
 söndag
-- Siivoa koodi
+- Profile-meta plugin. 
 - Tekijäksi BC, päivitä metatekstit. 
 
 söndag/jos aikaa riittää

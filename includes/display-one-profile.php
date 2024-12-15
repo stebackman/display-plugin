@@ -120,7 +120,7 @@ function display_selected_user_profile_shortcode() {
 }
 add_shortcode('display_selected_user_profile', 'display_selected_user_profile_shortcode');
 
-// Optional CSS Styling
+
 function display_user_profile_styles() {
     echo "
     <style>
@@ -215,6 +215,7 @@ function display_user_profile_styles() {
 }
 add_action('wp_head', 'display_user_profile_styles');
 add_action('wp_login', function($user_login, $user) {
+    
     update_user_meta($user->ID, 'last_login', current_time('mysql'));
 }, 10, 2);
 ?>

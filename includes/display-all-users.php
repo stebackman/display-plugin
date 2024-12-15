@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Display All User Profiles
-Description: A plugin that displays all user profiles on the frontend, including profile pictures and biographical info. Users can control visibility of their phone number and email.
+Description: Tämä koodi hallinnoi "kaikki jäsenet"- siv
 Version: 1.3
 Author: Group Molto Bene
 License: GPL2
