@@ -693,7 +693,7 @@ function display_user_profiles_styles() {
     vertical-align: middle;
     }
 
-     @media screen and (max-width:1150px) and (min-width: 920px){
+     @media screen and (max-width:1150px) and (min-width: 921px){
         #content {
             width: 100%;   
         }
