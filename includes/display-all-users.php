@@ -45,10 +45,11 @@ function display_all_user_profiles_shortcode($atts) {
 
     // Display search form, department filter, and view toggle button
     ?>
-    <form action="" method="get">
+     <form id="search-form" action="" method="get">
     <input type="hidden" name="page_id" value="<?php echo get_the_ID(); ?>" />
     <input type="text" name="search_user" id="search-user-input" placeholder="Hae profiili..." value="<?php echo esc_attr($search_query); ?>" />
     <button type="submit"><span class="search-icon">&#x1F50D;</span>Hae</button>
+    <button id="reset">Reset</button>
     </form>
 
     <label for="department">Valitse alue:</label>
@@ -206,47 +207,47 @@ function display_all_user_profiles_shortcode($atts) {
 
         echo '</div>';
         // Table structure for list view
-        echo '<table class="user-profiles-table" style="display:none;">';
-        echo '<thead>
-        <tr>
-            <th data-sortable="true" onclick="sortTable(0)">Nimi</th>
-            <th data-sortable="true" onclick="sortTable(1)">Numero</th>
-            <th data-sortable="true" onclick="sortTable(2)">Puhelinnumero</th>
-            <th data-sortable="true" onclick="sortTable(3)">Sähköposti</th>
-            <th data-sortable="true" onclick="sortTable(4)">Yritys</th>
-            <th data-sortable="true" onclick="sortTable(5)">EA-koulutus</th>
-            <th data-sortable="true" onclick="sortTable(6)">TT-koulutus</th>
-        </tr>
-    </thead>';
-        echo '<tbody>';
-        foreach ($users as $user) {
-            $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
-            $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
-            $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
-            $first_aid=get_user_meta($user->ID,'first_aid',true);
-            if (!empty($first_aid)){
-                $first_aid = date('d.m.Y',strtotime($first_aid));
-            }
-            $tilanne_koulutus= get_user_meta($user->ID,'tilanne_koulutus',true);
-            if (!empty($tilanne_koulutus)) {
-                $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
-            }
-            $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
-            ?>
-            <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>" data-title="<?php echo esc_attr(get_user_meta($user->ID,'titteli',true)); ?>">
-                <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
-                <td><?php echo esc_html(($custom_user_id)); ?></p></td>
-                <td><?php echo (!$hide_phone_number) ? esc_html(get_user_meta($user->ID, 'phone_number', true)) : 'Private'; ?></td>
-                <td><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></td>
-                <td><?php echo esc_html($user->company); ?></td>
-                <td><?php if (!empty($first_aid) && $first_aid!== '01.01.1970'): echo $first_aid; endif;?></td>
-                <td><?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : echo $tilanne_koulutus; endif;?> </td>
-
-            </tr>
+        echo '<div id="user-table">';
+            echo '<table class="user-profiles-table" style="display:none;">';
+                echo '<thead>
+                    <tr>
+                        <th data-sortable="true" onclick="sortTable(0)">Nimi</th>
+                        <th data-sortable="true" onclick="sortTable(1)">Numero</th>
+                        <th data-sortable="true" onclick="sortTable(2)">Puhelinnumero</th>
+                        <th data-sortable="true" onclick="sortTable(3)">Sähköposti</th>
+                        <th data-sortable="true" onclick="sortTable(4)">Yritys</th>
+                        <th data-sortable="true" onclick="sortTable(5)">EA-koulutus</th>
+                        <th data-sortable="true" onclick="sortTable(6)">TT-koulutus</th>
+                    </tr>
+            </thead>';
+            echo '<tbody>';
+                foreach ($users as $user) {
+                    $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
+                    $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
+                    $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
+                    $first_aid=get_user_meta($user->ID,'first_aid',true);
+                    if (!empty($first_aid)){
+                        $first_aid = date('d.m.Y',strtotime($first_aid));
+                    }
+                    $tilanne_koulutus= get_user_meta($user->ID,'tilanne_koulutus',true);
+                    if (!empty($tilanne_koulutus)) {
+                        $tilanne_koulutus = date('d.m.Y', strtotime($tilanne_koulutus)); 
+                    }
+                    $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
+                    ?>
+                    <tr data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>" data-title="<?php echo esc_attr(get_user_meta($user->ID,'titteli',true)); ?>">
+                        <td><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></td>
+                        <td><?php echo esc_html(($custom_user_id)); ?></p></td>
+                        <td><?php echo (!$hide_phone_number) ? esc_html(get_user_meta($user->ID, 'phone_number', true)) : 'Private'; ?></td>
+                        <td><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></td>
+                        <td><?php echo esc_html($user->company); ?></td>
+                        <td><?php if (!empty($first_aid) && $first_aid!== '01.01.1970'): echo $first_aid; endif;?></td>
+                        <td><?php if (!empty($tilanne_koulutus) && $tilanne_koulutus !== '01.01.1970') : echo $tilanne_koulutus; endif;?> </td>
+                    </tr>
             
-            <?php
-        }
-        echo '</tbody></table>';
+                    <?php
+                }
+            echo '</tbody></table>';
         echo '</div>';
         ?>
     <?php
@@ -257,8 +258,8 @@ function display_all_user_profiles_shortcode($atts) {
         $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
         $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
     ?>
-        <ul class="user-info-list">
-            <li>
+        <ul id="<?php echo esc_html($user->first_name . $user->last_name); ?>" class="user-info-list" data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>" data-title="<?php echo esc_attr(get_user_meta($user->ID,'titteli',true)); ?>">
+            <li class="list-name">
                 <span class="label">Nimi:</span>
                 <span class="value"><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></span>
             </li>
@@ -275,23 +276,24 @@ function display_all_user_profiles_shortcode($atts) {
                 <span class="value"><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></span>
             </li>
        </ul>
-       <hr>
-        
         <?php
     }
        
        echo '</div>';
 
-
     } else {
         echo '<p>No user profiles found.</p>';
     }
-   
 
     // JavaScript for view toggle and department filtering
     ?>
    <!-- JavaScript for view toggle, department filtering, and live search functionality -->
 <script>
+// Reset form
+document.getElementById('reset').addEventListener('click', function () {
+    document.getElementById("search-user-input").value = "";
+});
+
 document.getElementById('toggle-view').addEventListener('click', function () {
     var userProfileContainer = document.querySelector('.user-profiles'); // Grid view
     var userTableContainer = document.querySelector('.user-profiles-table'); // Regular table view
@@ -335,6 +337,7 @@ function filterProfiles() {
     
     var profiles = document.querySelectorAll('.user-profile');
     var rows = document.querySelectorAll('.user-profiles-table tbody tr');
+    var list = document.querySelectorAll('.user-info-list');
 
     profiles.forEach(function(profile) {
         var department = profile.getAttribute('data-department');
@@ -349,12 +352,20 @@ function filterProfiles() {
         var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
         row.style.display = isVisible ? '' : 'none';
     });
+
+    list.forEach(function(list) {
+        var department = list.getAttribute('data-department');
+        var title = list.getAttribute('data-title');
+        var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
+        list.style.display = isVisible ? '' : 'none';
+    });
 }
     // Live search functionality
     document.getElementById('search-user-input').addEventListener('input', function () {
         var searchTerm = this.value.toLowerCase();
         var profiles = document.querySelectorAll('.user-profile');
         var rows = document.querySelectorAll('.user-profiles-table tbody tr');
+        var list = document.querySelectorAll('.user-info-list');
 
         profiles.forEach(function(profile) {
             var name = profile.querySelector('h2').textContent.toLowerCase();
@@ -364,6 +375,11 @@ function filterProfiles() {
         rows.forEach(function(row) {
             var name = row.querySelector('td:nth-child(1)').textContent.toLowerCase() + ' ' + row.querySelector('td:nth-child(2)').textContent.toLowerCase();
             row.style.display = name.includes(searchTerm) ? '' : 'none';
+        });
+
+        list.forEach(function(list) {
+            var userUl = list.id.toLowerCase();
+            list.style.display = userUl.includes(searchTerm) ? '' : 'none';
         });
     });
 
@@ -675,8 +691,9 @@ function display_user_profiles_styles() {
     color: #000000;
     margin-left: 5px;
     vertical-align: middle;
+    }
 
-     @media screen and (max-width:1150px) and (min-width: 921px){
+     @media screen and (max-width:1150px) and (min-width: 920px){
         #content {
             width: 100%;   
         }
@@ -692,23 +709,29 @@ function display_user_profiles_styles() {
         margin-top: 35px;
         font-size: 0.85rem;
         list-style-type: none;
+        border-bottom: 1px solid black;
     }
+
     .user-info-list li {
         display: flex;
         padding: 15px;
         border: 1px solid #ddd;
         border-radius: 4px;
     }
+
     .user-info-list li:nth-child(odd){
         background-color: #ffffff;
     }
+
     .user-info-list li:nth-child(even){
         background-color: #f0f0e8;
     }
+
     .user-info-list li .label {
         flex-basis: 40%;
         margin-right: 10px;
     }
+        
     .user-info-list li .value {
         flex-basis: 60%;
     }
