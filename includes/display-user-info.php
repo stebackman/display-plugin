@@ -227,8 +227,9 @@ $style = "
     $home_address = get_user_meta($current_user->ID, 'fennoa_address', true);
     $zipcode = get_user_meta($current_user->ID, 'fennoa_postcode', true);
     $city = get_user_meta($current_user->ID, 'fennoa_city', true);
-    $country_code = get_user_meta($current_user->ID, 'fennoa_country_code',true);
     $fennoa_email =get_user_meta($current_user->ID,'fennoa_email',true);
+    $live_abroad = get_user_meta($current_user->ID, 'live_abroad', true);
+    $country_code = get_user_meta($current_user->ID, 'fennoa_country_code', true);
 
     $profile_title = get_user_meta($current_user->ID, 'titteli', true);
     $department = get_user_meta($current_user->ID, 'department', true);
@@ -237,8 +238,8 @@ $style = "
     $biographical_info=get_user_meta($current_user->ID,'biographical_info',true);
     $custom_user_id = get_user_meta($current_user->ID, 'custom_user_id', true);
     $vip_member_icon= get_user_meta($current_user->ID,'vip_member_icon',true)==='yes';
-    $cross_icon=get_user_meta($current_user->ID,'cross_icon',true)==='yes';
     $kunniajasen=get_user_meta($current_user->ID,'titteli',true)==='Kunniajäsen';
+
 
     $first_aid= get_user_meta($current_user->ID,'first_aid',true);
     if (!empty($first_aid)) {
@@ -324,11 +325,23 @@ $style = "
                 <p><strong>Osoite:</strong> <input type="text" name="fennoa_address" value="<?php echo esc_attr($home_address); ?>" class="regular-text"></p>
                 <p><strong>Postinumero:</strong> <input type="text" name="fennoa_postcode" value="<?php echo esc_attr($zipcode); ?>" class="regular-text"></p>
                 <p><strong>Postitoimipaikka:</strong> <input type="text" name="fennoa_city" value="<?php echo esc_attr($city); ?>" class="regular-text"></p>
-                <p><strong>Maa:</strong> <input type="text" name="fennoa_country_code" value="<?php echo esc_attr($country_code); ?>" class="regular-text"></p>
+             <!-- Live Abroad Checkbox and Country Code -->
+             <div class="live-abroad-section">
+    <label>
+        <input type="checkbox" name="live_abroad" id="live_abroad" value="1" <?php checked( get_user_meta($current_user->ID, 'live_abroad', true ), '1' ); ?> />
+        Laskutusosoitteeni on ulkomailla
+    </label>
+
+    <div id="country-code-section" <?php echo (get_user_meta($current_user->ID, 'live_abroad', true) == '1') ? '' : 'style="display:none;"'; ?>>
+        <p><strong>Maakoodi:</strong> <input type="text" name="fennoa_country_code" value="<?php echo esc_attr(get_user_meta($current_user->ID, 'fennoa_country_code', true)); ?>" class="regular-text">Kirjoita maan maakoodi ISO 3166-1 alpha-2 -muodossa (esim. FI = Suomi,SE= Ruotsi).Jos epäröit,pyydä jäsenvastaavaa käydä tarkistamassa</p>
+    </div>
+</div>
+        
                 <div class="visibility-options">
                     <h4>Profiilin näkyvyysasetukset</h4>
                     <label><input type="checkbox" name="hide_email" value="yes" <?php checked($hide_email, 'yes'); ?>> Piilota sähköpostini muilta käyttäjiltä</label>
                     <label><input type="checkbox" name="hide_phone_number" value="yes" <?php checked($hide_phone_number, 'yes'); ?>> Piilota puhelinnumeroni muilta käyttäjiltä</label>
+                    
                 </div>
  <!-- Reset Password Button -->
  <button type="button" name="reset_password-button" class="reset-password-button" onclick="toggleChangePasswordForm()">Aseta uusi salasana:</button>
@@ -338,6 +351,28 @@ $style = "
 </div>
 </div>
 </form>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+    var liveAbroadCheckbox = document.getElementById('live_abroad');
+    var countryCodeSection = document.getElementById('country-code-section');
+
+    // Check initial state
+    if (liveAbroadCheckbox.checked) {
+        countryCodeSection.style.display = 'block';
+    } else {
+        countryCodeSection.style.display = 'none';
+    }
+
+    // Toggle visibility when checkbox is changed
+    liveAbroadCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            countryCodeSection.style.display = 'block';
+        } else {
+            countryCodeSection.style.display = 'none';
+        }
+    });
+});
+</script>
 <div id="change-password-form" class="user-info" style="display: none; margin-top: 20px;">
         <h4>Vaihda salasanaa</h4>
         <form method="post" action="">

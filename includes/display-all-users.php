@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Display All User Profiles
-Description: Tämä koodi hallinnoi "kaikki jäsenet"- siv
+Description: Tämä koodi hallinnoi "kaikki jäsenet"- sivua.
 Version: 1.3
 Author: Group Molto Bene
 License: GPL2
@@ -79,7 +79,14 @@ function display_all_user_profiles_shortcode($atts) {
         $other_users_profiles = '';
 
         foreach ($users as $user) {
-            
+            $roles = $user->roles;
+            // Fetch the 'show_deactivated_member' meta value
+            $show_deactivated_member = get_user_meta($user->ID, 'show_deactivated_member', true) === 'yes';
+        
+            // Check if the user has the 'deactivated' role and the 'show_deactivated_member' meta is not checked
+            if (in_array('deactivated', $roles) && !$show_deactivated_member) {
+                continue; // Skip this user if 'deactivated' role exists and 'show_deactivated_member' is not 'yes'
+            } 
             $profile_picture = get_user_meta($user->ID, 'profile_picture', true) ?: get_avatar_url($user->ID, ['size' => 100]);
             $department = get_user_meta($user->ID, 'department', true);
             $titteli = get_user_meta($user->ID, 'titteli', true);

@@ -1,4 +1,7 @@
 <?php 
+/* Tämä koodi vielä kehitysvaiheessa */ 
+
+
 function membership_card_shortcode() {
     if (is_user_logged_in()) {
         $current_user = wp_get_current_user();

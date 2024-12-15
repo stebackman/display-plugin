@@ -13,9 +13,5 @@ if (!defined('ABSPATH')) {
 require_once('includes/display-all-users.php');
 require_once('includes/display-one-profile.php');
 require_once('includes/display-user-info.php');
-require_once('includes/membership-card.php');
-
-
-
 
 ?>
