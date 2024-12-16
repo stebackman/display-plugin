@@ -49,7 +49,7 @@ function display_all_user_profiles_shortcode($atts) {
     <input type="hidden" name="page_id" value="<?php echo get_the_ID(); ?>" />
     <input type="text" name="search_user" id="search-user-input" placeholder="Hae profiili..." value="<?php echo esc_attr($search_query); ?>" />
     <button type="submit"><span class="search-icon">&#x1F50D;</span>Hae</button>
-    <button id="reset">Reset</button>
+    <button id="reset">Näytä kaikki jäsenet</button>
     </form>
 
     <label for="department">Valitse alue:</label>
@@ -207,7 +207,6 @@ function display_all_user_profiles_shortcode($atts) {
 
         echo '</div>';
         // Table structure for list view
-        echo '<div id="user-table">';
         echo '<div id="user-table">';
         echo '<table class="user-profiles-table" style="display:none;">';
         
@@ -624,8 +623,8 @@ function display_user_profiles_styles() {
     box-shadow: 0.1rem 0.2rem 5px #5a6142;
     border: solid 2px #5a6142;
     background-image: 
-        linear-gradient(rgba(255, 255, 255, 1.00), rgba(255, 255, 255, 0.5)), 
-        url('wp-content/plugins/display-user-info/includes/images/6.jpg');
+    linear-gradient(rgba(255, 255, 255, 1.00), rgba(255, 255, 255, 0.5)), 
+    url('wp-content/plugins/display-user-info/includes/images/6.jpg');
     background-size: cover;
     background-position: center;
 }
