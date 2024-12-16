@@ -45,10 +45,11 @@ function display_all_user_profiles_shortcode($atts) {
 
     // Display search form, department filter, and view toggle button
     ?>
-    <form action="" method="get">
+    <form id="search-form" action="" method="get">
     <input type="hidden" name="page_id" value="<?php echo get_the_ID(); ?>" />
     <input type="text" name="search_user" id="search-user-input" placeholder="Hae profiili..." value="<?php echo esc_attr($search_query); ?>" />
     <button type="submit"><span class="search-icon">&#x1F50D;</span>Hae</button>
+    <button id="reset">Reset</button>
     </form>
 
     <label for="department">Valitse alue:</label>
@@ -206,7 +207,10 @@ function display_all_user_profiles_shortcode($atts) {
 
         echo '</div>';
         // Table structure for list view
+        echo '<div id="user-table">';
+        echo '<div id="user-table">';
         echo '<table class="user-profiles-table" style="display:none;">';
+        
         echo '<thead>
         <tr>
             <th data-sortable="true" onclick="sortTable(0)">Nimi</th>
@@ -220,6 +224,14 @@ function display_all_user_profiles_shortcode($atts) {
     </thead>';
         echo '<tbody>';
         foreach ($users as $user) {
+            $roles = $user->roles;
+            // Fetch the 'show_deactivated_member' meta value
+            $show_deactivated_member = get_user_meta($user->ID, 'show_deactivated_member', true) === 'yes';
+        
+            // Check if the user has the 'deactivated' role and the 'show_deactivated_member' meta is not checked
+            if (in_array('deactivated', $roles) && !$show_deactivated_member) {
+                continue; // Skip this user if 'deactivated' role exists and 'show_deactivated_member' is not 'yes'
+            } 
             $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
             $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
             $biographical_info = get_user_meta($user->ID, 'biographical_info', true);
@@ -253,12 +265,20 @@ function display_all_user_profiles_shortcode($atts) {
         //list for mobile
         echo '<div id="user-list" class="userListContainer" style="display:none;">'; 
        foreach ($users as $user) {
+        $roles = $user->roles;
+        // Fetch the 'show_deactivated_member' meta value
+        $show_deactivated_member = get_user_meta($user->ID, 'show_deactivated_member', true) === 'yes';
+    
+        // Check if the user has the 'deactivated' role and the 'show_deactivated_member' meta is not checked
+        if (in_array('deactivated', $roles) && !$show_deactivated_member) {
+            continue; // Skip this user if 'deactivated' role exists and 'show_deactivated_member' is not 'yes'
+        } 
         $hide_email = get_user_meta($user->ID, 'hide_email', true) === 'yes';
         $hide_phone_number = get_user_meta($user->ID, 'hide_phone_number', true) === 'yes';
         $custom_user_id = get_user_meta($user->ID, 'custom_user_id', true);
     ?>
-        <ul class="user-info-list">
-            <li>
+        <ul id="<?php echo esc_html($user->first_name . $user->last_name); ?>" class="user-info-list" data-department="<?php echo esc_attr(get_user_meta($user->ID, 'department', true)); ?>" data-title="<?php echo esc_attr(get_user_meta($user->ID,'titteli',true)); ?>">
+        <li class="list-name">
                 <span class="label">Nimi:</span>
                 <span class="value"><?php echo esc_html($user->first_name . ' ' . $user->last_name); ?></span>
             </li>
@@ -275,7 +295,6 @@ function display_all_user_profiles_shortcode($atts) {
                 <span class="value"><?php echo (!$hide_email) ? esc_html($user->user_email) : 'Private'; ?></span>
             </li>
        </ul>
-       <hr>
         
         <?php
     }
@@ -292,6 +311,12 @@ function display_all_user_profiles_shortcode($atts) {
     ?>
    <!-- JavaScript for view toggle, department filtering, and live search functionality -->
 <script>
+
+    // Reset form
+document.getElementById('reset').addEventListener('click', function () {
+    document.getElementById("search-user-input").value = "";
+});
+
 document.getElementById('toggle-view').addEventListener('click', function () {
     var userProfileContainer = document.querySelector('.user-profiles'); // Grid view
     var userTableContainer = document.querySelector('.user-profiles-table'); // Regular table view
@@ -350,11 +375,18 @@ function filterProfiles() {
         row.style.display = isVisible ? '' : 'none';
     });
 }
+list.forEach(function(list) {
+        var department = list.getAttribute('data-department');
+        var title = list.getAttribute('data-title');
+        var isVisible = (selectedDepartment === 'all' || department === selectedDepartment) && (selectedTitle === 'all' || title === selectedTitle);
+        list.style.display = isVisible ? '' : 'none';
+    });
     // Live search functionality
     document.getElementById('search-user-input').addEventListener('input', function () {
         var searchTerm = this.value.toLowerCase();
         var profiles = document.querySelectorAll('.user-profile');
         var rows = document.querySelectorAll('.user-profiles-table tbody tr');
+        var list = document.querySelectorAll('.user-info-list');
 
         profiles.forEach(function(profile) {
             var name = profile.querySelector('h2').textContent.toLowerCase();
@@ -364,6 +396,10 @@ function filterProfiles() {
         rows.forEach(function(row) {
             var name = row.querySelector('td:nth-child(1)').textContent.toLowerCase() + ' ' + row.querySelector('td:nth-child(2)').textContent.toLowerCase();
             row.style.display = name.includes(searchTerm) ? '' : 'none';
+        });
+        list.forEach(function(list) {
+            var userUl = list.id.toLowerCase();
+            list.style.display = userUl.includes(searchTerm) ? '' : 'none';
         });
     });
 
@@ -675,8 +711,9 @@ function display_user_profiles_styles() {
     color: #000000;
     margin-left: 5px;
     vertical-align: middle;
+}
 
-     @media screen and (max-width:1150px) and (min-width: 921px){
+@media screen and (max-width:1150px) and (min-width: 920px){
         #content {
             width: 100%;   
         }
@@ -692,6 +729,7 @@ function display_user_profiles_styles() {
         margin-top: 35px;
         font-size: 0.85rem;
         list-style-type: none;
+        border-bottom: 1px solid black;
     }
     .user-info-list li {
         display: flex;
